@@ -10,40 +10,40 @@ administrators on a centralized platform.
 Features
 
 Student:
-  Register and Login
-  View Internships
-  Search Interships
-  Apply for Internships
-  Track Appliction status
+  Register and Login,
+  View Internships,
+  Search Interships,
+  Apply for Internships,
+  Track Appliction status.
 
 Company:
-  Register and Login
-  Post Internship Opportunities
-  Manage Internship Listings
-  Review Apllications
+  Register and Login,
+  Post Internship Opportunities,
+  Manage Internship Listings,
+  Review Apllications.
 
-Administrator
-  Manage Users
-  Manage Applications
-  Generate Reports
-  Monitor System Activities
+Administrator:
+  Manage Users,
+  Manage Applications,
+  Generate Reports,
+  Monitor System Activities.
 
-Technologies that will be Used
-  PHP(OOP)
-  MySQL
-  HTML
-  CSS
+Technologies that will be Used:
+  PHP(OOP),
+  MySQL,
+  HTML,
+  CSS,
   JavaScript
-  PDO
-  Apache
-  AWS EC2
+  PDO,
+  Apache,
+  AWS EC2.
 
-Security Features
-  Password Hashing
-  Session Management
-  Prepared Statements
+Security Features:
+  Password Hashing,
+  Session Management,
+  Prepared Statements.
 
-Database design
+Database design:
   3NF- Aiming to reduce data redundancy and improve data integrity.
 
 Author:
