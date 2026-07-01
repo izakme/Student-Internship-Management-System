@@ -1,40 +1,43 @@
 <?php
+session_start();
 
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/user.php";
 
-$message = "";
+$error = "";
 
-if($_SERVER["REQUEST_METHOD"]=="POST"){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $db =
-        (new Database())->connect();
+    try {
+        $db = (new Database())->connect();
+        $user = new User($db);
 
-    $user =
-        new User($db);
+        $full_name = trim($_POST['full_name'] ?? '');
+        $email     = trim($_POST['email'] ?? '');
+        $password  = trim($_POST['password'] ?? '');
+        $role      = $_POST['role'] ?? '';
 
-    $full_name =
-        trim($_POST['full_name']);
+        // VALIDATION
+        if (empty($full_name) || empty($email) || empty($password) || empty($role)) {
+            $error = "All fields are required.";
+        } else {
 
-    $email =
-        trim($_POST['email']);
+            $result = $user->register(
+                $full_name,
+                $email,
+                $password,
+                $role
+            );
 
-    $password =
-        trim($_POST['password']);
+            if ($result) {
+                $_SESSION['success'] = "Registration successful. You can now log in.";
+            } else {
+                $error = "Registration failed. Email may already exist.";
+            }
+        }
 
-    $role =
-        $_POST['role'];
-
-    if(
-        $user->register(
-            $full_name,
-            $email,
-            $password,
-            $role
-        )
-    ){
-        $message =
-            "Registration Successful";
+    } catch (Exception $e) {
+        $error = "System error. Please try again.";
     }
 }
 ?>
@@ -45,17 +48,37 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
+
 <body>
-    <div class="auth-wrapper">
+
+<div class="auth-wrapper">
 
     <div class="auth-card">
 
         <h2>Create Account</h2>
 
-        <p class="success-msg"><?php echo $message; ?></p>
+        <!-- SUCCESS MESSAGE -->
+        <?php if (isset($_SESSION['success'])): ?>
+            <p class="success-msg">
+                <?php 
+                    echo $_SESSION['success'];
+                    unset($_SESSION['success']);
+                ?>
+            </p>
 
+        <?php endif; ?>
+
+        <!-- ERROR MESSAGE -->
+        <?php if (!empty($error)): ?>
+            <p class="error-msg">
+                <?php echo $error; ?>
+            </p>
+        <?php endif; ?>
+
+        <!-- FORM -->
         <form method="POST">
 
             <input type="text" name="full_name" placeholder="Full Name" required>
@@ -73,7 +96,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
             <button class="btn" type="submit">Register</button>
 
         </form>
-
+            <span>Already have an account? <a href="login.php">Login</a></span>
     </div>
 
 </div>

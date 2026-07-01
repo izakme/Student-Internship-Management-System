@@ -5,7 +5,7 @@
     <a href="../student/dashboard.php">Dashboard</a>
     <a href="../student/internships.php">Internships</a>
     <a href="../student/search.php">Search</a>
-    <a href="../auth/logout.php">Logout</a>
+    <a href="../authentication/logout.php">Logout</a>
 
 </div>
 

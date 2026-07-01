@@ -2,60 +2,56 @@
 
 session_start();
 
-require_once "../../backend/config/database.php";
-require_once "../../backend/classes/user.php";
-require_once "../../backend/classes/auth.php";
+/* Show errors (REMOVE in production later) */
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+require_once __DIR__ . "/../../backend/config/database.php";
+require_once __DIR__ . "/../../backend/classes/user.php";
+require_once __DIR__ . "/../../backend/classes/auth.php";
 
 $message = "";
 
-if($_SERVER["REQUEST_METHOD"]=="POST"){
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $db =
-        (new database())->connect();
+    $db = (new Database())->connect();
 
-    $user =
-        new user($db);
+    $user = new User($db);
+    $auth = new Auth($user);
 
-    $auth =
-        new auth($user);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
 
-    if(
-        $auth->login(
-            $_POST['email'],
-            $_POST['password']
-        )
-    ){
+    $login = $auth->login($email, $password);
 
-        if(
-            $_SESSION['role']
-            == 'student'
-        ){
-            header(
-                "Location: ../student/dashboard.php"
-            );
+    if ($login) {
+
+        // IMPORTANT: ensure session exists before redirect
+        if (isset($_SESSION['role'])) {
+
+            if ($_SESSION['role'] === 'student') {
+                header("Location: /S-I-M-S/frontend/student/dashboard.php");
+                exit();
+            }
+
+            if ($_SESSION['role'] === 'company') {
+                header("Location: /S-I-M-S/frontend/company/dashboard.php");
+                exit();
+            }
+
+            if ($_SESSION['role'] === 'admin') {
+                header("Location: /S-I-M-S/frontend/admin/dashboard.php");
+                exit();
+            }
         }
 
-        elseif(
-            $_SESSION['role']
-            == 'company'
-        ){
-            header(
-                "Location: ../company/dashboard.php"
-            );
-        }
-
-        else{
-            header(
-                "Location: ../admin/dashboard.php"
-            );
-        }
-
-        exit();
+        // fallback if role missing
+        $message = "Login successful but role not found in session.";
+    } else {
+        $message = "Invalid email or password.";
     }
-
-    $message =
-        "Invalid Credentials";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -64,16 +60,23 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-        <link rel="stylesheet" href="../assets/css/style.css">
+
+    <link rel="stylesheet" href="/S-I-M-S/frontend/assets/css/style.css">
 </head>
+
 <body>
-    <div class="auth-wrapper">
+
+<div class="auth-wrapper">
 
     <div class="auth-card">
 
         <h2>Login</h2>
 
-        <p class="error-msg"><?php echo $message; ?></p>
+        <?php if (!empty($message)) { ?>
+            <p class="error-msg">
+                <?php echo htmlspecialchars($message); ?>
+            </p>
+        <?php } ?>
 
         <form method="POST">
 
@@ -85,8 +88,14 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 
         </form>
 
-    </div>
+        <span>
+            Don't have an account?
+            <a href="/S-I-M-S/frontend/authentication/register.php">Register</a>
+        </span>
 
     </div>
+
+</div>
+
 </body>
 </html>

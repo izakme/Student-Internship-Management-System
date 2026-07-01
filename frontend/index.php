@@ -24,7 +24,7 @@ session_start();
 
 <div class="content">
 
-```
+
 <div class="card center">
 
     <h1>Welcome to Student Internship Management System</h1>

@@ -1,22 +1,53 @@
-<?php include "../layouts/header.php"; ?>
-<?php include "../layouts/sidebar.php"; ?>
+<?php
+session_start();
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
+
+require_once __DIR__ . "/../../backend/classes/user.php";
+require_once __DIR__ . "/../../backend/classes/Internship.php";
+require_once __DIR__ . "/../../backend/classes/Application.php";
+
+/* OPTIONAL: protect admin */
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../authentication/login.php");
+    exit();
+}
+
+/* OBJECTS */
+$userObj = new User();
+$internshipObj = new Internship();
+$appObj = new Application();
+
+/* COUNTS */
+$totalUsers = $userObj->countUsers();
+$totalInternships = $internshipObj->countInternships();
+$totalApplications = $appObj->countApplications();
+?>
+
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <div class="grid">
 
     <div class="stat-card">
         <div class="stat-title">Total Users</div>
-        <div class="stat-number">150</div>
+        <div class="stat-number">
+            <?php echo $totalUsers; ?>
+        </div>
     </div>
 
     <div class="stat-card">
         <div class="stat-title">Internships</div>
-        <div class="stat-number">35</div>
+        <div class="stat-number">
+            <?php echo $totalInternships; ?>
+        </div>
     </div>
 
     <div class="stat-card">
         <div class="stat-title">Applications</div>
-        <div class="stat-number">280</div>
+        <div class="stat-number">
+            <?php echo $totalApplications; ?>
+        </div>
     </div>
 
 </div>

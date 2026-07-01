@@ -1,11 +1,11 @@
 <?php
-
 session_start();
 
+// Clear all session data
+session_unset();
 session_destroy();
 
-header("Location: login.php");
-
+// Redirect to the homepage
+header("Location: /S-I-M-S/frontend/index.php");
 exit();
-
 ?>

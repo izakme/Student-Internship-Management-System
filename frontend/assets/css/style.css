@@ -205,10 +205,32 @@ font-size:15px;
 margin-bottom:12px;
 }
 
+/* DASHBOARD STATS ROW */
+.grid{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+/* STAT CARDS */
+.stat-card{
+    flex: 1;
+    min-width: 250px;
+    background: white;
+    padding: 30px;
+    border-radius: var(--radius);
+    text-align: center;
+    border-top: 4px solid var(--success);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+/* make numbers consistent */
 .stat-number{
-font-size:42px;
-font-weight:700;
-color:var(--success);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--success);
 }
 
 /* BUTTONS */
