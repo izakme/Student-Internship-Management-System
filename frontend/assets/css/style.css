@@ -17,14 +17,10 @@
 
 --radius:16px;
 
---shadow:
-    0 4px 12px rgba(0,0,0,.08);
-
---shadow-hover:
-    0 12px 30px rgba(0,0,0,.12);
+--shadow:0 4px 12px rgba(0,0,0,.08);
+--shadow-hover:0 12px 30px rgba(0,0,0,.12);
 
 --transition:.3s ease;
-
 }
 
 /* RESET */
@@ -34,9 +30,9 @@ padding:0;
 box-sizing:border-box;
 }
 
-html,
-body{
+html, body{
 height:100%;
+overflow-x:hidden; /* REMOVE HORIZONTAL SCROLL */
 }
 
 body{
@@ -44,7 +40,6 @@ font-family:"Segoe UI",sans-serif;
 background:var(--bg);
 color:var(--text);
 line-height:1.6;
-overflow-x:hidden;
 }
 
 /* TOPBAR */
@@ -57,22 +52,15 @@ height:70px;
 display:flex;
 align-items:center;
 justify-content:center;
-background:
-    linear-gradient(
-        135deg,
-        var(--primary),
-        var(--secondary)
-    );
-
+background:linear-gradient(135deg,var(--primary),var(--secondary));
 color:white;
 font-size:24px;
 font-weight:700;
 box-shadow:var(--shadow);
 z-index:1000;
-
 }
 
-/* LANDING PAGE TOPBAR */
+/* LANDING PAGE */
 body:not(.dashboard-page) .topbar{
 left:0;
 }
@@ -81,6 +69,7 @@ left:0;
 .layout{
 display:flex;
 min-height:100vh;
+overflow:hidden;
 }
 
 /* SIDEBAR */
@@ -91,25 +80,20 @@ left:0;
 width:var(--sidebar-width);
 height:100vh;
 padding:25px 15px;
-background:
-    linear-gradient(
-        180deg,
-        var(--primary),
-        var(--secondary)
-    );
+background:linear-gradient(180deg,var(--primary),var(--secondary));
 box-shadow:var(--shadow);
 z-index:1001;
-
 }
 
+/* SIDEBAR TEXT */
 .sidebar h3{
 text-align:center;
 color:white;
 font-size:26px;
 margin-bottom:30px;
-font-weight:700;
 }
 
+/* SIDEBAR LINKS */
 .sidebar a{
 display:flex;
 align-items:center;
@@ -121,7 +105,6 @@ text-decoration:none;
 font-weight:600;
 border-radius:12px;
 transition:var(--transition);
-
 }
 
 .sidebar a:hover{
@@ -135,18 +118,14 @@ border-left:5px solid var(--success);
 
 /* CONTENT */
 .content{
-margin-top:90px;
-padding:30px;
-}
-
-/* DASHBOARD CONTENT */
-.sidebar + .content{
 margin-left:var(--sidebar-width);
-margin-top:70px;
-min-height:calc(100vh - 70px);
+margin-top:80px;
+padding:20px;
+flex:1;
+min-width:0;
 }
 
-/* CARDS */
+/* CARD */
 .card{
 background:white;
 padding:25px;
@@ -154,7 +133,6 @@ margin-bottom:25px;
 border-radius:var(--radius);
 box-shadow:var(--shadow);
 transition:var(--transition);
-
 }
 
 .card:hover{
@@ -162,28 +140,18 @@ transform:translateY(-4px);
 box-shadow:var(--shadow-hover);
 }
 
-.card h1{
-margin-bottom:15px;
-font-size:42px;
-color:var(--text);
-}
-
-.card h2,
-.card h3{
-margin-bottom:15px;
-}
-
-/* GRID */
+/* GRID (FIXED ONLY ONCE) */
 .grid{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(250px,1fr));
+display:flex;
 gap:20px;
-
+flex-wrap:wrap;
+justify-content:space-between;
 }
 
-/* STAT CARDS */
+/* STAT CARD */
 .stat-card{
+flex:1;
+min-width:250px;
 background:white;
 padding:30px;
 border-radius:var(--radius);
@@ -191,7 +159,6 @@ text-align:center;
 border-top:4px solid var(--success);
 box-shadow:var(--shadow);
 transition:var(--transition);
-
 }
 
 .stat-card:hover{
@@ -205,35 +172,13 @@ font-size:15px;
 margin-bottom:12px;
 }
 
-/* DASHBOARD STATS ROW */
-.grid{
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-/* STAT CARDS */
-.stat-card{
-    flex: 1;
-    min-width: 250px;
-    background: white;
-    padding: 30px;
-    border-radius: var(--radius);
-    text-align: center;
-    border-top: 4px solid var(--success);
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-}
-
-/* make numbers consistent */
 .stat-number{
-    font-size: 42px;
-    font-weight: 700;
-    color: var(--success);
+font-size:42px;
+font-weight:700;
+color:var(--success);
 }
 
-/* BUTTONS */
+/* BUTTON */
 .btn{
 display:inline-block;
 padding:12px 22px;
@@ -246,7 +191,6 @@ font-weight:600;
 background:var(--primary);
 color:white;
 transition:var(--transition);
-
 }
 
 .btn:hover{
@@ -254,31 +198,16 @@ background:var(--success);
 transform:translateY(-2px);
 }
 
-/* FORMS */
-input,
-select,
-textarea{
+/* INPUT */
+input, select, textarea{
 width:100%;
 padding:12px;
 border:1px solid var(--border);
 border-radius:10px;
-margin-top:6px;
-margin-bottom:16px;
-font-size:15px;
-transition:var(--transition);
-
+margin:8px 0 16px;
 }
 
-input:focus,
-select:focus,
-textarea:focus{
-outline:none;
-border-color:var(--primary);
-box-shadow: 0 0 0 3px rgba(91,188,255,.2);
-
-}
-
-/* TABLES */
+/* TABLE FIX */
 table{
 width:100%;
 border-collapse:collapse;
@@ -286,7 +215,7 @@ background:white;
 border-radius:var(--radius);
 overflow:hidden;
 box-shadow:var(--shadow);
-
+table-layout:fixed;
 }
 
 table th{
@@ -294,16 +223,17 @@ background:var(--primary);
 color:white;
 padding:14px;
 text-align:left;
-
 }
 
 table td{
 padding:14px;
 border-bottom:1px solid var(--border);
-
+word-wrap:break-word;
 }
 
-table tr:hover
+table tr:hover{
+background:#f1f7ff;
+}
 
 /* BADGES */
 .badge{
@@ -313,98 +243,51 @@ border-radius:50px;
 color:white;
 font-size:12px;
 font-weight:600;
-
 }
 
-.badge-success{
-background:var(--success);
-}
-
-.badge-pending{
-background:var(--warning);
-}
-
-.badge-danger{
-background:var(--danger);
-}
+.badge-success{ background:var(--success); }
+.badge-pending{ background:var(--warning); }
+.badge-danger{ background:var(--danger); }
 
 /* AUTH */
 .auth-card{
 width:420px;
-
-
 margin:120px auto;
-
 padding:30px;
-
 background:white;
-
 border-radius:var(--radius);
-
 box-shadow:var(--shadow);
-
-
 }
 
-.auth-card h2{
-text-align:center;
-margin-bottom:20px;
-}
-
-/* LISTS */
-ul{
-padding-left:20px;
-}
-
-li{
-margin-bottom:8px;
-}
-
-/* UTILITIES */
-.center{
-text-align:center;
-}
-
-.mt-20{
-margin-top:20px;
-}
-
-.mb-20{
-margin-bottom:20px;
-}
+/* UTIL */
+.center{text-align:center;}
+.mt-20{margin-top:20px;}
 
 /* RESPONSIVE */
 @media(max-width:768px){
 
-
 .sidebar{
-    position:relative;
-    width:100%;
-    height:auto;
+position:relative;
+width:100%;
+height:auto;
 }
 
 .topbar{
-    position:relative;
-    left:0;
+position:relative;
+left:0;
 }
 
 .content{
-    margin-left:0 !important;
-    margin-top:0;
-    padding:15px;
+margin-left:0;
+margin-top:0;
+padding:15px;
 }
 
 .grid{
-    grid-template-columns:1fr;
+flex-direction:column;
 }
 
 .auth-card{
-    width:95%;
+width:95%;
 }
-
-.card h1{
-    font-size:30px;
-}
-
-
 }

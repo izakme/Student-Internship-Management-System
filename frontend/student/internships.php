@@ -54,7 +54,13 @@ $stmt = $internship->getInternships();
 </head>
 <body>
 
-<h2>Available Internships</h2>
+<div class="page-header">
+    <a href="/S-I-M-S/frontend/student/dashboard.php" class="back-btn">
+    ← Back to Dashboard
+</a>
+
+    <h2>Available Internships</h2>
+</div>
 
 <table>
     <thead>

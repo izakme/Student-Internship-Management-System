@@ -13,198 +13,209 @@ class Application
         $this->conn = $database->connect();
     }
 
-    /* APPLY FOR INTERNSHIP */
+    /* =========================
+       APPLY FOR INTERNSHIP
+    ========================= */
     public function apply($student_id, $internship_id)
     {
-        // Check if student has already applied
-        $check = $this->conn->prepare("
+        // Validate inputs
+        if (!$student_id || !$internship_id) {
+            return false;
+        }
+
+        // Check internship exists + still active
+        $stmt = $this->conn->prepare("
+            SELECT COUNT(*)
+            FROM internships
+            WHERE internship_id = ?
+            AND deadline >= CURDATE()
+        ");
+
+        $stmt->execute([$internship_id]);
+
+        if ($stmt->fetchColumn() == 0) {
+            return false;
+        }
+
+        // Prevent duplicate applications
+        if ($this->hasApplied($student_id, $internship_id)) {
+            return false;
+        }
+
+        // Insert application
+        $sql = "
+            INSERT INTO {$this->table}
+            (student_id, internship_id, status, application_date)
+            VALUES (?, ?, 'Pending', NOW())
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([$student_id, $internship_id]);
+    }
+
+    /* =========================
+       CHECK DUPLICATE APPLY
+    ========================= */
+    public function hasApplied($student_id, $internship_id)
+    {
+        $stmt = $this->conn->prepare("
             SELECT COUNT(*)
             FROM {$this->table}
             WHERE student_id = ?
             AND internship_id = ?
         ");
 
-        $check->execute([$student_id, $internship_id]);
+        $stmt->execute([$student_id, $internship_id]);
 
-        if ($check->fetchColumn() > 0) {
-            return false;
-        }
-
-        $sql = "INSERT INTO {$this->table}
-                (student_id, internship_id)
-                VALUES (?, ?)";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            $student_id,
-            $internship_id
-        ]);
+        return $stmt->fetchColumn() > 0;
     }
 
-    /* GET ALL APPLICATIONS */
-
+    /* =========================
+       ADMIN: ALL APPLICATIONS
+    ========================= */
     public function getApplications()
     {
-        $sql = "SELECT
-                    a.application_id,
-                    s.registration_no,
-                    u.full_name,
-                    i.title,
-                    a.status,
-                    a.application_date
+        $stmt = $this->conn->prepare("
+            SELECT
+                a.application_id,
+                s.registration_no,
+                u.full_name,
+                i.title,
+                a.status,
+                a.application_date
+            FROM applications a
+            INNER JOIN students s ON a.student_id = s.student_id
+            INNER JOIN users u ON s.user_id = u.user_id
+            INNER JOIN internships i ON a.internship_id = i.internship_id
+            ORDER BY a.application_date DESC
+        ");
 
-                FROM applications a
-
-                JOIN students s
-                ON a.student_id = s.student_id
-
-                JOIN users u
-                ON s.user_id = u.user_id
-
-                JOIN internships i
-                ON a.internship_id = i.internship_id
-
-                ORDER BY a.application_date DESC";
-
-        $stmt = $this->conn->prepare($sql);
         $stmt->execute();
-
         return $stmt;
     }
 
-    /* GET STUDENT APPLICATIONS */
-
+    /* =========================
+       STUDENT APPLICATIONS
+    ========================= */
     public function getStudentApplications($student_id)
     {
-        $sql = "SELECT
-                    a.application_id,
-                    i.title,
-                    a.status,
-                    a.application_date
-
-                FROM applications a
-
-                JOIN internships i
-
-                ON a.internship_id=i.internship_id
-
-                WHERE a.student_id=?
-
-                ORDER BY a.application_date DESC";
-
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare("
+            SELECT
+                a.application_id,
+                i.title,
+                a.status,
+                a.application_date
+            FROM applications a
+            INNER JOIN internships i ON a.internship_id = i.internship_id
+            WHERE a.student_id = ?
+            ORDER BY a.application_date DESC
+        ");
 
         $stmt->execute([$student_id]);
-
         return $stmt;
     }
 
-    /* UPDATE STATUS */
-
+    /* =========================
+       UPDATE STATUS
+    ========================= */
     public function updateStatus($application_id, $status)
     {
-        $sql = "UPDATE {$this->table}
+        $stmt = $this->conn->prepare("
+            UPDATE {$this->table}
+            SET status = ?
+            WHERE application_id = ?
+        ");
 
-                SET status=?
-
-                WHERE application_id=?";
-
-        $stmt = $this->conn->prepare($sql);
-
-        return $stmt->execute([
-            $status,
-            $application_id
-        ]);
+        return $stmt->execute([$status, $application_id]);
     }
 
-    /* DELETE APPLICATION */
-
+    /* =========================
+       DELETE APPLICATION
+    ========================= */
     public function deleteApplication($application_id)
     {
-        $sql = "DELETE FROM {$this->table}
-
-                WHERE application_id=?";
-
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->prepare("
+            DELETE FROM {$this->table}
+            WHERE application_id = ?
+        ");
 
         return $stmt->execute([$application_id]);
     }
 
-    /* DASHBOARD COUNTS */
-
+    /* =========================
+       ADMIN DASHBOARD COUNTS
+    ========================= */
     public function countApplications()
     {
-        $stmt = $this->conn->query("
-            SELECT COUNT(*)
-            FROM {$this->table}
-        ");
-
-        return $stmt->fetchColumn();
+        return $this->conn->query("SELECT COUNT(*) FROM {$this->table}")->fetchColumn();
     }
 
     public function countPending()
     {
-        $stmt = $this->conn->query("
-            SELECT COUNT(*)
-            FROM {$this->table}
-            WHERE status='Pending'
-        ");
-
-        return $stmt->fetchColumn();
+        return $this->conn->query("SELECT COUNT(*) FROM {$this->table} WHERE status='Pending'")->fetchColumn();
     }
 
     public function countAccepted()
     {
-        $stmt = $this->conn->query("
-            SELECT COUNT(*)
-            FROM {$this->table}
-            WHERE status='Accepted'
-        ");
-
-        return $stmt->fetchColumn();
+        return $this->conn->query("SELECT COUNT(*) FROM {$this->table} WHERE status='Accepted'")->fetchColumn();
     }
 
     public function countRejected()
     {
-        $stmt = $this->conn->query("
+        return $this->conn->query("SELECT COUNT(*) FROM {$this->table} WHERE status='Rejected'")->fetchColumn();
+    }
+
+    /* =========================
+       STUDENT DASHBOARD COUNTS
+    ========================= */
+    public function countStudentApplications($student_id)
+    {
+        $stmt = $this->conn->prepare("
             SELECT COUNT(*)
             FROM {$this->table}
-            WHERE status='Rejected'
+            WHERE student_id = ?
         ");
 
+        $stmt->execute([$student_id]);
         return $stmt->fetchColumn();
     }
 
-    /* COMPANY APPLICANTS */
-
-    public function getCompanyApplicants($company_id)
+    public function countAcceptedByStudent($student_id)
     {
-        $sql = "SELECT
+        $stmt = $this->conn->prepare("
+            SELECT COUNT(*)
+            FROM {$this->table}
+            WHERE student_id = ?
+            AND status = 'Accepted'
+        ");
 
-                    u.full_name,
-                    s.registration_no,
-                    i.title,
-                    a.status
-
-                FROM applications a
-
-                JOIN students s
-                ON a.student_id=s.student_id
-
-                JOIN users u
-                ON s.user_id=u.user_id
-
-                JOIN internships i
-                ON a.internship_id=i.internship_id
-
-                WHERE i.company_id=?";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([$company_id]);
-
-        return $stmt;
+        $stmt->execute([$student_id]);
+        return $stmt->fetchColumn();
     }
 
+    /* =========================
+       COMPANY APPLICANTS
+    ========================= */
+    public function getCompanyApplicants($company_id)
+    {
+        $stmt = $this->conn->prepare("
+            SELECT
+                a.application_id,
+                u.full_name,
+                s.registration_no,
+                i.title,
+                a.status,
+                a.application_date
+            FROM applications a
+            INNER JOIN students s ON a.student_id = s.student_id
+            INNER JOIN users u ON s.user_id = u.user_id
+            INNER JOIN internships i ON a.internship_id = i.internship_id
+            WHERE i.company_id = ?
+            ORDER BY a.application_date DESC
+        ");
+
+        $stmt->execute([$company_id]);
+        return $stmt;
+    }
 }

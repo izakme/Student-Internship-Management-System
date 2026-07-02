@@ -1,237 +1,129 @@
 <?php
 
-require_once __DIR__ . "/../config/database.php";
+session_start();
 
-class Student
-{
-    // Encapsulation
-    private $conn;
-    private $table = "students";
+require_once "../../backend/config/Database.php";
 
-    // Constructor
-    public function __construct()
-    {
-        $database = new Database();
-        $this->conn = $database->connect();
-    }
+$database = new Database();
 
-    /* ADD STUDENT */
+$conn = $database->connect();
 
-    public function addStudent(
-        $user_id,
-        $registration_no,
-        $course,
-        $year_of_study,
-        $phone
-    )
-    {
-        $sql = "INSERT INTO {$this->table}
-                (user_id, registration_no, course, year_of_study, phone)
-                VALUES (?, ?, ?, ?, ?)";
+$sql="SELECT
 
-        $stmt = $this->conn->prepare($sql);
+s.student_id,
+u.full_name,
+u.email,
+s.registration_no,
+s.course,
+s.year_of_study,
+s.phone
 
-        return $stmt->execute([
-            $user_id,
-            $registration_no,
-            $course,
-            $year_of_study,
-            $phone
-        ]);
-    }
+FROM students s
 
-    /* GET ALL STUDENTS */
+JOIN users u
 
-    public function getStudents()
-    {
-        $sql = "SELECT
+ON s.user_id=u.user_id
 
-                    s.student_id,
-                    u.full_name,
-                    u.email,
-                    s.registration_no,
-                    s.course,
-                    s.year_of_study,
-                    s.phone
+ORDER BY u.full_name";
 
-                FROM students s
+$stmt=$conn->query($sql);
 
-                JOIN users u
+?>
 
-                ON s.user_id = u.user_id
+<!DOCTYPE html>
 
-                ORDER BY u.full_name ASC";
+<html>
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+<head>
 
-        return $stmt;
-    }
+<title>Students</title>
 
-    /* GET ONE STUDENT */
+<link rel="stylesheet" href="../assets/css/style.css">
 
-    public function getStudent($student_id)
-    {
-        $sql = "SELECT
+</head>
 
-                    s.*,
-                    u.full_name,
-                    u.email
+<body>
 
-                FROM students s
+<div class="topbar">
 
-                JOIN users u
+Internship Management System
 
-                ON s.user_id=u.user_id
+</div>
 
-                WHERE s.student_id=?";
+<div class="layout">
 
-        $stmt = $this->conn->prepare($sql);
+<div class="sidebar">
 
-        $stmt->execute([$student_id]);
+<h3>Admin Panel</h3>
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+<a href="dashboard.php">Dashboard</a>
 
-    /* GET STUDENT BY USER ID*/
+<a href="users.php">Users</a>
 
-    public function getStudentByUser($user_id)
-    {
-        $sql = "SELECT *
+<a href="students.php" class="active">Students</a>
 
-                FROM students
+<a href="companies.php">Companies</a>
 
-                WHERE user_id=?";
+<a href="internships.php">Internships</a>
 
-        $stmt = $this->conn->prepare($sql);
+<a href="applications.php">Applications</a>
 
-        $stmt->execute([$user_id]);
+<a href="reports.php">Reports</a>
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+<a href="../authentication/logout.php">Logout</a>
 
-    /* UPDATE PROFILE*/
+</div>
 
-    public function updateStudent(
-        $student_id,
-        $registration_no,
-        $course,
-        $year_of_study,
-        $phone
-    )
-    {
-        $sql = "UPDATE {$this->table}
+<div class="content">
 
-                SET
+<div class="card">
 
-                registration_no=?,
-                course=?,
-                year_of_study=?,
-                phone=?
+<h2>Registered Students</h2>
 
-                WHERE student_id=?";
+<table>
 
-        $stmt = $this->conn->prepare($sql);
+<tr>
 
-        return $stmt->execute([
-            $registration_no,
-            $course,
-            $year_of_study,
-            $phone,
-            $student_id
-        ]);
-    }
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Registration</th>
+<th>Course</th>
+<th>Year</th>
+<th>Phone</th>
 
-    /* DELETE STUDENT */
+</tr>
 
-    public function deleteStudent($student_id)
-    {
-        $sql = "DELETE FROM {$this->table}
+<?php while($row=$stmt->fetch(PDO::FETCH_ASSOC)): ?>
 
-                WHERE student_id=?";
+<tr>
 
-        $stmt = $this->conn->prepare($sql);
+<td><?= $row['student_id']; ?></td>
 
-        return $stmt->execute([$student_id]);
-    }
+<td><?= $row['full_name']; ?></td>
 
-    /* COUNT STUDENTS */
+<td><?= $row['email']; ?></td>
 
-    public function countStudents()
-    {
-        $stmt = $this->conn->query("SELECT COUNT(*) FROM students");
+<td><?= $row['registration_no']; ?></td>
 
-        return $stmt->fetchColumn();
-    }
+<td><?= $row['course']; ?></td>
 
-    /*SEARCH STUDENTS */
+<td><?= $row['year_of_study']; ?></td>
 
-    public function searchStudents($keyword)
-    {
-        $sql = "SELECT
+<td><?= $row['phone']; ?></td>
 
-                    s.student_id,
-                    u.full_name,
-                    u.email,
-                    s.registration_no,
-                    s.course,
-                    s.year_of_study
+</tr>
 
-                FROM students s
+<?php endwhile; ?>
 
-                JOIN users u
+</table>
 
-                ON s.user_id=u.user_id
+</div>
 
-                WHERE
+</div>
 
-                u.full_name LIKE ?
+</div>
 
-                OR s.registration_no LIKE ?
+</body>
 
-                OR s.course LIKE ?";
-
-        $search = "%" . $keyword . "%";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->execute([
-            $search,
-            $search,
-            $search
-        ]);
-
-        return $stmt;
-    }
-
-    /* RECENT STUDENTS */
-
-    public function latestStudents($limit = 5)
-    {
-        $sql = "SELECT
-
-                    s.student_id,
-                    u.full_name,
-                    s.registration_no,
-                    s.course
-
-                FROM students s
-
-                JOIN users u
-
-                ON s.user_id=u.user_id
-
-                ORDER BY s.student_id DESC
-
-                LIMIT :limit";
-
-        $stmt = $this->conn->prepare($sql);
-
-        $stmt->bindValue(":limit", (int)$limit, PDO::PARAM_INT);
-
-        $stmt->execute();
-
-        return $stmt;
-    }
-
-}
+</html>

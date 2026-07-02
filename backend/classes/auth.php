@@ -10,26 +10,30 @@ class Auth
     }
 
     public function login($email, $password)
-    {
-        $user = $this->user->findByEmail($email);
+{
+    $user = $this->user->findByEmail($email);
 
-        if ($user && password_verify($password, $user['password'])) {
+    if ($user && password_verify($password, $user['password'])) {
 
-            session_start(); // IMPORTANT SAFETY FIX
+        session_start();
 
-            $_SESSION['user_id'] = $user['user_id'];
-            $_SESSION['name'] = $user['full_name'];
-            $_SESSION['role'] = $user['role'];
+        $_SESSION['user_id'] = $user['user_id'];
+        $_SESSION['name'] = $user['full_name'];
+        $_SESSION['role'] = $user['role'];
 
-            // ✅ CRITICAL FIX FOR STUDENT SYSTEM
-            if ($user['role'] === 'student') {
-                $_SESSION['student_id'] = $user['user_id']; 
-                // OR correct column if you have student_id separately
+        // GET STUDENT ID IF STUDENT
+        if ($user['role'] === 'student') {
+
+            $student = $this->user->getStudentByUserId($user['user_id']);
+
+            if ($student) {
+                $_SESSION['student_id'] = $student['student_id'];
             }
-
-            return true;
         }
 
-        return false;
+        return true;
     }
+
+    return false;
+}
 }

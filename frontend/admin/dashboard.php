@@ -14,8 +14,10 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+$db = (new Database())->connect();
+
 /* OBJECTS */
-$userObj = new User();
+$userObj = new User($db);
 $internshipObj = new Internship();
 $appObj = new Application();
 

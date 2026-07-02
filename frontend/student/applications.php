@@ -1,140 +1,144 @@
 <?php
 session_start();
 
-require_once __DIR__ . "/../../backend/classes/Application.php";
+require_once "../../backend/config/database.php";
 
-// Check if student is logged in
-if (!isset($_SESSION['student_id'])) {
-header("Location: ../authentication/login.php");
+/* =========================
+   LOGIN CHECK
+========================= */
+if (empty($_SESSION['user_id'])) {
+    header("Location: ../authentication/login.php");
     exit();
 }
 
-$student_id = $_SESSION['student_id'];
+$database = new Database();
+$conn = $database->connect();
 
-$application = new Application();
-$applications = $application->getStudentApplications($student_id);
+/* =========================
+   GET student_id (CRITICAL FIX)
+========================= */
+$stmt = $conn->prepare("
+    SELECT student_id
+    FROM students
+    WHERE user_id = ?
+    LIMIT 1
+");
+
+$stmt->execute([$_SESSION['user_id']]);
+$student_id = $stmt->fetchColumn();
+
+/* =========================
+   VALIDATION
+========================= */
+if (!$student_id) {
+    die("
+        <div style='text-align:center;margin-top:60px;color:red;font-size:18px;'>
+            Student profile not found.<br>
+            Please ensure your account is linked to a student profile.
+        </div>
+    ");
+}
+
+/* =========================
+   FETCH APPLICATIONS
+========================= */
+$stmt = $conn->prepare("
+    SELECT
+        a.application_id,
+        i.title,
+        a.status,
+        a.application_date
+    FROM applications a
+    INNER JOIN internships i
+        ON a.internship_id = i.internship_id
+    WHERE a.student_id = ?
+    ORDER BY a.application_date DESC
+");
+
+$stmt->execute([$student_id]);
+
+$applications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Applications</title>
 
-<style>
-body{
-    font-family:Arial,sans-serif;
-    background:#f4f4f4;
-    margin:20px;
-}
-
-.container{
-    width:95%;
-    margin:auto;
-}
-
-h2{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-}
-
-th,td{
-    padding:12px;
-    border:1px solid #ddd;
-    text-align:left;
-}
-
-th{
-    background:#0d6efd;
-    color:white;
-}
-
-tr:nth-child(even){
-    background:#f9f9f9;
-}
-
-.pending{
-    color:orange;
-    font-weight:bold;
-}
-
-.accepted{
-    color:green;
-    font-weight:bold;
-}
-
-.rejected{
-    color:red;
-    font-weight:bold;
-}
-
-.no-record{
-    text-align:center;
-    color:red;
-    font-weight:bold;
-}
-</style>
-
+<link rel="stylesheet" href="../assets/css/style.css">
 </head>
-<body>
 
-<div class="container">
+<body class="dashboard-page">
 
-<h2>My Internship Applications</h2>
+<?php include "../layouts/header.php"; ?>
+<?php include "../layouts/sidebar.php"; ?>
+
+<div class="content">
+
+<div class="card">
+
+<div class="page-header">
+    <h2>My Internship Applications</h2>
+</div>
 
 <table>
 
 <thead>
 <tr>
-    <th>Application ID</th>
+    <th>ID</th>
     <th>Internship</th>
     <th>Status</th>
-    <th>Application Date</th>
+    <th>Date</th>
 </tr>
 </thead>
 
 <tbody>
 
-<?php
-if ($applications->rowCount() > 0) {
+<?php if (!empty($applications)): ?>
 
-    while ($row = $applications->fetch(PDO::FETCH_ASSOC)) {
+    <?php foreach ($applications as $row): ?>
 
-        $statusClass = strtolower($row['status']);
+        <tr>
+            <td><?= htmlspecialchars($row['application_id']) ?></td>
+            <td><?= htmlspecialchars($row['title']) ?></td>
 
-        echo "<tr>";
-        echo "<td>".$row['application_id']."</td>";
-        echo "<td>".htmlspecialchars($row['title'])."</td>";
-        echo "<td class='$statusClass'>".$row['status']."</td>";
-        echo "<td>".$row['application_date']."</td>";
-        echo "</tr>";
-    }
+            <td>
+                <?php if ($row['status'] === "Accepted"): ?>
+                    <span class="badge badge-success">Accepted</span>
+                <?php elseif ($row['status'] === "Rejected"): ?>
+                    <span class="badge badge-danger">Rejected</span>
+                <?php else: ?>
+                    <span class="badge badge-pending">Pending</span>
+                <?php endif; ?>
+            </td>
 
-} else {
-?>
+            <td><?= htmlspecialchars($row['application_date']) ?></td>
+        </tr>
 
-<tr>
-<td colspan="4" class="no-record">
-No internship applications found.
-</td>
-</tr>
+    <?php endforeach; ?>
 
-<?php
-}
-?>
+<?php else: ?>
+
+    <tr>
+        <td colspan="4" class="center">
+            No applications found.
+        </td>
+    </tr>
+
+<?php endif; ?>
 
 </tbody>
 
 </table>
 
 </div>
+
+</div>
+
+<?php include "../layouts/footer.php"; ?>
 
 </body>
 </html>
