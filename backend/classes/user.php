@@ -52,7 +52,7 @@ class User
     ========================= */
     public function getStudentByUserId($user_id)
     {
-        $sql = "SELECT student_id, registration_no, course, year_of_study, phone
+        $sql = "SELECT student_id, registration_no, course, year_of_study
                 FROM students
                 WHERE user_id = ?
                 LIMIT 1";

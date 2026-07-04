@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-require_once "../../backend/config/Database.php";
+require_once "../../backend/config/database.php";
 
 $database = new Database();
 $conn = $database->connect();

@@ -59,7 +59,7 @@ if (isset($_GET['delete'])) {
 $stmt = $db->prepare("
     SELECT * FROM internships 
     WHERE company_id = ? 
-    ORDER BY created_at DESC
+    ORDER BY internship_id DESC
 ");
 $stmt->execute([$company_id]);
 $internships = $stmt;
@@ -163,7 +163,6 @@ $internships = $stmt;
                 <tr>
                     <th>ID</th>
                     <th>Title</th>
-                    <th>Posted Date</th>
                     <th>Deadline</th>
                     <th>Actions</th>
                 </tr>
@@ -174,7 +173,6 @@ $internships = $stmt;
                         <tr>
                             <td><?= htmlspecialchars($row['internship_id']) ?></td>
                             <td><?= htmlspecialchars($row['title']) ?></td>
-                            <td><?= htmlspecialchars($row['created_at']) ?></td>
                             <td><?= htmlspecialchars($row['deadline']) ?></td>
                             <td>
                                 <a href="internships.php?delete=<?php echo $row['internship_id']; ?>" 
@@ -185,7 +183,7 @@ $internships = $stmt;
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="5" class="center">No internships posted yet.</td>
+                        <td colspan="4" class="center">No internships posted yet.</td>
                     </tr>
                 <?php endif; ?>
                 </tbody>

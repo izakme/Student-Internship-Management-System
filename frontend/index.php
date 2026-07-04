@@ -10,9 +10,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Internship Management System</title>
 
-```
-<link rel="stylesheet" href="assets/css/style.css">
-```
+    <link rel="stylesheet" href="assets/css/style.css">
 
 </head>
 
@@ -24,23 +22,24 @@ session_start();
 
 <div class="content">
 
+<div class="card">
 
-<div class="card center">
+    <h1 class="center">Welcome to Student Internship Management System</h1>
 
-    <h1>Welcome to Student Internship Management System</h1>
-
-    <p style="margin:15px 0;">
+    <p style="margin:15px 0;text-align:center;">
         A web-based platform that connects students,
         companies, and administrators for efficient internship management.
     </p>
 
-    <a href="authentication/login.php" class="btn">
-        Login
-    </a>
+    <div style="text-align:center;margin-top:20px;">
+        <a href="authentication/login.php" class="btn">
+            Login
+        </a>
 
-    <a href="authentication/register.php" class="btn">
-        Register
-    </a>
+        <a href="authentication/register.php" class="btn" style="margin-left:10px;">
+            Register
+        </a>
+    </div>
 
 </div>
 
@@ -66,6 +65,8 @@ session_start();
         </div>
 
     </div>
+
+</div>
 
 </div>
 

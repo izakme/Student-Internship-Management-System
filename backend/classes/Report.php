@@ -18,18 +18,23 @@ class Report
     ========================= */
     public function createReport($report_name, $report_type, $generated_by, $report_data = null)
     {
-        $sql = "INSERT INTO {$this->table}
-                (report_name, report_type, generated_by, report_data)
-                VALUES (?, ?, ?, ?)";
+        try {
+            $sql = "INSERT INTO {$this->table}
+                    (report_name, report_type, generated_by, report_data)
+                    VALUES (?, ?, ?, ?)";
 
-        $stmt = $this->conn->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
 
-        return $stmt->execute([
-            $report_name,
-            $report_type,
-            $generated_by,
-            $report_data
-        ]);
+            return $stmt->execute([
+                $report_name,
+                $report_type,
+                $generated_by,
+                $report_data
+            ]);
+        } catch (PDOException $e) {
+            error_log("Report creation error: " . $e->getMessage());
+            throw new Exception("Failed to create report: " . $e->getMessage());
+        }
     }
 
     /* =========================
@@ -90,30 +95,35 @@ class Report
     ========================= */
     public function generateApplicationsReport($generated_by)
     {
-        $sql = "SELECT 
-                    a.application_id,
-                    u.full_name as student_name,
-                    s.registration_no,
-                    i.title as internship_title,
-                    c.company_name,
-                    a.status,
-                    a.application_date
-                FROM applications a
-                INNER JOIN students s ON a.student_id = s.student_id
-                INNER JOIN users u ON s.user_id = u.user_id
-                INNER JOIN internships i ON a.internship_id = i.internship_id
-                INNER JOIN companies c ON i.company_id = c.company_id
-                ORDER BY a.application_date DESC";
+        try {
+            $sql = "SELECT 
+                        a.application_id,
+                        u.full_name as student_name,
+                        s.registration_no,
+                        i.title as internship_title,
+                        c.company_name,
+                        a.status,
+                        a.application_date
+                    FROM applications a
+                    INNER JOIN students s ON a.student_id = s.student_id
+                    INNER JOIN users u ON s.user_id = u.user_id
+                    INNER JOIN internships i ON a.internship_id = i.internship_id
+                    INNER JOIN companies c ON i.company_id = c.company_id
+                    ORDER BY a.application_date DESC";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
 
-        $report_name = "Applications Report - " . date('Y-m-d H:i:s');
-        $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            $report_name = "Applications Report - " . date('Y-m-d H:i:s');
+            $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-        $this->createReport($report_name, 'Applications', $generated_by, $report_data);
+            $this->createReport($report_name, 'Applications', $generated_by, $report_data);
 
-        return $stmt;
+            return $stmt;
+        } catch (Exception $e) {
+            error_log("Applications report generation error: " . $e->getMessage());
+            throw new Exception("Failed to generate applications report: " . $e->getMessage());
+        }
     }
 
     /* =========================
@@ -121,28 +131,33 @@ class Report
     ========================= */
     public function generateInternshipsReport($generated_by)
     {
-        $sql = "SELECT 
-                    i.internship_id,
-                    i.title,
-                    c.company_name,
-                    i.description,
-                    i.deadline,
-                    COUNT(a.application_id) as applicant_count
-                FROM internships i
-                INNER JOIN companies c ON i.company_id = c.company_id
-                LEFT JOIN applications a ON i.internship_id = a.internship_id
-                GROUP BY i.internship_id
-                ORDER BY i.deadline DESC";
+        try {
+            $sql = "SELECT 
+                        i.internship_id,
+                        i.title,
+                        c.company_name,
+                        i.description,
+                        i.deadline,
+                        COUNT(a.application_id) as applicant_count
+                    FROM internships i
+                    INNER JOIN companies c ON i.company_id = c.company_id
+                    LEFT JOIN applications a ON i.internship_id = a.internship_id
+                    GROUP BY i.internship_id
+                    ORDER BY i.deadline DESC";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
 
-        $report_name = "Internships Report - " . date('Y-m-d H:i:s');
-        $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            $report_name = "Internships Report - " . date('Y-m-d H:i:s');
+            $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-        $this->createReport($report_name, 'Internships', $generated_by, $report_data);
+            $this->createReport($report_name, 'Internships', $generated_by, $report_data);
 
-        return $stmt;
+            return $stmt;
+        } catch (Exception $e) {
+            error_log("Internships report generation error: " . $e->getMessage());
+            throw new Exception("Failed to generate internships report: " . $e->getMessage());
+        }
     }
 
     /* =========================
@@ -150,28 +165,33 @@ class Report
     ========================= */
     public function generateStudentsReport($generated_by)
     {
-        $sql = "SELECT 
-                    u.full_name,
-                    s.registration_no,
-                    s.course,
-                    s.year_of_study,
-                    u.email,
-                    COUNT(a.application_id) as applications
-                FROM students s
-                INNER JOIN users u ON s.user_id = u.user_id
-                LEFT JOIN applications a ON s.student_id = a.student_id
-                GROUP BY s.student_id
-                ORDER BY u.full_name ASC";
+        try {
+            $sql = "SELECT 
+                        u.full_name,
+                        s.registration_no,
+                        s.course,
+                        s.year_of_study,
+                        u.email,
+                        COUNT(a.application_id) as applications
+                    FROM students s
+                    INNER JOIN users u ON s.user_id = u.user_id
+                    LEFT JOIN applications a ON s.student_id = a.student_id
+                    GROUP BY s.student_id
+                    ORDER BY u.full_name ASC";
 
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
 
-        $report_name = "Students Report - " . date('Y-m-d H:i:s');
-        $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
+            $report_name = "Students Report - " . date('Y-m-d H:i:s');
+            $report_data = json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
 
-        $this->createReport($report_name, 'Students', $generated_by, $report_data);
+            $this->createReport($report_name, 'Students', $generated_by, $report_data);
 
-        return $stmt;
+            return $stmt;
+        } catch (Exception $e) {
+            error_log("Students report generation error: " . $e->getMessage());
+            throw new Exception("Failed to generate students report: " . $e->getMessage());
+        }
     }
 
     /* =========================

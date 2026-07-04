@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . "/../config/Database.php";
+require_once __DIR__ . "/../config/database.php";
 
 class Company
 {
@@ -136,55 +136,4 @@ class Company
 
         return $stmt;
     }
-}
-
-    // Count Companies
-    public function countCompanies()
-    {
-        $stmt=$this->conn->query(
-            "SELECT COUNT(*) FROM companies"
-        );
-
-        return $stmt->fetchColumn();
-    }
-
-    // Search Companies
-    public function searchCompany($keyword)
-    {
-        $search="%".$keyword."%";
-
-        $sql="SELECT *
-
-              FROM companies
-
-              WHERE
-              company_name LIKE ?
-              OR location LIKE ?";
-
-        $stmt=$this->conn->prepare($sql);
-
-        $stmt->execute([
-            $search,
-            $search
-        ]);
-
-        return $stmt;
-    }
-
-    // Company Profile
-    public function getCompanyProfile($user_id)
-    {
-        $sql="SELECT *
-
-              FROM companies
-
-              WHERE user_id=?";
-
-        $stmt=$this->conn->prepare($sql);
-
-        $stmt->execute([$user_id]);
-
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
-
 }
