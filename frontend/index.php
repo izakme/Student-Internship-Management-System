@@ -101,9 +101,12 @@ session_start();
 </div>
 
 <!-- FOOTER -->
-<div style="text-align:center; padding:20px; color:#94a3b8;">
-    zak © <?php echo date("Y"); ?> Student Internship Management System
-</div>
+<footer class="site-footer">
+    <hr class="footer-separator">
+    <p>&copy; <?php echo date("Y"); ?> Student Internship Management System. All rights reserved.</p>
+    <p>Contact: +255754553483</p>
+    <p>Prepared by Wanginyi Tech (zak)</p>
+</footer>
 
 </body>
 </html>

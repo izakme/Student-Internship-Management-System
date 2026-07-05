@@ -125,13 +125,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php include "../layouts/footer.php"; ?>
-
-</body>
-</html>
-
-</div>
-
-<?php include "../layouts/footer.php"; ?>
-
-</body>
-</html>

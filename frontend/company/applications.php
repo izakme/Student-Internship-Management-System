@@ -140,5 +140,3 @@ $applicants = $appObj->getCompanyApplicants($company_id);
 </div>
 
 <?php include "../layouts/footer.php"; ?>
-</body>
-</html>
