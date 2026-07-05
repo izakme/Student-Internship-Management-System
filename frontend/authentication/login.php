@@ -2,7 +2,6 @@
 
 session_start();
 
-/* Show errors (REMOVE in production later) */
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -26,76 +25,131 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($login) {
 
-        // IMPORTANT: ensure session exists before redirect
         if (isset($_SESSION['role'])) {
 
-            if ($_SESSION['role'] === 'student') {
-                header("Location: /S-I-M-S/frontend/student/dashboard.php");
-                exit();
-            }
+            switch ($_SESSION['role']) {
 
-            if ($_SESSION['role'] === 'company') {
-                header("Location: /S-I-M-S/frontend/company/dashboard.php");
-                exit();
-            }
+                case 'student':
+                    header("Location: /S-I-M-S/frontend/student/dashboard.php");
+                    exit();
 
-            if ($_SESSION['role'] === 'admin') {
-                header("Location: /S-I-M-S/frontend/admin/dashboard.php");
-                exit();
+                case 'company':
+                    header("Location: /S-I-M-S/frontend/company/dashboard.php");
+                    exit();
+
+                case 'admin':
+                    header("Location: /S-I-M-S/frontend/admin/dashboard.php");
+                    exit();
             }
         }
 
-        // fallback if role missing
-        $message = "Login successful but role not found in session.";
+        $message = "Login successful but no role found.";
     } else {
         $message = "Invalid email or password.";
     }
 }
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
 
-    <link rel="stylesheet" href="/S-I-M-S/frontend/assets/css/style.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login | Student Internship Management System</title>
+
+<link rel="stylesheet" href="/S-I-M-S/frontend/assets/css/style.css">
+
 </head>
 
 <body>
 
-<div class="auth-wrapper">
+<div class="topbar">
+    Student Internship Management System
+</div>
 
-    <div class="auth-card">
+<div class="content">
 
-        <h2>Login</h2>
+    <div class="card" style="max-width:450px; margin-top:40px;">
+
+        <h2 class="center">Welcome Back</h2>
+
+        <p class="center" style="margin-bottom:25px;">
+            Login to continue to your account.
+        </p>
 
         <?php if (!empty($message)) { ?>
-            <p class="error-msg">
+
+            <div
+                style="
+                    background:#fdecec;
+                    color:#e74c3c;
+                    padding:12px;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                    text-align:center;
+                ">
+
                 <?php echo htmlspecialchars($message); ?>
-            </p>
+
+            </div>
+
         <?php } ?>
 
         <form method="POST">
 
-            <input type="email" name="email" placeholder="Email" required>
+            <label>Email Address</label>
 
-            <input type="password" name="password" placeholder="Password" required>
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
 
-            <button class="btn" type="submit">Login</button>
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button
+                class="btn"
+                type="submit"
+                style="width:100%;">
+                Login
+            </button>
 
         </form>
 
-        <span>
+        <hr style="margin:25px 0; border:1px solid #e5edf5;">
+
+        <p class="center">
+
             Don't have an account?
-            <a href="/S-I-M-S/frontend/authentication/register.php">Register</a>
-        </span>
+
+            <br><br>
+
+            <a
+                href="/S-I-M-S/frontend/authentication/register.php"
+                style="color:#5bbcff;font-weight:600;">
+
+                Register Here
+
+            </a>
+
+        </p>
 
     </div>
 
 </div>
 
 </body>
+
 </html>

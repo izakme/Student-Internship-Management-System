@@ -121,6 +121,10 @@ class Application
     ========================= */
     public function updateStatus($application_id, $status)
     {
+        if (!$this->isValidStatus($status)) {
+            return false;
+        }
+
         $stmt = $this->conn->prepare("
             UPDATE {$this->table}
             SET status = ?
@@ -128,6 +132,25 @@ class Application
         ");
 
         return $stmt->execute([$status, $application_id]);
+    }
+
+    public function updateCompanyApplicationStatus($application_id, $company_id, $status)
+    {
+        if (!$this->isValidStatus($status)) {
+            return false;
+        }
+
+        $stmt = $this->conn->prepare("
+            UPDATE applications a
+            INNER JOIN internships i ON a.internship_id = i.internship_id
+            SET a.status = ?
+            WHERE a.application_id = ?
+            AND i.company_id = ?
+        ");
+
+        $stmt->execute([$status, $application_id, $company_id]);
+
+        return $stmt->rowCount() > 0;
     }
 
     /* =========================
@@ -217,5 +240,10 @@ class Application
 
         $stmt->execute([$company_id]);
         return $stmt;
+    }
+
+    private function isValidStatus($status)
+    {
+        return in_array($status, ['Pending', 'Accepted', 'Rejected'], true);
     }
 }

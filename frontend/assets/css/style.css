@@ -126,7 +126,8 @@ body:not(.dashboard-page) .topbar {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center; 
+
 }
 
 /* CARD */
@@ -308,3 +309,5 @@ table tr:hover {
     width: 95%;
   }
 }
+
+

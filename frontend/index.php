@@ -102,7 +102,7 @@ session_start();
 
 <!-- FOOTER -->
 <div style="text-align:center; padding:20px; color:#94a3b8;">
-    © <?php echo date("Y"); ?> Student Internship Management System
+    zak © <?php echo date("Y"); ?> Student Internship Management System
 </div>
 
 </body>

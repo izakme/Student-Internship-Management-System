@@ -1,11 +1,9 @@
 <?php
 session_start();
 
-include "../layouts/header.php";
-include "../layouts/sidebar.php";
-
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
+require_once __DIR__ . "/../../backend/classes/company.php";
 
 /* AUTH CHECK */
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
@@ -13,7 +11,16 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     exit();
 }
 
-$company_id = $_SESSION['user_id'];
+$companyObj = new Company();
+$company = $companyObj->getCompanyByUserId($_SESSION['user_id']);
+$company_id = $company['company_id'] ?? null;
+
+if (!$company_id) {
+    die("Company profile not found.");
+}
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 
 /* OBJECTS */
 $internshipObj = new Internship();
@@ -36,7 +43,7 @@ $totalApplicants = $applicants->rowCount();
 /* APPROVED STUDENTS */
 $approved = 0;
 
-$applicants->execute([$company_id]); // reset pointer
+$applicants = $appObj->getCompanyApplicants($company_id);
 
 while ($row = $applicants->fetch(PDO::FETCH_ASSOC)) {
     if ($row['status'] === 'Accepted') {

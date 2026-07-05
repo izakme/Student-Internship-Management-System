@@ -11,16 +11,29 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 $internshipObj = new Internship();
 
-// Delete internship
 if (isset($_GET['delete'])) {
-    $internship_id = $_GET['delete'];
-    if ($internshipObj->deleteInternship($internship_id)) {
-        $_SESSION['message'] = "Internship deleted successfully.";
+
+    $internship_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
+
+    $internship = $internshipObj->getInternship($internship_id);
+
+    if (!$internship) {
+        $_SESSION['error'] = "Internship not found.";
+        header("Location: internships.php");
+        exit();
     }
+
+    $result = $internshipObj->deleteInternship($internship_id);
+
+    if ($result['success']) {
+        $_SESSION['message'] = $result['message'];
+    } else {
+        $_SESSION['error'] = $result['message'];
+    }
+
     header("Location: internships.php");
     exit();
 }
-
 $internships = $internshipObj->getInternships();
 ?>
 
@@ -54,6 +67,9 @@ $internships = $internshipObj->getInternships();
             <h2>All Internship Opportunities</h2>
             <?php if (isset($_SESSION['message'])): ?>
                 <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error'])): ?>
+                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
             <?php endif; ?>
         </div>
 

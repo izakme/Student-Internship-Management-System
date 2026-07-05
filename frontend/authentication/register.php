@@ -9,6 +9,7 @@ $error = "";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
+
         $db = (new Database())->connect();
         $user = new User($db);
 
@@ -17,9 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password  = trim($_POST['password'] ?? '');
         $role      = $_POST['role'] ?? '';
 
-        // VALIDATION
         if (empty($full_name) || empty($email) || empty($password) || empty($role)) {
+
             $error = "All fields are required.";
+
         } else {
 
             $result = $user->register(
@@ -30,76 +32,200 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             if ($result) {
-                $_SESSION['success'] = "Registration successful. You can now log in.";
+
+                $_SESSION['success'] =
+                    "Registration successful. You can now log in.";
+
+                header("Location: login.php");
+                exit();
+
             } else {
+
                 $error = "Registration failed. Email may already exist.";
+
             }
         }
 
     } catch (Exception $e) {
+
         $error = "System error. Please try again.";
+
     }
+
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
 
-    <link rel="stylesheet" href="../assets/css/style.css">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Create Account</title>
+
+<link rel="stylesheet"
+      href="../assets/css/style.css">
+
 </head>
 
 <body>
 
-<div class="auth-wrapper">
+<div class="topbar">
+    Student Internship Management System
+</div>
 
-    <div class="auth-card">
+<div class="content">
 
-        <h2>Create Account</h2>
+    <div class="card"
+         style="max-width:500px; margin-top:40px;">
 
-        <!-- SUCCESS MESSAGE -->
-        <?php if (isset($_SESSION['success'])): ?>
-            <p class="success-msg">
-                <?php 
+        <h2 class="center">
+            Create Account
+        </h2>
+
+        <p class="center"
+           style="margin-bottom:25px;">
+
+            Register to start using the platform.
+
+        </p>
+
+        <!-- Success -->
+
+        <?php if(isset($_SESSION['success'])){ ?>
+
+            <div
+                style="
+                    background:#d4edda;
+                    color:#155724;
+                    padding:12px;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                    text-align:center;
+                ">
+
+                <?php
+
                     echo $_SESSION['success'];
                     unset($_SESSION['success']);
+
                 ?>
-            </p>
 
-        <?php endif; ?>
+            </div>
 
-        <!-- ERROR MESSAGE -->
-        <?php if (!empty($error)): ?>
-            <p class="error-msg">
-                <?php echo $error; ?>
-            </p>
-        <?php endif; ?>
+        <?php } ?>
 
-        <!-- FORM -->
+        <!-- Error -->
+
+        <?php if(!empty($error)){ ?>
+
+            <div
+                style="
+                    background:#fdecec;
+                    color:#e74c3c;
+                    padding:12px;
+                    border-radius:10px;
+                    margin-bottom:20px;
+                    text-align:center;
+                ">
+
+                <?php echo htmlspecialchars($error); ?>
+
+            </div>
+
+        <?php } ?>
+
         <form method="POST">
 
-            <input type="text" name="full_name" placeholder="Full Name" required>
+            <label>Full Name</label>
 
-            <input type="email" name="email" placeholder="Email" required>
+            <input
+                type="text"
+                name="full_name"
+                placeholder="Enter your full name"
+                required
+            >
 
-            <input type="password" name="password" placeholder="Password" required>
+            <label>Email Address</label>
+
+            <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label>Password</label>
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Create a password"
+                required
+            >
+
+            <label>Register As</label>
 
             <select name="role" required>
-                <option value="">Select Role</option>
-                <option value="student">Student</option>
-                <option value="company">Company</option>
+
+                <option value="">
+                    Select Role
+                </option>
+
+                <option value="student">
+                    Student
+                </option>
+
+                <option value="company">
+                    Company
+                </option>
+
             </select>
 
-            <button class="btn" type="submit">Register</button>
+            <button
+                class="btn"
+                type="submit"
+                style="width:100%;">
+
+                Create Account
+
+            </button>
 
         </form>
-            <span>Already have an account? <a href="login.php">Login</a></span>
+
+        <hr
+            style="
+                margin:25px 0;
+                border:1px solid #e5edf5;
+            ">
+
+        <p class="center">
+
+            Already have an account?
+
+            <br><br>
+
+            <a
+                href="login.php"
+                style="
+                    color:#5bbcff;
+                    font-weight:600;
+                ">
+
+                Login Here
+
+            </a>
+
+        </p>
+
     </div>
 
 </div>
 
 </body>
+
 </html>

@@ -94,15 +94,41 @@ class Internship
     }
 
     /* DELETE INTERNSHIP */
-    public function deleteInternship($id)
-    {
-        $sql = "DELETE FROM {$this->table}
-                WHERE internship_id=?";
+public function deleteInternship($id)
+{
+    // Check if the internship has applications
+    $sql = "SELECT COUNT(*)
+            FROM applications
+            WHERE internship_id = ?";
 
-        $stmt = $this->conn->prepare($sql);
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([$id]);
 
-        return $stmt->execute([$id]);
+    if ($stmt->fetchColumn() > 0) {
+        return [
+            "success" => false,
+            "message" => "Cannot delete internship. Students have already applied."
+        ];
     }
+
+    // Delete internship
+    $sql = "DELETE FROM {$this->table}
+            WHERE internship_id = ?";
+
+    $stmt = $this->conn->prepare($sql);
+
+    if ($stmt->execute([$id])) {
+        return [
+            "success" => true,
+            "message" => "Internship deleted successfully."
+        ];
+    }
+
+    return [
+        "success" => false,
+        "message" => "Failed to delete internship."
+    ];
+}
 
     /* SEARCH INTERNSHIPS */
     public function searchInternships($keyword)
@@ -124,6 +150,35 @@ class Internship
 
                 OR company_name LIKE ?
 
+                ORDER BY deadline ASC";
+
+        $search = "%" . $keyword . "%";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([
+            $search,
+            $search,
+            $search
+        ]);
+
+        return $stmt;
+    }
+
+    /* SEARCH ACTIVE INTERNSHIPS */
+    public function searchActiveInternships($keyword)
+    {
+        $sql = "SELECT internships.*,
+                       companies.company_name
+                FROM internships
+                INNER JOIN companies
+                ON internships.company_id=companies.company_id
+                WHERE deadline >= CURDATE()
+                AND (
+                    title LIKE ?
+                    OR description LIKE ?
+                    OR company_name LIKE ?
+                )
                 ORDER BY deadline ASC";
 
         $search = "%" . $keyword . "%";
@@ -199,12 +254,12 @@ class Internship
     =========================== */
     public function activeInternships()
     {
-        $sql = "SELECT *
-
+        $sql = "SELECT internships.*,
+                       companies.company_name
                 FROM internships
-
+                INNER JOIN companies
+                ON internships.company_id=companies.company_id
                 WHERE deadline >= CURDATE()
-
                 ORDER BY deadline ASC";
 
         $stmt = $this->conn->prepare($sql);

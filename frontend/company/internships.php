@@ -43,13 +43,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_internship'])) {
 
 // Delete internship
 if (isset($_GET['delete'])) {
-    $internship_id = $_GET['delete'];
+    $internship_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
     // Verify it belongs to this company
     $internship = $internshipObj->getInternship($internship_id);
-    if ($internship['company_id'] == $company_id) {
-        if ($internshipObj->deleteInternship($internship_id)) {
-            $_SESSION['message'] = "Internship deleted.";
+    if ($internship && $internship['company_id'] == $company_id) {
+        $result = $internshipObj->deleteInternship($internship_id);
+        if ($result['success']) {
+            $_SESSION['message'] = $result['message'];
+        } else {
+            $_SESSION['error'] = $result['message'];
         }
+    } else {
+        $_SESSION['error'] = "Internship not found or unauthorized.";
     }
     header("Location: internships.php");
     exit();

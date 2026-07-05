@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS reports (
     report_id INT AUTO_INCREMENT PRIMARY KEY,
     report_name VARCHAR(200) NOT NULL,
     report_type VARCHAR(100),
-    generated_by INT NOT NULL,
+    generated_by INT,
     generated_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     report_data LONGTEXT,
     FOREIGN KEY (generated_by) REFERENCES users(user_id) ON DELETE SET NULL,

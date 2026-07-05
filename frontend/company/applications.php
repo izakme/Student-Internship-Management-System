@@ -25,18 +25,20 @@ if (!$company_id) {
 
 // Update application status
 if (isset($_POST['application_id']) && isset($_POST['status'])) {
-    $app_id = $_POST['application_id'];
+    $app_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
     $status = $_POST['status'];
     
-    if ($appObj->updateStatus($app_id, $status)) {
+    if ($appObj->updateCompanyApplicationStatus($app_id, $company_id, $status)) {
         $_SESSION['message'] = "Application status updated.";
+    } else {
+        $_SESSION['error'] = "Application not found or unauthorized.";
     }
     header("Location: applications.php");
     exit();
 }
 
 // Get applicants for this company's internships
-$applicants = $appObj->getCompanyApplicants($company_user_id);
+$applicants = $appObj->getCompanyApplicants($company_id);
 ?>
 
 <!DOCTYPE html>
@@ -85,6 +87,9 @@ $applicants = $appObj->getCompanyApplicants($company_user_id);
             <h2>Review Applications</h2>
             <?php if (isset($_SESSION['message'])): ?>
                 <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error'])): ?>
+                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
             <?php endif; ?>
         </div>
 

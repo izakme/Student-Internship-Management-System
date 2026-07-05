@@ -76,9 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 $keyword = trim($_GET['search'] ?? "");
 
 if (!empty($keyword)) {
-    $result = $internship->searchInternships($keyword);
+    $result = $internship->searchActiveInternships($keyword);
 } else {
-    $result = $internship->getInternships();
+    $result = $internship->activeInternships();
 }
 ?>
 

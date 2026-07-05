@@ -13,9 +13,27 @@ if (!isset($_SESSION['student_id'])) {
 }
 
 $internship = new Internship();
-$stmt = $internship->getInternships();
-
 $application = new Application();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
+    $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
+    $student_id = $_SESSION['student_id'];
+
+    if ($internship_id && !$application->hasApplied($student_id, $internship_id)) {
+        if ($application->apply($student_id, $internship_id)) {
+            $_SESSION['message'] = "Application submitted successfully.";
+        } else {
+            $_SESSION['error'] = "Failed to submit application. The internship may be expired.";
+        }
+    } else {
+        $_SESSION['error'] = "You have already applied for this internship.";
+    }
+
+    header("Location: internships.php");
+    exit;
+}
+
+$stmt = $internship->activeInternships();
 ?>
 
 <!DOCTYPE html>
@@ -36,6 +54,12 @@ $application = new Application();
     <div class="content">
         <div class="card">
             <h2 class="center">Available Internships</h2>
+            <?php if (isset($_SESSION['message'])): ?>
+                <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
+            <?php endif; ?>
+            <?php if (isset($_SESSION['error'])): ?>
+                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+            <?php endif; ?>
 
             <?php if ($stmt->rowCount() > 0): ?>
 
@@ -91,34 +115,3 @@ $application = new Application();
 
 </body>
 </html>
-
-<?php
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
-    $internship_id = $_POST['internship_id'] ?? null;
-    $student_id = $_SESSION['student_id'];
-
-    if ($internship_id) {
-        $has_applied = $application->hasApplied($student_id, $internship_id);
-        
-        if (!$has_applied) {
-            $result = $application->apply($student_id, $internship_id);
-            if ($result) {
-                echo "<script>
-                    alert('Application submitted successfully!');
-                    window.location.reload();
-                </script>";
-            } else {
-                echo "<script>
-                    alert('Failed to submit application. Please try again.');
-                    window.location.reload();
-                </script>";
-            }
-        } else {
-            echo "<script>
-                alert('You have already applied for this internship.');
-                window.location.reload();
-            </script>";
-        }
-    }
-}
-?>
