@@ -15,6 +15,19 @@ $reportObj = new Report();
 $reports = $reportObj->getAllReports();
 $search = "";
 
+// Download report
+if (isset($_GET['download'])) {
+    $report_id = filter_input(INPUT_GET, 'download', FILTER_VALIDATE_INT);
+
+    if ($report_id && $reportObj->outputReportCsv($report_id)) {
+        exit();
+    }
+
+    $_SESSION['error'] = "Report not found or unavailable for download.";
+    header("Location: reports.php");
+    exit();
+}
+
 // Generate report
 if (isset($_POST['generate_report'])) {
     try {
@@ -154,6 +167,10 @@ if (isset($_GET['delete'])) {
                                 <td><?= htmlspecialchars($row['full_name'] ?? 'Unknown') ?></td>
                                 <td><?= htmlspecialchars(date('M d, Y H:i', strtotime($row['generated_date']))) ?></td>
                                 <td>
+                                    <a href="reports.php?download=<?= $row['report_id']; ?>"
+                                       class="btn" style="background: #198754; padding: 6px 12px; font-size: 12px; text-decoration: none; margin-right: 6px;">
+                                        Download
+                                    </a>
                                     <a href="reports.php?delete=<?= $row['report_id']; ?>" 
                                        onclick="return confirm('Are you sure you want to delete this report?');" 
                                        class="btn" style="background: #dc3545; padding: 6px 12px; font-size: 12px; text-decoration: none;">

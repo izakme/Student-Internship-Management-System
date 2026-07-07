@@ -71,6 +71,47 @@ class Report
     }
 
     /* =========================
+       DOWNLOAD REPORT DATA
+    ========================= */
+    public function outputReportCsv($report_id)
+    {
+        $report = $this->getReport($report_id);
+
+        if (!$report) {
+            return false;
+        }
+
+        $rows = json_decode($report['report_data'] ?? '[]', true);
+
+        if (!is_array($rows)) {
+            $rows = [];
+        }
+
+        $filename = preg_replace('/[^A-Za-z0-9_-]+/', '_', $report['report_name']);
+        $filename = trim($filename, '_') ?: 'report';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '.csv"');
+        header('Pragma: no-cache');
+        header('Expires: 0');
+
+        $output = fopen('php://output', 'w');
+
+        if (!empty($rows)) {
+            fputcsv($output, array_keys($rows[0]));
+
+            foreach ($rows as $row) {
+                fputcsv($output, $row);
+            }
+        } else {
+            fputcsv($output, ['No data available']);
+        }
+
+        fclose($output);
+        return true;
+    }
+
+    /* =========================
        SEARCH REPORTS
     ========================= */
     public function searchReports($keyword)

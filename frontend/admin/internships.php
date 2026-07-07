@@ -40,6 +40,7 @@ $internships = $internshipObj->getInternships();
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Internships</title>
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>

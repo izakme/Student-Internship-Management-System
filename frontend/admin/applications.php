@@ -11,57 +11,15 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 
 $appObj = new Application();
 
-// Update status
-if (isset($_POST['application_id']) && isset($_POST['status'])) {
-    $app_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
-    $status = $_POST['status'];
-    
-    if ($appObj->updateStatus($app_id, $status)) {
-        $_SESSION['message'] = "Application status updated.";
-    } else {
-        $_SESSION['error'] = "Invalid application or status.";
-    }
-    header("Location: applications.php");
-    exit();
-}
-
-// Delete application
-if (isset($_GET['delete'])) {
-    $app_id = $_GET['delete'];
-    if ($appObj->deleteApplication($app_id)) {
-        $_SESSION['message'] = "Application deleted.";
-    }
-    header("Location: applications.php");
-    exit();
-}
-
 $applications = $appObj->getApplications();
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Applications</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .status-form {
-            display: inline-flex;
-            gap: 5px;
-        }
-        .status-form select {
-            padding: 5px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-        .status-form button {
-            padding: 5px 10px;
-            background: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body>
 
@@ -103,7 +61,6 @@ $applications = $appObj->getApplications();
                     <th>Internship</th>
                     <th>Status</th>
                     <th>Applied Date</th>
-                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -113,23 +70,8 @@ $applications = $appObj->getApplications();
                         <td><?= htmlspecialchars($row['full_name']) ?></td>
                         <td><?= htmlspecialchars($row['registration_no']) ?></td>
                         <td><?= htmlspecialchars($row['title']) ?></td>
-                        <td>
-                            <form method="POST" class="status-form">
-                                <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
-                                <select name="status">
-                                    <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                    <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
-                                    <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
-                                </select>
-                                <button type="submit">Update</button>
-                            </form>
-                        </td>
+                        <td><?= htmlspecialchars($row['status']) ?></td>
                         <td><?= htmlspecialchars($row['application_date']) ?></td>
-                        <td>
-                            <a href="applications.php?delete=<?php echo $row['application_id']; ?>" 
-                               onclick="return confirm('Delete this application?');" 
-                               class="btn btn-danger" style="padding:5px 10px;font-size:12px;">Delete</a>
-                        </td>
                     </tr>
                 <?php endwhile; ?>
                 </tbody>

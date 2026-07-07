@@ -70,7 +70,7 @@ body:not(.dashboard-page) .topbar {
 .layout {
   display: flex;
   min-height: 100vh;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* SIDEBAR */
@@ -84,6 +84,7 @@ body:not(.dashboard-page) .topbar {
   background: linear-gradient(180deg, var(--primary), var(--secondary));
   box-shadow: var(--shadow);
   z-index: 1001;
+  overflow-y: auto;
 }
 
 /* SIDEBAR TEXT */
@@ -119,7 +120,6 @@ body:not(.dashboard-page) .topbar {
 
 /* CONTENT */
 .content {
-  margin-left: var(--sidebar-width);
   margin-top: 80px;
   padding: 20px;
   flex: 1;
@@ -128,6 +128,11 @@ body:not(.dashboard-page) .topbar {
   flex-direction: column;
   align-items: center; 
 
+}
+
+.layout > .content {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
 }
 
 /* CARD */
@@ -140,6 +145,7 @@ body:not(.dashboard-page) .topbar {
   transition: var(--transition);
   max-width: 900px;
   width: 100%;
+  overflow-x: auto;
 }
 
 .card:hover {
@@ -224,7 +230,7 @@ table {
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
-  table-layout: fixed;
+  table-layout: auto;
 }
 
 table th {
@@ -237,7 +243,7 @@ table th {
 table td {
   padding: 14px;
   border-bottom: 1px solid var(--border);
-  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 table tr:hover {
@@ -314,33 +320,171 @@ table tr:hover {
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
+  :root {
+    --radius: 12px;
+  }
+
+  body {
+    font-size: 15px;
+  }
+
+  h1 {
+    font-size: 30px !important;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .layout {
+    display: block;
+    min-height: auto;
+  }
+
   .sidebar {
-    position: relative;
+    position: sticky;
+    top: 0;
     width: 100%;
     height: auto;
+    max-height: none;
+    padding: 14px;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sidebar h3 {
+    display: none;
+  }
+
+  .sidebar a {
+    flex: 0 0 auto;
+    min-height: 42px;
+    margin: 0;
+    padding: 10px 14px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 14px;
+  }
+
+  .sidebar a:hover {
+    transform: none;
+  }
+
+  .sidebar a.active {
+    border-left: 0;
+    box-shadow: inset 0 -3px 0 var(--success);
   }
 
   .topbar {
     position: relative;
     left: 0;
+    height: auto;
+    min-height: 58px;
+    padding: 12px 16px;
+    font-size: 18px;
+    line-height: 1.25;
+    text-align: center;
   }
 
   .content {
     margin-left: 0;
     margin-top: 0;
-    padding: 15px;
+    width: 100%;
+    padding: 14px;
+    align-items: stretch;
+  }
+
+  .card {
+    max-width: 100%;
+    padding: 16px;
+    margin-bottom: 16px;
   }
 
   .grid {
     flex-direction: column;
+    gap: 14px;
+  }
+
+  .stat-card {
+    min-width: 0;
+    width: 100%;
+    padding: 22px 16px;
+  }
+
+  .stat-number {
+    font-size: 34px;
+  }
+
+  .btn {
+    max-width: 100%;
+    padding: 10px 14px;
+    margin: 4px 2px;
+    white-space: normal;
+    text-align: center;
+  }
+
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  table {
+    min-width: 640px;
+    font-size: 14px;
+    box-shadow: none;
+  }
+
+  table th,
+  table td {
+    padding: 10px;
   }
 
   .auth-card {
-    width: 95%;
+    width: calc(100% - 28px);
+    margin: 80px auto 24px;
+    padding: 22px 16px;
   }
 
   .layout + .site-footer {
     margin-left: 0;
     width: 100%;
+  }
+
+  .site-footer {
+    padding: 16px 14px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .topbar {
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .sidebar {
+    padding: 10px;
+  }
+
+  .sidebar a {
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+
+  .form-buttons {
+    flex-direction: column;
   }
 }
