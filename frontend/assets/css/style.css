@@ -163,7 +163,7 @@ body:not(.dashboard-page) .topbar {
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   transition: var(--transition);
-  max-width: 900px;
+  max-width: 1200px;
   width: 100%;
   overflow-x: auto;
 }
@@ -288,6 +288,87 @@ table tr:hover {
 }
 .badge-danger {
   background: var(--danger);
+}
+.badge-primary {
+  background: var(--primary);
+}
+
+/* ALERTS */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+.alert-success {
+  color: #155724;
+  background: #d4edda;
+}
+.alert-error {
+  color: #721c24;
+  background: #f8d7da;
+}
+
+/* FORM GROUP */
+.form-group {
+  margin-bottom: 8px;
+}
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+/* ACTION BUTTONS */
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.btn-success {
+  background: var(--success);
+}
+.btn-danger {
+  background: var(--danger);
+}
+.btn-secondary {
+  background: #6c757d;
+}
+.btn-success:hover,
+.btn-danger:hover,
+.btn-secondary:hover {
+  background: var(--primary);
+}
+.action-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* CARD HEADING SPACING */
+.card h2 {
+  margin-bottom: 20px;
+}
+
+/* TABLE IMPROVEMENTS */
+table th,
+table td {
+  word-break: break-word;
+}
+table tbody tr:nth-child(even) {
+  background: #fafcfe;
+}
+table tbody tr:hover {
+  background: #eef5ff;
+}
+
+/* EMPTY STATE */
+.empty-state {
+  text-align: center;
+  color: var(--text-light);
+  padding: 40px 20px;
 }
 
 /* AUTH */

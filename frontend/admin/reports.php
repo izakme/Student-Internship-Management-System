@@ -107,22 +107,22 @@ if (isset($_GET['delete'])) {
             <h2 class="center">Generate Reports</h2>
 
             <?php if (isset($_SESSION['message'])): ?>
-                <p style="color: #28a745; background: #d4edda; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                    ✓ <?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?>
+                <p class="alert alert-success">
+                    <?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?>
                 </p>
             <?php endif; ?>
 
             <?php if (isset($_SESSION['error'])): ?>
-                <p style="color: #dc3545; background: #f8d7da; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-                    ✗ <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
+                <p class="alert alert-error">
+                    <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
                 </p>
             <?php endif; ?>
             
             <form method="POST">
                 <?= csrfField() ?>
                 <div class="form-group">
-                    <label>Select Report Type:</label>
-                    <select name="report_type" required style="margin-bottom: 15px;">
+                    <label for="report_type">Select Report Type:</label>
+                    <select name="report_type" id="report_type" required>
                         <option value="">-- Choose a Report --</option>
                         <option value="applications">Applications Report</option>
                         <option value="internships">Internships Report</option>
@@ -137,10 +137,10 @@ if (isset($_GET['delete'])) {
             <h2 class="center">Search Reports</h2>
             <form method="GET">
                 <input type="text" name="search" placeholder="Search by report name or type..." 
-                       value="<?= htmlspecialchars($search) ?>" style="margin-bottom: 15px;">
+                       value="<?= htmlspecialchars($search) ?>">
                 <button type="submit" class="btn">Search</button>
                 <?php if ($search): ?>
-                    <a href="reports.php" class="btn" style="background: #6c757d;">Clear</a>
+                    <a href="reports.php" class="btn btn-secondary">Clear</a>
                 <?php endif; ?>
             </form>
         </div>
@@ -166,29 +166,31 @@ if (isset($_GET['delete'])) {
                                 <td><?= htmlspecialchars($row['report_id']) ?></td>
                                 <td><?= htmlspecialchars($row['report_name']) ?></td>
                                 <td>
-                                    <span class="badge" style="background: #0d6efd; color: white; padding: 6px 12px; border-radius: 50px;">
+                                    <span class="badge badge-primary">
                                         <?= htmlspecialchars($row['report_type']) ?>
                                     </span>
                                 </td>
                                 <td><?= htmlspecialchars($row['full_name'] ?? 'Unknown') ?></td>
                                 <td><?= htmlspecialchars(date('M d, Y H:i', strtotime($row['generated_date']))) ?></td>
                                 <td>
-                                    <a href="reports.php?download=<?= $row['report_id']; ?>"
-                                       class="btn" style="background: #198754; padding: 6px 12px; font-size: 12px; text-decoration: none; margin-right: 6px;">
-                                        Download
-                                    </a>
-                                    <a href="reports.php?delete=<?= $row['report_id']; ?>" 
-                                       onclick="return confirm('Are you sure you want to delete this report?');" 
-                                       class="btn" style="background: #dc3545; padding: 6px 12px; font-size: 12px; text-decoration: none;">
-                                        Delete
-                                    </a>
+                                    <div class="action-group">
+                                        <a href="reports.php?download=<?= $row['report_id']; ?>"
+                                           class="btn btn-sm btn-success">
+                                            Download
+                                        </a>
+                                        <a href="reports.php?delete=<?= $row['report_id']; ?>" 
+                                           onclick="return confirm('Are you sure you want to delete this report?');" 
+                                           class="btn btn-sm btn-danger">
+                                            Delete
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
             <?php else: ?>
-                <p style="text-align: center; color: #999; padding: 40px;">
+                <p class="empty-state">
                     No reports found. Generate a new report to get started.
                 </p>
             <?php endif; ?>
