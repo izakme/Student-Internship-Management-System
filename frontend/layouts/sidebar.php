@@ -1,4 +1,8 @@
-<div class="sidebar">
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="sidebar" id="sidebar">
+
+    <button class="sidebar-close" id="sidebarClose">&times;</button>
 
     <h3>Menu</h3>
 

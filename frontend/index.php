@@ -25,7 +25,7 @@ session_start();
 <!-- HERO SECTION -->
 <div class="content">
 
-    <div class="card" style="text-align:center; padding:60px 30px; position:relative; overflow:hidden;">
+    <div class="card hero-card" style="text-align:center; padding:60px 30px; position:relative; overflow:hidden;">
 
         <h1 style="font-size:38px; margin-bottom:15px; color:#0f172a;">
             Find Internships. Apply Easily. Build Your Future.
