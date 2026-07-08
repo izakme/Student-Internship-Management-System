@@ -3,12 +3,15 @@ session_start();
 
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/user.php";
+require_once "../../backend/helpers/csrf.php";
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    try {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $error = "Invalid form submission.";
+    } else {
 
         $db = (new Database())->connect();
         $user = new User($db);
@@ -22,36 +25,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $error = "All fields are required.";
 
+        } elseif (strlen($password) < 6) {
+
+            $error = "Password must be at least 6 characters long.";
+
         } else {
 
-            $result = $user->register(
-                $full_name,
-                $email,
-                $password,
-                $role
-            );
+            try {
+                $result = $user->register(
+                    $full_name,
+                    $email,
+                    $password,
+                    $role
+                );
 
-            if ($result) {
+                if ($result) {
 
-                $_SESSION['success'] =
-                    "Registration successful. You can now log in.";
+                    $_SESSION['success'] =
+                        "Registration successful. You can now log in.";
 
-                header("Location: login.php");
-                exit();
-
-            } else {
-
-                $error = "Registration failed. Email may already exist.";
-
+                    header("Location: login.php");
+                    exit();
+                }
+            } catch (Exception $e) {
+                $error = $e->getMessage();
             }
         }
-
-    } catch (Exception $e) {
-
-        $error = "System error. Please try again.";
-
     }
-
 }
 ?>
 
@@ -110,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 <?php
 
-                    echo $_SESSION['success'];
+                    echo htmlspecialchars($_SESSION['success']);
                     unset($_SESSION['success']);
 
                 ?>
@@ -140,6 +140,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php } ?>
 
         <form method="POST">
+
+            <?= csrfField() ?>
 
             <label>Full Name</label>
 

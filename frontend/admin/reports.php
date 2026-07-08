@@ -1,10 +1,9 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Report.php";
+require_once "../../backend/helpers/csrf.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -30,6 +29,9 @@ if (isset($_GET['download'])) {
 
 // Generate report
 if (isset($_POST['generate_report'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     try {
         $report_type = $_POST['report_type'] ?? '';
         
@@ -55,6 +57,7 @@ if (isset($_POST['generate_report'])) {
     }
     header("Location: reports.php");
     exit();
+    }
 }
 
 // Search reports
@@ -68,8 +71,10 @@ if (isset($_GET['search'])) {
 // Delete report
 if (isset($_GET['delete'])) {
     try {
-        $report_id = $_GET['delete'];
-        if ($reportObj->deleteReport($report_id)) {
+        $report_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
+        if ($report_id === false || $report_id === null) {
+            $_SESSION['error'] = "Invalid report ID.";
+        } elseif ($reportObj->deleteReport($report_id)) {
             $_SESSION['message'] = "Report deleted successfully.";
         } else {
             $_SESSION['error'] = "Failed to delete report.";
@@ -114,6 +119,7 @@ if (isset($_GET['delete'])) {
             <?php endif; ?>
             
             <form method="POST">
+                <?= csrfField() ?>
                 <div class="form-group">
                     <label>Select Report Type:</label>
                     <select name="report_type" required style="margin-bottom: 15px;">

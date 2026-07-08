@@ -2,9 +2,10 @@
 session_start();
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
+require_once __DIR__ . "/../../backend/helpers/csrf.php";
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    header("Location: /S-I-M-S/frontend/authentication/login.php");
+    header("Location: ../authentication/login.php");
     exit;
 }
 
@@ -16,6 +17,9 @@ $internship = new Internship();
 $application = new Application();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $student_id = $_SESSION['student_id'];
 
@@ -31,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 
     header("Location: internships.php");
     exit;
+    }
 }
 
 $stmt = $internship->activeInternships();
@@ -55,10 +60,10 @@ $stmt = $internship->activeInternships();
         <div class="card">
             <h2 class="center">Available Internships</h2>
             <?php if (isset($_SESSION['message'])): ?>
-                <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
+                <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
             <?php endif; ?>
             <?php if (isset($_SESSION['error'])): ?>
-                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
+                <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
             <?php endif; ?>
 
             <?php if ($stmt->rowCount() > 0): ?>
@@ -91,6 +96,7 @@ $stmt = $internship->activeInternships();
                                 <span style="color: #28a745; font-weight: bold;">✓ Applied</span>
                             <?php else: ?>
                                 <form method="POST" style="display: inline;">
+                                    <?= csrfField() ?>
                                     <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
                                     <button type="submit" name="apply" class="btn" style="padding: 8px 16px; font-size: 13px;">Apply</button>
                                 </form>

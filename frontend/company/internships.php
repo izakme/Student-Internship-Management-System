@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Internship.php";
 require_once "../../backend/classes/company.php";
+require_once "../../backend/helpers/csrf.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -25,6 +26,9 @@ if (!$company_id) {
 
 // Add internship
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_internship'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     $title = $_POST['title'] ?? '';
     $description = $_POST['description'] ?? '';
     $requirements = $_POST['requirements'] ?? '';
@@ -38,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_internship'])) {
         }
         header("Location: internships.php");
         exit();
+    }
     }
 }
 
@@ -68,73 +73,54 @@ $stmt = $db->prepare("
 ");
 $stmt->execute([$company_id]);
 $internships = $stmt;
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Internships</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .form-group {
-            margin: 15px 0;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-        }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-        .form-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .form-buttons button {
-            flex: 1;
-            padding: 10px;
-        }
-    </style>
-</head>
-<body>
+<style>
+    .form-group {
+        margin: 15px 0;
+    }
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: Arial, sans-serif;
+    }
+    .form-group textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+    .form-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    .form-buttons button {
+        flex: 1;
+        padding: 10px;
+    }
+</style>
 
-<div class="topbar">
-    Internship Management System
-</div>
-
-<div class="layout">
-    <div class="sidebar">
-        <h3>Company Menu</h3>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="internships.php" class="active">My Internships</a>
-        <a href="applications.php">Applications</a>
-        <a href="profile.php">Profile</a>
-        <a href="../authentication/logout.php">Logout</a>
-    </div>
-
-    <div class="content">
-        <div class="card">
-            <h2>Post New Internship</h2>
-            <?php if (isset($_SESSION['message'])): ?>
-                <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['error'])): ?>
-                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-            <?php endif; ?>
+<div class="card">
+    <h2>Post New Internship</h2>
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
             
             <form method="POST">
+                <?= csrfField() ?>
                 <div class="form-group">
                     <label>Title *</label>
                     <input type="text" name="title" required>
@@ -194,8 +180,6 @@ $internships = $stmt;
                 <?php endif; ?>
                 </tbody>
             </table>
-        </div>
     </div>
-</div>
 
 <?php include "../layouts/footer.php"; ?>

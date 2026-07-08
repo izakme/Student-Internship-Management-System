@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../authentication/login.php");
+    exit();
+}
+
 include "../layouts/header.php";
 include "../layouts/sidebar.php";
 
@@ -8,11 +13,7 @@ require_once __DIR__ . "/../../backend/classes/user.php";
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
 
-/* OPTIONAL: protect admin */
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../authentication/login.php");
-    exit();
-}
+require_once __DIR__ . "/../../backend/config/database.php";
 
 $db = (new Database())->connect();
 
@@ -26,8 +27,6 @@ $totalUsers = $userObj->countUsers();
 $totalInternships = $internshipObj->countInternships();
 $totalApplications = $appObj->countApplications();
 ?>
-
-<link rel="stylesheet" href="../assets/css/style.css">
 
 <div class="grid">
 

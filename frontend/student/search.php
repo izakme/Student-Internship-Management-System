@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/classes/Internship.php";
 require_once "../../backend/classes/Application.php";
 require_once "../../backend/config/database.php";
+require_once "../../backend/helpers/csrf.php";
 
 /* =========================
    DATABASE CONNECTION
@@ -53,6 +54,10 @@ $message = "";
 ========================= */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $message = "<div class='badge badge-danger'>Invalid form submission.</div>";
+    } else {
+
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
 
     if ($internship_id) {
@@ -67,6 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 
     } else {
         $message = "<div class='badge badge-danger'>Invalid internship selected.</div>";
+    }
     }
 }
 
@@ -151,6 +157,7 @@ value="<?= htmlspecialchars($keyword) ?>">
 
 <td>
 <form method="POST">
+    <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
     <button type="submit" name="apply" class="btn">Apply Now</button>
 </form>

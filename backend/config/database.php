@@ -2,10 +2,18 @@
 
 class Database
 {
-    private $host = "localhost";
-    private $dbname = "internship_db";
-    private $username = "root";
-    private $password = "";
+    private $host;
+    private $dbname;
+    private $username;
+    private $password;
+
+    public function __construct()
+    {
+        $this->host = getenv('DB_HOST') ?: 'localhost';
+        $this->dbname = getenv('DB_NAME') ?: 'internship_db';
+        $this->username = getenv('DB_USERNAME') ?: 'root';
+        $this->password = getenv('DB_PASSWORD') ?: '';
+    }
 
     public $conn;
 

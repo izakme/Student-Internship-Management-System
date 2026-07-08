@@ -25,7 +25,9 @@
         <?php endif; ?>
     <?php endif; ?>
 
-    <a href="../authentication/logout.php">Logout</a>
+    <?php if (isset($_SESSION['role'])): ?>
+        <a href="../authentication/logout.php">Logout</a>
+    <?php endif; ?>
 
 </div>
 

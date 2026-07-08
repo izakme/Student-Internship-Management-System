@@ -22,37 +22,29 @@ if (!$company_id) {
 include "../layouts/header.php";
 include "../layouts/sidebar.php";
 
+require_once "../../backend/config/database.php";
+$db = (new Database())->connect();
+
 /* OBJECTS */
 $internshipObj = new Internship();
 $appObj = new Application();
 
 /* TOTAL POSTED INTERNSHIPS */
-$allInternships = $internshipObj->getInternships();
-$postedCount = 0;
-
-while ($row = $allInternships->fetch(PDO::FETCH_ASSOC)) {
-    if ($row['company_id'] == $company_id) {
-        $postedCount++;
-    }
-}
+$stmt = $db->prepare("SELECT COUNT(*) FROM internships WHERE company_id = ?");
+$stmt->execute([$company_id]);
+$postedCount = $stmt->fetchColumn();
 
 /* COMPANY APPLICANTS */
-$applicants = $appObj->getCompanyApplicants($company_id);
-$totalApplicants = $applicants->rowCount();
-
-/* APPROVED STUDENTS */
+$applicantsData = $appObj->getCompanyApplicants($company_id);
+$allApplicants = $applicantsData->fetchAll(PDO::FETCH_ASSOC);
+$totalApplicants = count($allApplicants);
 $approved = 0;
-
-$applicants = $appObj->getCompanyApplicants($company_id);
-
-while ($row = $applicants->fetch(PDO::FETCH_ASSOC)) {
-    if ($row['status'] === 'Accepted') {
+foreach ($allApplicants as $app) {
+    if ($app['status'] === 'Accepted') {
         $approved++;
     }
 }
 ?>
-
-<link rel="stylesheet" href="../assets/css/style.css">
 
 <div class="grid">
 

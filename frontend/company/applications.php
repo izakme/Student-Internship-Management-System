@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Application.php";
 require_once "../../backend/classes/company.php";
+require_once "../../backend/helpers/csrf.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -25,119 +26,105 @@ if (!$company_id) {
 
 // Update application status
 if (isset($_POST['application_id']) && isset($_POST['status'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     $app_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
     $status = $_POST['status'];
+    $allowedStatuses = ['Pending', 'Accepted', 'Rejected'];
     
-    if ($appObj->updateCompanyApplicationStatus($app_id, $company_id, $status)) {
+    if (!in_array($status, $allowedStatuses, true)) {
+        $_SESSION['error'] = "Invalid status value.";
+    } elseif ($appObj->updateCompanyApplicationStatus($app_id, $company_id, $status)) {
         $_SESSION['message'] = "Application status updated.";
     } else {
         $_SESSION['error'] = "Application not found or unauthorized.";
     }
     header("Location: applications.php");
     exit();
+    }
 }
 
 // Get applicants for this company's internships
 $applicants = $appObj->getCompanyApplicants($company_id);
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Applications</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <style>
-        .status-form {
-            display: inline-flex;
-            gap: 5px;
-        }
-        .status-form select {
-            padding: 5px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-        .status-form button {
-            padding: 5px 10px;
-            background: #0d6efd;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+<style>
+    .status-form {
+        display: inline-flex;
+        gap: 5px;
+    }
+    .status-form select {
+        padding: 5px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+    }
+    .status-form button {
+        padding: 5px 10px;
+        background: #0d6efd;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+</style>
 
-<div class="topbar">
-    Internship Management System
+<div class="card">
+    <h2>Review Applications</h2>
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
 </div>
 
-<div class="layout">
-    <div class="sidebar">
-        <h3>Company Menu</h3>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="internships.php">My Internships</a>
-        <a href="applications.php" class="active">Applications</a>
-        <a href="profile.php">Profile</a>
-        <a href="../authentication/logout.php">Logout</a>
-    </div>
-
-    <div class="content">
-        <div class="card">
-            <h2>Review Applications</h2>
-            <?php if (isset($_SESSION['message'])): ?>
-                <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['error'])): ?>
-                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-            <?php endif; ?>
-        </div>
-
-        <div class="card">
-            <table>
-                <thead>
+<div class="card">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Student Name</th>
+            <th>Registration No</th>
+            <th>Internship</th>
+            <th>Status</th>
+            <th>Applied Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($applicants->rowCount() > 0): ?>
+            <?php while ($row = $applicants->fetch(PDO::FETCH_ASSOC)): ?>
                 <tr>
-                    <th>ID</th>
-                    <th>Student Name</th>
-                    <th>Registration No</th>
-                    <th>Internship</th>
-                    <th>Status</th>
-                    <th>Applied Date</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php if ($applicants->rowCount() > 0): ?>
-                    <?php while ($row = $applicants->fetch(PDO::FETCH_ASSOC)): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['application_id']) ?></td>
-                            <td><?= htmlspecialchars($row['full_name']) ?></td>
-                            <td><?= htmlspecialchars($row['registration_no']) ?></td>
-                            <td><?= htmlspecialchars($row['title']) ?></td>
-                            <td>
+                    <td><?= htmlspecialchars($row['application_id']) ?></td>
+                    <td><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td><?= htmlspecialchars($row['registration_no']) ?></td>
+                    <td><?= htmlspecialchars($row['title']) ?></td>
+                    <td>
                                 <form method="POST" class="status-form">
+                                    <?= csrfField() ?>
                                     <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
-                                    <select name="status">
-                                        <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                        <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
-                                        <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
-                                    </select>
-                                    <button type="submit">Update</button>
-                                </form>
-                            </td>
-                            <td><?= htmlspecialchars($row['application_date']) ?></td>
-                        </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="7" class="center">No applications yet.</td>
-                    </tr>
-                <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+                            <select name="status">
+                                <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
+                                <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
+                                <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                    <td><?= htmlspecialchars($row['application_date']) ?></td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr>
+                <td colspan="7" class="center">No applications yet.</td>
+            </tr>
+        <?php endif; ?>
+        </tbody>
+    </table>
 </div>
 
 <?php include "../layouts/footer.php"; ?>

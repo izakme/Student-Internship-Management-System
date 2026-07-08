@@ -1,9 +1,8 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once "../../backend/classes/Student.php";
+require_once "../../backend/helpers/csrf.php";
 
 /* =========================
    LOGIN CHECK
@@ -33,6 +32,9 @@ $student_id = $data['student_id'];
 
 // Update profile
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     try {
         $registration_no = isset($_POST['registration_no']) ? trim($_POST['registration_no']) : '';
         $course = isset($_POST['course']) ? trim($_POST['course']) : '';
@@ -50,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (Exception $e) {
         $_SESSION['error'] = "Error: " . $e->getMessage();
         error_log("Profile update error: " . $e->getMessage());
+    }
     }
 }
 
@@ -87,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <form method="POST">
+                <?= csrfField() ?>
                 <div class="form-group">
                     <label>Full Name</label>
                     <input type="text" value="<?= htmlspecialchars($data['full_name'] ?? '') ?>" disabled>

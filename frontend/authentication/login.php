@@ -2,17 +2,18 @@
 
 session_start();
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 require_once __DIR__ . "/../../backend/config/database.php";
 require_once __DIR__ . "/../../backend/classes/user.php";
 require_once __DIR__ . "/../../backend/classes/auth.php";
+require_once __DIR__ . "/../../backend/helpers/csrf.php";
 
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $message = "Invalid form submission.";
+    } else {
     $db = (new Database())->connect();
 
     $user = new User($db);
@@ -30,15 +31,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             switch ($_SESSION['role']) {
 
                 case 'student':
-                    header("Location: /S-I-M-S/frontend/student/dashboard.php");
+                    header("Location: ../student/dashboard.php");
                     exit();
 
                 case 'company':
-                    header("Location: /S-I-M-S/frontend/company/dashboard.php");
+                    header("Location: ../company/dashboard.php");
                     exit();
 
                 case 'admin':
-                    header("Location: /S-I-M-S/frontend/admin/dashboard.php");
+                    header("Location: ../admin/dashboard.php");
                     exit();
             }
         }
@@ -46,6 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Login successful but no role found.";
     } else {
         $message = "Invalid email or password.";
+    }
     }
 }
 ?>
@@ -61,7 +63,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <title>Login | Student Internship Management System</title>
 
-<link rel="stylesheet" href="/S-I-M-S/frontend/assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
 
@@ -101,6 +103,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <form method="POST">
 
+            <?= csrfField() ?>
+
             <label>Email Address</label>
 
             <input
@@ -137,7 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <br><br>
 
             <a
-                href="/S-I-M-S/frontend/authentication/register.php"
+                href="register.php"
                 style="color:#5bbcff;font-weight:600;">
 
                 Register Here

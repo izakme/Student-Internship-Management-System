@@ -15,6 +15,17 @@ class User
     ========================= */
     public function register($full_name, $email, $password, $role)
     {
+        $allowedRoles = ['student', 'company'];
+        if (!in_array($role, $allowedRoles, true)) {
+            throw new Exception("Invalid role selected.");
+        }
+
+        // Check for duplicate email
+        $existing = $this->findByEmail($email);
+        if ($existing) {
+            throw new Exception("An account with this email already exists.");
+        }
+
         $query = "INSERT INTO users (full_name, email, password, role)
                   VALUES (:full_name, :email, :password, :role)";
 
@@ -31,16 +42,19 @@ class User
 
         $user_id = $this->conn->lastInsertId();
 
-        /* =========================
-           AUTO CREATE STUDENT PROFILE
-        ========================= */
         if ($role === "student") {
-
             $stmt2 = $this->conn->prepare("
                 INSERT INTO students (user_id, registration_no, course, year_of_study, phone)
                 VALUES (?, NULL, NULL, NULL, NULL)
             ");
+            $stmt2->execute([$user_id]);
+        }
 
+        if ($role === "company") {
+            $stmt2 = $this->conn->prepare("
+                INSERT INTO companies (user_id, company_name, location, phone)
+                VALUES (?, NULL, NULL, NULL)
+            ");
             $stmt2->execute([$user_id]);
         }
 

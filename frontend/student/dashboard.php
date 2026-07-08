@@ -1,17 +1,18 @@
 <?php
 session_start();
 
+require_once __DIR__ . "/../../backend/config/database.php";
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
+    header("Location: ../authentication/login.php");
+    exit();
+}
+
 include "../layouts/header.php";
 include "../layouts/sidebar.php";
 
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
-
-// Check login
-if (!isset($_SESSION['student_id'])) {
-    header("Location: ../authentication/login.php");
-    exit();
-}
 
 $student_id = $_SESSION['student_id'];
 
@@ -58,5 +59,3 @@ while ($row = $applications->fetch(PDO::FETCH_ASSOC)) {
 </div>
 
 <?php include "../layouts/footer.php"; ?>
-
-<link rel="stylesheet" href="../assets/css/style.css">

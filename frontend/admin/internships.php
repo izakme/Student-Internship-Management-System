@@ -35,74 +35,48 @@ if (isset($_GET['delete'])) {
     exit();
 }
 $internships = $internshipObj->getInternships();
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 ?>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Internships</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body>
-
-<div class="topbar">
-    Internship Management System
+<div class="card">
+    <h2>All Internship Opportunities</h2>
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
 </div>
 
-<div class="layout">
-    <div class="sidebar">
-        <h3>Admin Panel</h3>
-        <a href="dashboard.php">Dashboard</a>
-        <a href="users.php">Users</a>
-        <a href="students.php">Students</a>
-        <a href="companies.php">Companies</a>
-        <a href="internships.php" class="active">Internships</a>
-        <a href="applications.php">Applications</a>
-        <a href="reports.php">Reports</a>
-        <a href="../authentication/logout.php">Logout</a>
-    </div>
-
-    <div class="content">
-        <div class="card">
-            <h2>All Internship Opportunities</h2>
-            <?php if (isset($_SESSION['message'])): ?>
-                <p class="success-msg"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></p>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['error'])): ?>
-                <p class="error-msg"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></p>
-            <?php endif; ?>
-        </div>
-
-        <div class="card">
-            <table>
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Company</th>
-                    <th>Deadline</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php while ($row = $internships->fetch(PDO::FETCH_ASSOC)): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['internship_id']) ?></td>
-                        <td><?= htmlspecialchars($row['title']) ?></td>
-                        <td><?= htmlspecialchars($row['company_name']) ?></td>
-                        <td><?= htmlspecialchars($row['deadline']) ?></td>
-                        <td>
-                            <a href="internships.php?delete=<?php echo $row['internship_id']; ?>" 
-                               onclick="return confirm('Delete this internship?');" 
-                               class="btn btn-danger" style="padding:5px 10px;font-size:12px;">Delete</a>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="card">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Company</th>
+            <th>Deadline</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php while ($row = $internships->fetch(PDO::FETCH_ASSOC)): ?>
+            <tr>
+                <td><?= htmlspecialchars($row['internship_id']) ?></td>
+                <td><?= htmlspecialchars($row['title']) ?></td>
+                <td><?= htmlspecialchars($row['company_name']) ?></td>
+                <td><?= htmlspecialchars($row['deadline']) ?></td>
+                <td>
+                    <a href="internships.php?delete=<?php echo $row['internship_id']; ?>" 
+                       onclick="return confirm('Delete this internship?');" 
+                       class="btn btn-danger" style="padding:5px 10px;font-size:12px;">Delete</a>
+                </td>
+            </tr>
+        <?php endwhile; ?>
+        </tbody>
+    </table>
 </div>
 
 <?php include "../layouts/footer.php"; ?>
