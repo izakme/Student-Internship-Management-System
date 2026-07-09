@@ -624,16 +624,66 @@ table tbody tr:hover {
     min-width: 100%;
     font-size: 13px;
     box-shadow: none;
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
+    border: 0;
   }
 
-  table th,
+  table thead {
+    display: none;
+  }
+
+  table tbody tr {
+    display: block;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    padding: 12px;
+  }
+
+  table tbody tr:hover {
+    background: white;
+  }
+
+  table tbody tr:nth-child(even) {
+    background: white;
+  }
+
   table td {
-    padding: 8px 10px;
-    min-width: 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    min-width: 0;
+    gap: 10px;
+  }
+
+  table td:last-child {
+    border-bottom: 0;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-light);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+
+  table td:last-child::before {
+    align-self: flex-start;
+  }
+
+  .action-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-group .btn {
+    width: 100%;
+    text-align: center;
   }
 
   .auth-card {
