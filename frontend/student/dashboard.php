@@ -8,54 +8,139 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     exit();
 }
 
-include "../layouts/header.php";
-include "../layouts/sidebar.php";
+$db = (new Database())->connect();
 
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
 
 $student_id = $_SESSION['student_id'];
 
-/* OBJECTS */
 $internshipObj = new Internship();
 $appObj = new Application();
 
-/* AVAILABLE INTERNSHIPS (ACTIVE ONLY) */
 $availableInternships = $internshipObj->activeInternships();
 $availableCount = $availableInternships->rowCount();
 
-/* STUDENT APPLICATIONS */
-$applications = $appObj->getStudentApplications($student_id);
+$totalApplications = $appObj->countStudentApplications($student_id);
+$accepted = $appObj->countAcceptedByStudent($student_id);
 
-$totalApplications = 0;
-$accepted = 0;
-
-while ($row = $applications->fetch(PDO::FETCH_ASSOC)) {
-    $totalApplications++;
-
-    if ($row['status'] === 'Accepted') {
-        $accepted++;
-    }
+$pending = 0;
+$rejected = 0;
+$stmt = $db->prepare("
+    SELECT status, COUNT(*) AS cnt
+    FROM applications
+    WHERE student_id = ?
+    GROUP BY status
+");
+$stmt->execute([$student_id]);
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    if ($row['status'] === 'Pending') $pending = (int)$row['cnt'];
+    if ($row['status'] === 'Rejected') $rejected = (int)$row['cnt'];
 }
+
+/* Last 5 applications for recent activity */
+$recentStmt = $db->prepare("
+    SELECT i.title, a.status, a.application_date
+    FROM applications a
+    INNER JOIN internships i ON a.internship_id = i.internship_id
+    WHERE a.student_id = ?
+    ORDER BY a.application_date DESC
+    LIMIT 5
+");
+$recentStmt->execute([$student_id]);
+$recentApps = $recentStmt->fetchAll(PDO::FETCH_ASSOC);
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 ?>
 
 <div class="grid">
 
     <div class="stat-card">
+        <div class="stat-icon">&#128218;</div>
         <div class="stat-title">Available Internships</div>
         <div class="stat-number"><?php echo $availableCount; ?></div>
     </div>
 
     <div class="stat-card">
+        <div class="stat-icon">&#128203;</div>
         <div class="stat-title">My Applications</div>
         <div class="stat-number"><?php echo $totalApplications; ?></div>
     </div>
 
     <div class="stat-card">
+        <div class="stat-icon">&#9989;</div>
         <div class="stat-title">Accepted</div>
         <div class="stat-number"><?php echo $accepted; ?></div>
     </div>
 
+    <div class="stat-card stat-card-warning">
+        <div class="stat-icon">&#9200;</div>
+        <div class="stat-title">Pending</div>
+        <div class="stat-number"><?php echo $pending; ?></div>
+    </div>
+
 </div>
+
+<div class="charts-row">
+    <div class="chart-card">
+        <h3>My Application Status</h3>
+        <canvas id="statusChart"></canvas>
+    </div>
+    <div class="chart-card">
+        <h3>Recent Activity</h3>
+        <?php if (!empty($recentApps)): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>Internship</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($recentApps as $app): ?>
+                <tr>
+                    <td data-label="Internship"><?php echo htmlspecialchars($app['title']); ?></td>
+                    <td data-label="Status">
+                        <span class="badge badge-<?php
+                            echo $app['status'] === 'Accepted' ? 'success' : ($app['status'] === 'Pending' ? 'pending' : 'danger');
+                        ?>"><?php echo $app['status']; ?></span>
+                    </td>
+                    <td data-label="Date"><?php echo date('M j, Y', strtotime($app['application_date'])); ?></td>
+                </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <?php else: ?>
+        <p style="text-align:center;color:var(--text-light);padding:30px;">No applications yet.</p>
+        <?php endif; ?>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    new Chart(document.getElementById('statusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Accepted', 'Rejected'],
+            datasets: [{
+                data: [<?php echo $pending; ?>, <?php echo $accepted; ?>, <?php echo $rejected; ?>],
+                backgroundColor: ['#f39c12', '#27ae60', '#e74c3c'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+});
+</script>
 
 <?php include "../layouts/footer.php"; ?>

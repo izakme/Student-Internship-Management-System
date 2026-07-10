@@ -65,6 +65,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <link rel="stylesheet" href="../assets/css/style.css">
 
+<style>
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.password-wrapper input {
+    padding-right: 40px;
+}
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-light);
+    padding: 4px;
+    line-height: 1;
+}
+.toggle-password:hover {
+    color: var(--text);
+}
+.field-error {
+    color: #e74c3c;
+    font-size: 13px;
+    margin-top: -8px;
+    margin-bottom: 12px;
+    display: none;
+}
+.field-error.show {
+    display: block;
+}
+input.error {
+    border-color: #e74c3c;
+}
+</style>
+
 </head>
 
 <body>
@@ -110,22 +148,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <input
                 type="email"
                 name="email"
+                id="email"
                 placeholder="Enter your email"
                 required
             >
+            <div class="field-error" id="emailError">Please enter a valid email address.</div>
 
             <label>Password</label>
 
-            <input
-                type="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-            >
+            <div class="password-wrapper">
+                <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Enter your password"
+                    required
+                >
+                <button type="button" class="toggle-password" id="togglePassword" tabindex="-1">&#128065;</button>
+            </div>
+            <div class="field-error" id="passwordError">Password is required.</div>
 
             <button
                 class="btn"
                 type="submit"
+                id="loginBtn"
                 style="width:100%;">
                 Login
             </button>
@@ -157,10 +203,61 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <footer class="site-footer">
     <hr class="footer-separator">
     <p>&copy; <?php echo date("Y"); ?> Student Internship Management System. All rights reserved.</p>
-    <p>Contact: +255754553483</p>
-    <p>Prepared by Wanginyi Tech (zak)</p>
+    <p>Version 1.0</p>
+    <p>Developer: Isaack Changawa (zak)</p>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form');
+    var emailInput = document.getElementById('email');
+    var passwordInput = document.getElementById('password');
+    var emailError = document.getElementById('emailError');
+    var passwordError = document.getElementById('passwordError');
+    var toggleBtn = document.getElementById('togglePassword');
+
+    form.addEventListener('submit', function(e) {
+        var valid = true;
+        var email = emailInput.value.trim();
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!emailRegex.test(email)) {
+            emailInput.classList.add('error');
+            emailError.classList.add('show');
+            valid = false;
+        } else {
+            emailInput.classList.remove('error');
+            emailError.classList.remove('show');
+        }
+
+        if (passwordInput.value.trim() === '') {
+            passwordInput.classList.add('error');
+            passwordError.classList.add('show');
+            valid = false;
+        } else {
+            passwordInput.classList.remove('error');
+            passwordError.classList.remove('show');
+        }
+
+        if (!valid) e.preventDefault();
+    });
+
+    emailInput.addEventListener('input', function() {
+        this.classList.remove('error');
+        emailError.classList.remove('show');
+    });
+
+    passwordInput.addEventListener('input', function() {
+        this.classList.remove('error');
+        passwordError.classList.remove('show');
+    });
+
+    toggleBtn.addEventListener('click', function() {
+        var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+    });
+});
+</script>
 </body>
 
 </html>
