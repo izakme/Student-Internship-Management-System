@@ -10,6 +10,7 @@ session_start();
     <title>Student Internship Management System</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 
     <!-- Optional modern font -->
     <link href="https://fonts.googleapis.com/css2?family=Segoe+UI&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
@@ -19,7 +20,8 @@ session_start();
 
 <!-- TOP BAR -->
 <div class="topbar">
-    Student Internship Management System
+    <span class="topbar-title">Student Internship Management System</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
 </div>
 
 <!-- HERO SECTION -->
@@ -104,9 +106,32 @@ session_start();
 <footer class="site-footer">
     <hr class="footer-separator">
     <p>&copy; <?php echo date("Y"); ?> Student Internship Management System. All rights reserved.</p>
-    <p>Contact: +255754553483</p>
-    <p>Prepared by Wanginyi Tech (zak)</p>
+    <p>Version 1.0</p>
+    <p>Developer: Isaack Changawa (zak)</p>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var themeToggle = document.getElementById('themeToggle');
+    var html = document.documentElement;
+    if (localStorage.getItem('theme') === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        if (themeToggle) themeToggle.textContent = '\u2600';
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '\u263E';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '\u2600';
+            }
+        });
+    }
+});
+</script>
 </body>
 </html>

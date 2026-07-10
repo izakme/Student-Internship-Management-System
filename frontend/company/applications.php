@@ -99,14 +99,14 @@ include "../layouts/sidebar.php";
         <?php if ($applicants->rowCount() > 0): ?>
             <?php while ($row = $applicants->fetch(PDO::FETCH_ASSOC)): ?>
                 <tr>
-                    <td><?= htmlspecialchars($row['application_id']) ?></td>
-                    <td><?= htmlspecialchars($row['full_name']) ?></td>
-                    <td><?= htmlspecialchars($row['registration_no']) ?></td>
-                    <td><?= htmlspecialchars($row['title']) ?></td>
-                    <td>
-                                <form method="POST" class="status-form">
-                                    <?= csrfField() ?>
-                                    <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
+                    <td data-label="ID"><?= htmlspecialchars($row['application_id']) ?></td>
+                    <td data-label="Student"><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
+                    <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
+                    <td data-label="Status">
+                        <form method="POST" class="status-form">
+                            <?= csrfField() ?>
+                            <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
                             <select name="status">
                                 <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
                                 <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
@@ -115,7 +115,7 @@ include "../layouts/sidebar.php";
                             <button type="submit">Update</button>
                         </form>
                     </td>
-                    <td><?= htmlspecialchars($row['application_date']) ?></td>
+                    <td data-label="Date"><?= htmlspecialchars($row['application_date']) ?></td>
                 </tr>
             <?php endwhile; ?>
         <?php else: ?>

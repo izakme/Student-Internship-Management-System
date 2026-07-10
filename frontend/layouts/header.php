@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) session_start();
 $timeout = 3600;
 if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout) {
     session_unset();
@@ -10,6 +10,24 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
 $_SESSION['last_activity'] = time();
 $loggedInName = htmlspecialchars($_SESSION['name'] ?? 'User');
 $loggedInRole = $_SESSION['role'] ?? '';
+
+/* Fetch notification data for admin if page didn't already set it */
+if ($loggedInRole === 'admin' && !isset($pendingCount)) {
+    try {
+        require_once __DIR__ . "/../../backend/config/database.php";
+        require_once __DIR__ . "/../../backend/classes/Application.php";
+        $appObj = new Application();
+        $pendingCount = (int)$appObj->countPending();
+        $stmt = $appObj->getApplications();
+        $allApps = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $recentApps = array_slice($allApps, 0, 10);
+    } catch (Exception $e) {
+        $pendingCount = 0;
+        $recentApps = [];
+    }
+}
+if (!isset($pendingCount)) $pendingCount = 0;
+if (!isset($recentApps)) $recentApps = [];
 ?>
 <!DOCTYPE html>
 <html>

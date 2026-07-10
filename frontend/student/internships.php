@@ -39,82 +39,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 }
 
 $stmt = $internship->activeInternships();
+
+include "../layouts/header.php";
+include "../layouts/sidebar.php";
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Internships</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
-</head>
-<body class="dashboard-page">
+<div class="card">
+    <h2 class="center">Available Internships</h2>
 
-<?php include '../layouts/header.php'; ?>
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+    <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
 
-<div class="layout">
-    <?php include '../layouts/sidebar.php'; ?>
+    <?php if ($stmt->rowCount() > 0): ?>
 
-    <div class="content">
-        <div class="card">
-            <h2 class="center">Available Internships</h2>
-            <?php if (isset($_SESSION['message'])): ?>
-                <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
-            <?php endif; ?>
-            <?php if (isset($_SESSION['error'])): ?>
-                <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
-            <?php endif; ?>
+    <div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Requirements</th>
+                <th>Deadline</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
 
-            <?php if ($stmt->rowCount() > 0): ?>
+        <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
+            $has_applied = $application->hasApplied($_SESSION['student_id'], $row['internship_id']);
+        ?>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Company</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Requirements</th>
-                        <th>Deadline</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <tr>
+                <td data-label="Company"><?php echo htmlspecialchars($row['company_name']); ?></td>
+                <td data-label="Title"><?php echo htmlspecialchars($row['title']); ?></td>
+                <td data-label="Description" class="preserve-lines"><?php echo htmlspecialchars($row['description']); ?></td>
+                <td data-label="Requirements" class="preserve-lines"><?php echo htmlspecialchars($row['requirements']); ?></td>
+                <td data-label="Deadline"><?php echo htmlspecialchars($row['deadline']); ?></td>
+                <td data-label="Action">
+                    <?php if ($has_applied): ?>
+                        <span class="badge badge-success">✓ Applied</span>
+                    <?php else: ?>
+                        <form method="POST" class="inline-form">
+                            <?= csrfField() ?>
+                            <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
+                            <button type="submit" name="apply" class="btn btn-sm">Apply</button>
+                        </form>
+                    <?php endif; ?>
+                </td>
+            </tr>
 
-                <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): 
-                    $has_applied = $application->hasApplied($_SESSION['student_id'], $row['internship_id']);
-                ?>
+        <?php endwhile; ?>
 
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['company_name']); ?></td>
-                        <td><?php echo htmlspecialchars($row['title']); ?></td>
-                        <td><?php echo htmlspecialchars($row['description']); ?></td>
-                        <td><?php echo htmlspecialchars($row['requirements']); ?></td>
-                        <td><?php echo htmlspecialchars($row['deadline']); ?></td>
-                        <td>
-                            <?php if ($has_applied): ?>
-                                <span style="color: #28a745; font-weight: bold;">✓ Applied</span>
-                            <?php else: ?>
-                                <form method="POST" style="display: inline;">
-                                    <?= csrfField() ?>
-                                    <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
-                                    <button type="submit" name="apply" class="btn" style="padding: 8px 16px; font-size: 13px;">Apply</button>
-                                </form>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-
-                <?php endwhile; ?>
-
-                </tbody>
-            </table>
-
-            <?php else: ?>
-                <p style="text-align: center; color: #999; padding: 40px;">No internships available at the moment.</p>
-            <?php endif; ?>
-
-        </div>
+        </tbody>
+    </table>
     </div>
+
+    <?php else: ?>
+        <div class="empty-state">No internships available at the moment.</div>
+    <?php endif; ?>
 </div>
 
-<?php include '../layouts/footer.php'; ?>
+<?php include "../layouts/footer.php"; ?>

@@ -42,12 +42,12 @@ include "../layouts/sidebar.php";
         <tbody>
         <?php while ($row = $applications->fetch(PDO::FETCH_ASSOC)): ?>
             <tr>
-                <td><?= htmlspecialchars($row['application_id']) ?></td>
-                <td><?= htmlspecialchars($row['full_name']) ?></td>
-                <td><?= htmlspecialchars($row['registration_no']) ?></td>
-                <td><?= htmlspecialchars($row['title']) ?></td>
-                <td><?= htmlspecialchars($row['status']) ?></td>
-                <td><?= htmlspecialchars($row['application_date']) ?></td>
+                <td data-label="ID"><?= htmlspecialchars($row['application_id']) ?></td>
+                <td data-label="Student"><?= htmlspecialchars($row['full_name']) ?></td>
+                <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
+                <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
+                <td data-label="Status"><?= htmlspecialchars($row['status']) ?></td>
+                <td data-label="Date"><?= htmlspecialchars($row['application_date']) ?></td>
             </tr>
         <?php endwhile; ?>
         </tbody>

@@ -64,8 +64,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <title>Login | Student Internship Management System</title>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 
 <style>
+.topbar .topbar-title {
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+@media (max-width: 768px) {
+    .topbar .topbar-title {
+        font-size: 26px;
+    }
+}
+@media (max-width: 480px) {
+    .topbar .topbar-title {
+        font-size: 22px;
+    }
+}
 .password-wrapper {
     position: relative;
     display: flex;
@@ -101,6 +116,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 input.error {
     border-color: #e74c3c;
 }
+@media (max-width: 768px) {
+    .card[style*="margin-top:40px"] {
+        margin-top: 20px !important;
+    }
+}
 </style>
 
 </head>
@@ -108,7 +128,8 @@ input.error {
 <body>
 
 <div class="topbar">
-    Student Internship Management System
+    <span class="topbar-title">SIMS</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
 </div>
 
 <div class="content">
@@ -256,6 +277,26 @@ document.addEventListener('DOMContentLoaded', function() {
         var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
         passwordInput.setAttribute('type', type);
     });
+
+    var themeToggle = document.getElementById('themeToggle');
+    var html = document.documentElement;
+    if (localStorage.getItem('theme') === 'dark') {
+        html.setAttribute('data-theme', 'dark');
+        if (themeToggle) themeToggle.textContent = '\u2600';
+    }
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeToggle.textContent = '\u263E';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeToggle.textContent = '\u2600';
+            }
+        });
+    }
 });
 </script>
 </body>
