@@ -818,9 +818,10 @@ table tbody tr:hover {
 }
 
 .internships-table td:nth-child(6) .btn,
-.internships-table td:nth-child(6) .btn-sm {
-  padding: 5px 10px;
-  font-size: 12px;
+.internships-table td:nth-child(6) .btn-sm,
+.internships-table td:nth-child(6) .badge {
+  padding: 4px 8px;
+  font-size: 11px;
   margin: 0;
   white-space: nowrap;
 }
