@@ -54,7 +54,7 @@ session_start();
 
             <div class="stat-card">
                 <div class="stat-title">Step 1</div>
-                <div class="stat-number" style="font-size:28px;">🧑‍🎓</div>
+                <div class="stat-number" style="font-size:28px;">🎓</div>
                 <p>Students register and build professional profiles.</p>
             </div>
 
@@ -66,7 +66,7 @@ session_start();
 
             <div class="stat-card">
                 <div class="stat-title">Step 3</div>
-                <div class="stat-number" style="font-size:28px;">📩</div>
+                <div class="stat-number" style="font-size:28px;">📝</div>
                 <p>Students apply and get selected online.</p>
             </div>
 
