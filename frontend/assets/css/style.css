@@ -788,43 +788,15 @@ table tbody tr:hover {
 }
 
 /* Internships table column widths */
-.internships-table {
-  table-layout: fixed;
-}
-
-.internships-table .col-company {
-  width: 20%;
-}
-.internships-table .col-title {
-  width: 25%;
-}
-.internships-table .col-desc {
-  width: 15%;
-}
-.internships-table .col-req {
-  width: 15%;
-}
-.internships-table .col-deadline {
-  width: 12%;
-}
-.internships-table .col-action {
-  width: 13%;
-}
-
 .internships-table td:nth-child(5),
 .internships-table th:nth-child(5) {
   text-align: center;
+  white-space: nowrap;
 }
 
 .internships-table td:nth-child(6),
 .internships-table th:nth-child(6) {
   text-align: center;
-}
-
-@media (max-width: 768px) {
-  .internships-table {
-    table-layout: auto;
-  }
 }
 
 /* AUTH */
