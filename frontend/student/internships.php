@@ -85,8 +85,8 @@ include "../layouts/sidebar.php";
             <tr>
                 <td data-label="Company"><?php echo htmlspecialchars($row['company_name']); ?></td>
                 <td data-label="Title"><?php echo htmlspecialchars($row['title']); ?></td>
-                <td data-label="Description" class="cell-text"><?php echo htmlspecialchars($row['description']); ?></td>
-                <td data-label="Requirements" class="cell-text"><?php echo htmlspecialchars($row['requirements']); ?></td>
+                <td data-label="Description"><?php echo htmlspecialchars($row['description']); ?></td>
+                <td data-label="Requirements"><?php echo htmlspecialchars($row['requirements']); ?></td>
                 <td data-label="Deadline"><?php echo htmlspecialchars($row['deadline']); ?></td>
                 <td data-label="Action">
                     <?php if ($has_applied): ?>

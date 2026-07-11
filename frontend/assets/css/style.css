@@ -811,20 +811,9 @@ table tbody tr:hover {
   width: 11%;
 }
 
-.internships-table .cell-text {
-  max-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 @media (max-width: 768px) {
   .internships-table {
     table-layout: auto;
-  }
-  .internships-table .cell-text {
-    max-width: none;
-    white-space: normal;
   }
 }
 
