@@ -58,6 +58,14 @@ include "../layouts/sidebar.php";
 
     <div class="table-wrap">
     <table class="internships-table">
+        <colgroup>
+            <col class="col-company">
+            <col class="col-title">
+            <col class="col-desc">
+            <col class="col-req">
+            <col class="col-deadline">
+            <col class="col-action">
+        </colgroup>
         <thead>
             <tr>
                 <th>Company</th>
