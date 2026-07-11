@@ -678,6 +678,7 @@ table tr:hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  margin: 0;
 }
 .btn-success {
   background: var(--success);
@@ -731,6 +732,22 @@ table tbody tr:hover {
 .table-wrap {
   width: 100%;
   overflow-x: auto;
+}
+
+/* STATUS FORM (applications) */
+.status-form {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.status-form select {
+  width: auto;
+  padding: 6px 10px;
+  margin: 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 13px;
 }
 
 /* INLINE FORM */
@@ -1154,7 +1171,6 @@ table tbody tr:hover {
     width: auto;
     padding: 6px 14px;
     font-size: 13px;
-    margin: 2px;
   }
 
   .btn-block {

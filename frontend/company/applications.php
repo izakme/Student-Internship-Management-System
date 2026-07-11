@@ -52,18 +52,6 @@ include "../layouts/header.php";
 include "../layouts/sidebar.php";
 ?>
 
-<style>
-    .status-form {
-        display: inline-flex;
-        gap: 5px;
-        align-items: center;
-    }
-    .status-form select {
-        padding: 5px;
-        border-radius: 4px;
-        border: 1px solid var(--border);
-    }
-</style>
 
 <div class="card">
     <h2>Review Applications</h2>
@@ -85,7 +73,6 @@ include "../layouts/sidebar.php";
             <th>Internship</th>
             <th>Status</th>
             <th>Applied Date</th>
-            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
