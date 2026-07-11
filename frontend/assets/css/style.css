@@ -1245,8 +1245,16 @@ table tbody tr:hover {
   }
 
   table td:last-child {
-    grid-template-columns: 1fr;
-    gap: 4px;
+    gap: 8px;
+    text-align: right;
+  }
+
+  table td:last-child::before {
+    text-align: left;
+  }
+
+  table td:last-child form {
+    display: inline-block;
   }
 
   .action-group {
