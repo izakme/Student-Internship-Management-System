@@ -207,14 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             </select>
 
-            <button
-                class="btn"
-                type="submit"
-                style="width:100%;">
-
-                Create Account
-
-            </button>
+            <button class="btn btn-block" type="submit">Create Account</button>
 
         </form>
 

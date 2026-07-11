@@ -50,15 +50,11 @@ include "../layouts/sidebar.php";
     <h2 class="center">My Profile</h2>
 
     <?php if (isset($_SESSION['message'])): ?>
-        <p style="color: #28a745; background: #d4edda; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-            <?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?>
-        </p>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
-        <p style="color: #dc3545; background: #f8d7da; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
-            <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
-        </p>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
     <?php endif; ?>
 
     <form method="POST">

@@ -56,19 +56,12 @@ include "../layouts/sidebar.php";
     .status-form {
         display: inline-flex;
         gap: 5px;
+        align-items: center;
     }
     .status-form select {
         padding: 5px;
-        border-radius: 3px;
-        border: 1px solid #ccc;
-    }
-    .status-form button {
-        padding: 5px 10px;
-        background: #0d6efd;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
+        border-radius: 4px;
+        border: 1px solid var(--border);
     }
 </style>
 
@@ -112,7 +105,7 @@ include "../layouts/sidebar.php";
                                 <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
                                 <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
                             </select>
-                            <button type="submit">Update</button>
+                            <button type="submit" class="btn btn-sm">Update</button>
                         </form>
                     </td>
                     <td data-label="Date"><?= htmlspecialchars($row['application_date']) ?></td>

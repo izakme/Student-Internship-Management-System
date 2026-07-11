@@ -64,7 +64,7 @@ include "../layouts/sidebar.php";
                 <td>
                     <a href="companies.php?delete=<?php echo $row['company_id']; ?>" 
                        onclick="return confirm('Delete this company?');" 
-                       class="btn btn-danger" style="padding:5px 10px;font-size:12px;">Delete</a>
+                       class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         <?php endwhile; ?>

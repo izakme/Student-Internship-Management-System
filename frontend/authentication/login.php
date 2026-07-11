@@ -189,13 +189,7 @@ input.error {
             </div>
             <div class="field-error" id="passwordError">Password is required.</div>
 
-            <button
-                class="btn"
-                type="submit"
-                id="loginBtn"
-                style="width:100%;">
-                Login
-            </button>
+            <button class="btn btn-block" type="submit" id="loginBtn">Login</button>
 
         </form>
 

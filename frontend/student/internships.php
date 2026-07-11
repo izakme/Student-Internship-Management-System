@@ -57,7 +57,15 @@ include "../layouts/sidebar.php";
     <?php if ($stmt->rowCount() > 0): ?>
 
     <div class="table-wrap">
-    <table>
+    <table class="internships-table">
+        <colgroup>
+            <col class="col-company">
+            <col class="col-title">
+            <col class="col-desc">
+            <col class="col-req">
+            <col class="col-deadline">
+            <col class="col-action">
+        </colgroup>
         <thead>
             <tr>
                 <th>Company</th>
@@ -77,8 +85,8 @@ include "../layouts/sidebar.php";
             <tr>
                 <td data-label="Company"><?php echo htmlspecialchars($row['company_name']); ?></td>
                 <td data-label="Title"><?php echo htmlspecialchars($row['title']); ?></td>
-                <td data-label="Description" class="preserve-lines"><?php echo htmlspecialchars($row['description']); ?></td>
-                <td data-label="Requirements" class="preserve-lines"><?php echo htmlspecialchars($row['requirements']); ?></td>
+                <td data-label="Description" class="cell-text"><?php echo htmlspecialchars($row['description']); ?></td>
+                <td data-label="Requirements" class="cell-text"><?php echo htmlspecialchars($row['requirements']); ?></td>
                 <td data-label="Deadline"><?php echo htmlspecialchars($row['deadline']); ?></td>
                 <td data-label="Action">
                     <?php if ($has_applied): ?>

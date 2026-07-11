@@ -699,6 +699,10 @@ table tr:hover {
   flex-wrap: wrap;
 }
 
+.btn-block {
+  width: 100%;
+}
+
 /* CARD HEADING SPACING */
 .card h2 {
   margin-bottom: 20px;
@@ -764,6 +768,47 @@ table tbody tr:hover {
 /* Preserve line breaks */
 .preserve-lines {
   white-space: pre-wrap;
+}
+
+/* Internships table column widths */
+.internships-table {
+  table-layout: fixed;
+}
+
+.internships-table .col-company {
+  width: 15%;
+}
+.internships-table .col-title {
+  width: 18%;
+}
+.internships-table .col-desc {
+  width: 22%;
+}
+.internships-table .col-req {
+  width: 22%;
+}
+.internships-table .col-deadline {
+  width: 12%;
+}
+.internships-table .col-action {
+  width: 11%;
+}
+
+.internships-table .cell-text {
+  max-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .internships-table {
+    table-layout: auto;
+  }
+  .internships-table .cell-text {
+    max-width: none;
+    white-space: normal;
+  }
 }
 
 /* AUTH */
@@ -1103,6 +1148,17 @@ table tbody tr:hover {
     white-space: normal;
     text-align: center;
     font-size: 14px;
+  }
+
+  .btn-sm {
+    width: auto;
+    padding: 6px 14px;
+    font-size: 13px;
+    margin: 2px;
+  }
+
+  .btn-block {
+    width: 100%;
   }
 
   .btn:hover {

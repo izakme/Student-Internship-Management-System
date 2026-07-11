@@ -23,7 +23,19 @@ if (!$company_id) {
     die("Company profile not found.");
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_internship'])) {
+$editInternship = null;
+if (isset($_GET['edit'])) {
+    $edit_id = filter_input(INPUT_GET, 'edit', FILTER_VALIDATE_INT);
+    $editInternship = $internshipObj->getInternship($edit_id);
+    if (!$editInternship || $editInternship['company_id'] != $company_id) {
+        $editInternship = null;
+        $_SESSION['error'] = "Internship not found or unauthorized.";
+        header("Location: internships.php");
+        exit();
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
         $_SESSION['error'] = "Invalid form submission.";
     } else {
@@ -33,13 +45,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_internship'])) {
     $deadline = $_POST['deadline'] ?? '';
 
     if ($title && $description && $deadline) {
-        if ($internshipObj->addInternship($company_id, $title, $description, $requirements, $deadline)) {
-            $_SESSION['message'] = "Internship posted successfully.";
+        $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
+
+        if ($internship_id) {
+            // Update existing
+            $internship = $internshipObj->getInternship($internship_id);
+            if ($internship && $internship['company_id'] == $company_id) {
+                if ($internshipObj->updateInternship($internship_id, $title, $description, $requirements, $deadline)) {
+                    $_SESSION['message'] = "Internship updated successfully.";
+                } else {
+                    $_SESSION['error'] = "Error updating internship.";
+                }
+            } else {
+                $_SESSION['error'] = "Internship not found or unauthorized.";
+            }
         } else {
-            $_SESSION['error'] = "Error posting internship.";
+            // Create new
+            if ($internshipObj->addInternship($company_id, $title, $description, $requirements, $deadline)) {
+                $_SESSION['message'] = "Internship posted successfully.";
+            } else {
+                $_SESSION['error'] = "Error posting internship.";
+            }
         }
         header("Location: internships.php");
         exit();
+    } else {
+        $_SESSION['error'] = "Please fill all required fields.";
     }
     }
 }
@@ -70,7 +101,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>Post New Internship</h2>
+    <h2><?php echo $editInternship ? 'Edit Internship' : 'Post New Internship'; ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
@@ -81,27 +112,35 @@ include "../layouts/sidebar.php";
 
     <form method="POST">
         <?= csrfField() ?>
+        <?php if ($editInternship): ?>
+            <input type="hidden" name="internship_id" value="<?php echo $editInternship['internship_id']; ?>">
+        <?php endif; ?>
         <div class="form-group">
             <label>Title *</label>
-            <input type="text" name="title" required>
+            <input type="text" name="title" value="<?php echo htmlspecialchars($editInternship['title'] ?? ''); ?>" required>
         </div>
 
         <div class="form-group">
             <label>Description *</label>
-            <textarea name="description" required></textarea>
+            <textarea name="description" required><?php echo htmlspecialchars($editInternship['description'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group">
             <label>Requirements</label>
-            <textarea name="requirements"></textarea>
+            <textarea name="requirements"><?php echo htmlspecialchars($editInternship['requirements'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group">
             <label>Deadline *</label>
-            <input type="date" name="deadline" required>
+            <input type="date" name="deadline" value="<?php echo htmlspecialchars($editInternship['deadline'] ?? ''); ?>" required>
         </div>
 
-        <button type="submit" name="add_internship" class="btn">Post Internship</button>
+        <div class="form-buttons">
+            <button type="submit" name="save_internship" class="btn"><?php echo $editInternship ? 'Update Internship' : 'Post Internship'; ?></button>
+            <?php if ($editInternship): ?>
+                <a href="internships.php" class="btn btn-secondary">Cancel</a>
+            <?php endif; ?>
+        </div>
     </form>
 </div>
 
@@ -126,9 +165,13 @@ include "../layouts/sidebar.php";
                     <td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
                     <td data-label="Deadline"><?= htmlspecialchars($row['deadline']) ?></td>
                     <td data-label="Actions">
-                        <a href="internships.php?delete=<?php echo $row['internship_id']; ?>"
-                           onclick="return confirm('Delete this internship?');"
-                           class="btn btn-danger btn-sm">Delete</a>
+                        <div class="action-group">
+                            <a href="internships.php?edit=<?php echo $row['internship_id']; ?>"
+                               class="btn btn-sm">Edit</a>
+                            <a href="internships.php?delete=<?php echo $row['internship_id']; ?>"
+                               onclick="return confirm('Delete this internship?');"
+                               class="btn btn-danger btn-sm">Delete</a>
+                        </div>
                     </td>
                 </tr>
             <?php endwhile; ?>

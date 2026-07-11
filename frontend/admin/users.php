@@ -75,7 +75,7 @@ include "../layouts/sidebar.php";
                 <td>
                     <a href="users.php?delete=<?php echo $row['user_id']; ?>" 
                        onclick="return confirm('Delete this user?');" 
-                       class="btn btn-danger" style="padding:5px 10px;font-size:12px;">Delete</a>
+                       class="btn btn-danger btn-sm">Delete</a>
                 </td>
             </tr>
         <?php endwhile; ?>
