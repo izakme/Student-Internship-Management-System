@@ -88,23 +88,8 @@ if (!empty($keyword)) {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Search Internships</title>
-
-<link rel="stylesheet" href="../assets/css/style.css">
-</head>
-
-<body class="dashboard-page">
-
 <?php include "../layouts/header.php"; ?>
 <?php include "../layouts/sidebar.php"; ?>
-
-<div class="content">
 
 <div class="card">
 
@@ -128,8 +113,16 @@ value="<?= htmlspecialchars($keyword) ?>">
 
 <div class="card">
 
-<table>
-
+<div class="table-wrap">
+<table class="internships-table">
+<colgroup>
+    <col class="col-company">
+    <col class="col-title">
+    <col class="col-desc">
+    <col class="col-req">
+    <col class="col-deadline">
+    <col class="col-action">
+</colgroup>
 <thead>
 <tr>
 <th>Company</th>
@@ -149,13 +142,13 @@ value="<?= htmlspecialchars($keyword) ?>">
 
 <tr>
 
-<td><?= htmlspecialchars($row['company_name']) ?></td>
-<td><?= htmlspecialchars($row['title']) ?></td>
-<td><?= htmlspecialchars($row['description']) ?></td>
-<td><?= htmlspecialchars($row['requirements']) ?></td>
-<td><?= htmlspecialchars($row['deadline']) ?></td>
+<td data-label="Company"><?= htmlspecialchars($row['company_name']) ?></td>
+<td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
+<td data-label="Description"><?= htmlspecialchars($row['description']) ?></td>
+<td data-label="Requirements"><?= htmlspecialchars($row['requirements']) ?></td>
+<td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
 
-<td>
+<td data-label="Action">
 <form method="POST">
     <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
@@ -178,7 +171,6 @@ value="<?= htmlspecialchars($keyword) ?>">
 </tbody>
 
 </table>
-
 </div>
 
 </div>

@@ -67,7 +67,7 @@ include "../layouts/sidebar.php";
                 <td data-label="ID"><?= htmlspecialchars($row['internship_id']) ?></td>
                 <td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
                 <td data-label="Company"><?= htmlspecialchars($row['company_name']) ?></td>
-                <td data-label="Deadline"><?= htmlspecialchars($row['deadline']) ?></td>
+                <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
                 <td data-label="Actions">
                     <a href="internships.php?delete=<?php echo $row['internship_id']; ?>"
                        onclick="return confirm('Delete this internship?');"

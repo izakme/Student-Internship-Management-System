@@ -47,7 +47,7 @@ include "../layouts/sidebar.php";
                 <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
                 <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
                 <td data-label="Status"><?= htmlspecialchars($row['status']) ?></td>
-                <td data-label="Date"><?= htmlspecialchars($row['application_date']) ?></td>
+                <td data-label="Date"><?= htmlspecialchars(date("M j, Y", strtotime($row['application_date']))) ?></td>
             </tr>
         <?php endwhile; ?>
         </tbody>

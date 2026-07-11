@@ -71,7 +71,7 @@ include "../layouts/sidebar.php";
                         <?= ucfirst($row['role']) ?>
                     </span>
                 </td>
-                <td><?= htmlspecialchars($row['created_at']) ?></td>
+                <td><?= htmlspecialchars(date("M j, Y", strtotime($row['created_at']))) ?></td>
                 <td>
                     <a href="users.php?delete=<?php echo $row['user_id']; ?>" 
                        onclick="return confirm('Delete this user?');" 

@@ -163,7 +163,7 @@ include "../layouts/sidebar.php";
                 <tr>
                     <td data-label="ID"><?= htmlspecialchars($row['internship_id']) ?></td>
                     <td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
-                    <td data-label="Deadline"><?= htmlspecialchars($row['deadline']) ?></td>
+                    <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
                     <td data-label="Actions">
                         <div class="action-group">
                             <a href="internships.php?edit=<?php echo $row['internship_id']; ?>"

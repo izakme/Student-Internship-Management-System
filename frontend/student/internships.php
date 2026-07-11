@@ -87,7 +87,7 @@ include "../layouts/sidebar.php";
                 <td data-label="Title"><?php echo htmlspecialchars($row['title']); ?></td>
                 <td data-label="Description"><?php echo htmlspecialchars($row['description']); ?></td>
                 <td data-label="Requirements"><?php echo htmlspecialchars($row['requirements']); ?></td>
-                <td data-label="Deadline"><?php echo htmlspecialchars($row['deadline']); ?></td>
+                <td data-label="Deadline"><?php echo htmlspecialchars(date("M j, Y", strtotime($row['deadline']))); ?></td>
                 <td data-label="Action">
                     <?php if ($has_applied): ?>
                         <span class="badge badge-success">✓ Applied</span>

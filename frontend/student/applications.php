@@ -60,7 +60,7 @@ include "../layouts/sidebar.php";
                                 <span class="badge badge-pending">Pending</span>
                             <?php endif; ?>
                         </td>
-                        <td data-label="Date"><?= htmlspecialchars($row['application_date']) ?></td>
+                        <td data-label="Date"><?= htmlspecialchars(date("M j, Y", strtotime($row['application_date']))) ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
