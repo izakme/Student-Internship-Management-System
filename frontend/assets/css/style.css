@@ -1222,11 +1222,11 @@ table tbody tr:hover {
 
   table td {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    justify-content: space-between;
+    align-items: flex-start;
     padding: 8px 10px;
     border-bottom: 1px solid var(--border);
-    gap: 2px;
+    gap: 10px;
     word-break: normal;
     overflow-wrap: break-word;
   }
@@ -1242,10 +1242,20 @@ table tbody tr:hover {
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    flex-shrink: 0;
+    width: 100px;
+    white-space: normal;
+    word-break: normal;
   }
 
   table td:last-child {
+    flex-direction: column;
+    align-items: stretch;
     gap: 6px;
+  }
+
+  table td:last-child::before {
+    width: auto;
   }
 
   .action-group {
