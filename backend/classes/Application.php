@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../config/database.php";
+require_once __DIR__ . "/../helpers/Mailer.php";
 
 class Application
 {
@@ -16,7 +17,7 @@ class Application
     /* =========================
        APPLY FOR INTERNSHIP
     ========================= */
-    public function apply($student_id, $internship_id)
+    public function apply($student_id, $internship_id, $cover_letter = '')
     {
         // Validate inputs
         if (!$student_id || !$internship_id) {
@@ -45,13 +46,48 @@ class Application
         // Insert application
         $sql = "
             INSERT INTO {$this->table}
-            (student_id, internship_id, status, application_date)
-            VALUES (?, ?, 'Pending', NOW())
+            (student_id, internship_id, cover_letter, status, application_date)
+            VALUES (?, ?, ?, 'Pending', NOW())
         ";
 
         $stmt = $this->conn->prepare($sql);
+        $result = $stmt->execute([$student_id, $internship_id, $cover_letter]);
 
-        return $stmt->execute([$student_id, $internship_id]);
+        if ($result) {
+            $this->notifyCompanyNewApplication($internship_id, $student_id);
+        }
+
+        return $result;
+    }
+
+    private function notifyCompanyNewApplication($internship_id, $student_id)
+    {
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT u.email, c.company_name, stu.full_name as student_name, i.title
+                FROM internships i
+                JOIN companies c ON i.company_id = c.company_id
+                JOIN users u ON c.user_id = u.user_id
+                JOIN students s ON s.student_id = ?
+                JOIN users stu ON s.user_id = stu.user_id
+                WHERE i.internship_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$student_id, $internship_id]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($data) {
+                $mailer = new Mailer();
+                $mailer->sendNewApplication(
+                    $data['email'],
+                    $data['company_name'],
+                    $data['student_name'],
+                    $data['title']
+                );
+            }
+        } catch (Exception $e) {
+            error_log("Failed to send new application notification: " . $e->getMessage());
+        }
     }
 
     /* =========================
@@ -83,6 +119,7 @@ class Application
                 u.full_name,
                 i.title,
                 a.status,
+                a.cover_letter,
                 a.application_date
             FROM applications a
             INNER JOIN students s ON a.student_id = s.student_id
@@ -117,6 +154,21 @@ class Application
     }
 
     /* =========================
+       WITHDRAW APPLICATION
+    ========================= */
+    public function withdraw($application_id, $student_id)
+    {
+        $stmt = $this->conn->prepare("
+            DELETE FROM {$this->table}
+            WHERE application_id = ?
+            AND student_id = ?
+            AND status = 'Pending'
+        ");
+        $stmt->execute([$application_id, $student_id]);
+        return $stmt->rowCount() > 0;
+    }
+
+    /* =========================
        UPDATE STATUS
     ========================= */
     public function updateStatus($application_id, $status)
@@ -131,7 +183,42 @@ class Application
             WHERE application_id = ?
         ");
 
-        return $stmt->execute([$status, $application_id]);
+        $result = $stmt->execute([$status, $application_id]);
+
+        if ($result) {
+            $this->notifyStudentStatusChange($application_id);
+        }
+
+        return $result;
+    }
+
+    private function notifyStudentStatusChange($application_id)
+    {
+        try {
+            $stmt = $this->conn->prepare("
+                SELECT u.email, u.full_name, a.status, i.title
+                FROM applications a
+                JOIN students s ON a.student_id = s.student_id
+                JOIN users u ON s.user_id = u.user_id
+                JOIN internships i ON a.internship_id = i.internship_id
+                WHERE a.application_id = ?
+                LIMIT 1
+            ");
+            $stmt->execute([$application_id]);
+            $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($data) {
+                $mailer = new Mailer();
+                $mailer->sendApplicationStatus(
+                    $data['email'],
+                    $data['full_name'],
+                    $data['title'],
+                    $data['status']
+                );
+            }
+        } catch (Exception $e) {
+            error_log("Failed to send status notification: " . $e->getMessage());
+        }
     }
 
     public function updateCompanyApplicationStatus($application_id, $company_id, $status)
@@ -149,8 +236,13 @@ class Application
         ");
 
         $stmt->execute([$status, $application_id, $company_id]);
+        $result = $stmt->rowCount() > 0;
 
-        return $stmt->rowCount() > 0;
+        if ($result) {
+            $this->notifyStudentStatusChange($application_id);
+        }
+
+        return $result;
     }
 
     /* =========================
@@ -229,6 +321,7 @@ class Application
                 s.registration_no,
                 i.title,
                 a.status,
+                a.cover_letter,
                 a.application_date
             FROM applications a
             INNER JOIN students s ON a.student_id = s.student_id

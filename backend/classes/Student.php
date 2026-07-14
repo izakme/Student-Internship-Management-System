@@ -87,6 +87,18 @@ class Student
     }
 
     /* =========================
+       UPDATE RESUME PATH
+    ========================= */
+    public function updateResume($student_id, $resumePath)
+    {
+        $sql = "UPDATE {$this->table}
+                SET resume = ?
+                WHERE student_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$resumePath, $student_id]);
+    }
+
+    /* =========================
        COUNT STUDENTS
     ========================= */
     public function countStudents()

@@ -3,6 +3,7 @@ session_start();
 
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/company.php";
+require_once "../../backend/helpers/csrf.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -12,14 +13,18 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 $companyObj = new Company();
 
 // Delete company
-if (isset($_GET['delete'])) {
-    $company_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
+if (isset($_POST['delete']) && isset($_POST['company_id'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
+    $company_id = filter_input(INPUT_POST, 'company_id', FILTER_VALIDATE_INT);
     if ($company_id === false || $company_id === null) {
         $_SESSION['error'] = "Invalid company ID.";
     } elseif ($companyObj->deleteCompany($company_id)) {
         $_SESSION['message'] = "Company deleted successfully.";
     } else {
         $_SESSION['error'] = "Failed to delete company.";
+    }
     }
     header("Location: companies.php");
     exit();
@@ -62,9 +67,11 @@ include "../layouts/sidebar.php";
                 <td><?= htmlspecialchars($row['phone'] ?? 'N/A') ?></td>
                 <td><?= htmlspecialchars($row['email'] ?? 'N/A') ?></td>
                 <td>
-                    <a href="companies.php?delete=<?php echo $row['company_id']; ?>" 
-                       onclick="return confirm('Delete this company?');" 
-                       class="btn btn-danger btn-sm">Delete</a>
+                    <form method="POST" onsubmit="return confirm('Delete this company?');">
+                        <?= csrfField() ?>
+                        <input type="hidden" name="company_id" value="<?= $row['company_id'] ?>">
+                        <button type="submit" name="delete" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </td>
             </tr>
         <?php endwhile; ?>

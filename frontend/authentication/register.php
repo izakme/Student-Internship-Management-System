@@ -4,8 +4,10 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/user.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/App.php";
 
 $error = "";
+$presetRole = isset($_GET['role']) && in_array($_GET['role'], ['student', 'company']) ? $_GET['role'] : '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -25,11 +27,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $error = "All fields are required.";
 
-        } elseif (strlen($password) < 6) {
+        } elseif (!App::isValidEmail($email)) {
 
-            $error = "Password must be at least 6 characters long.";
+            $error = "Please enter a valid email address.";
 
         } else {
+
+            $pwErrors = App::validatePassword($password);
+            if (!empty($pwErrors)) {
+                $error = "Password must contain: " . implode(', ', $pwErrors) . ".";
+            } else {
 
             try {
                 $result = $user->register(
@@ -50,6 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } catch (Exception $e) {
                 $error = $e->getMessage();
             }
+        }
         }
     }
 }
@@ -185,27 +193,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input
                 type="password"
                 name="password"
-                placeholder="Create a password"
+                id="regPassword"
+                placeholder="Create a password (min 8 chars, 1 uppercase, 1 digit)"
                 required
             >
+            <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:12px;">
+                Must be at least 8 characters with an uppercase letter and a digit.
+            </div>
 
             <label>Register As</label>
 
             <select name="role" required>
-
-                <option value="">
-                    Select Role
-                </option>
-
-                <option value="student">
-                    Student
-                </option>
-
-                <option value="company">
-                    Company
-                </option>
-
+                <option value="">Select Role</option>
+                <option value="student" <?= $presetRole === 'student' ? 'selected' : '' ?>>Student</option>
+                <option value="company" <?= $presetRole === 'company' ? 'selected' : '' ?>>Company</option>
             </select>
+            <?php if ($presetRole): ?>
+                <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:12px;">
+                    Registering as <strong><?= htmlspecialchars(ucfirst($presetRole)) ?></strong>
+                </div>
+            <?php endif; ?>
 
             <button class="btn btn-block" type="submit">Create Account</button>
 

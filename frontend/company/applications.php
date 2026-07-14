@@ -71,6 +71,7 @@ include "../layouts/sidebar.php";
             <th>Student Name</th>
             <th>Registration No</th>
             <th>Internship</th>
+            <th>Cover Letter</th>
             <th>Status</th>
             <th>Applied Date</th>
         </tr>
@@ -83,6 +84,13 @@ include "../layouts/sidebar.php";
                     <td data-label="Student"><?= htmlspecialchars($row['full_name']) ?></td>
                     <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
                     <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
+                    <td data-label="Cover Letter" style="max-width:200px;">
+                        <?php if (!empty($row['cover_letter'])): ?>
+                            <em><?= htmlspecialchars($row['cover_letter']) ?></em>
+                        <?php else: ?>
+                            <span style="color:#999;">—</span>
+                        <?php endif; ?>
+                    </td>
                     <td data-label="Status">
                         <form method="POST" class="status-form">
                             <?= csrfField() ?>
@@ -100,7 +108,7 @@ include "../layouts/sidebar.php";
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7" class="center">No applications yet.</td>
+                <td colspan="8" class="center">No applications yet.</td>
             </tr>
         <?php endif; ?>
         </tbody>

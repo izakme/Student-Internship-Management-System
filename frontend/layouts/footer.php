@@ -8,5 +8,18 @@
     <p>Developer: Isaack Changawa (zak)</p>
 </footer>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('form').forEach(function(f) {
+        f.addEventListener('submit', function() {
+            var btn = this.querySelector('button[type="submit"]');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = 'Processing…';
+            }
+        });
+    });
+});
+</script>
 </body>
 </html>

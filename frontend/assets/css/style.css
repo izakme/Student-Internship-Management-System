@@ -584,7 +584,7 @@ body:not(.dashboard-page) .topbar {
 }
 
 /* INPUT */
-input,
+input:not([type="checkbox"]):not([type="radio"]),
 select,
 textarea {
   width: 100%;
@@ -592,6 +592,13 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 10px;
   margin: 8px 0 16px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  width: auto;
+  margin: 0;
+  padding: 0;
 }
 
 /* TABLE FIX */

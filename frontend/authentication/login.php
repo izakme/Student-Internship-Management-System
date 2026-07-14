@@ -1,11 +1,16 @@
 <?php
 
+session_set_cookie_params([
+    'httponly' => true,
+    'samesite' => 'Strict',
+]);
 session_start();
 
 require_once __DIR__ . "/../../backend/config/database.php";
 require_once __DIR__ . "/../../backend/classes/user.php";
 require_once __DIR__ . "/../../backend/classes/auth.php";
 require_once __DIR__ . "/../../backend/helpers/csrf.php";
+require_once __DIR__ . "/../../backend/helpers/App.php";
 
 $message = "";
 
@@ -14,6 +19,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
         $message = "Invalid form submission.";
     } else {
+
+    $rateCheck = App::rateLimitCheck('login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 900);
+    if ($rateCheck !== true) {
+        $message = "Too many attempts. Try again in " . ceil($rateCheck / 60) . " minutes.";
+    } else {
+
     $db = (new Database())->connect();
 
     $user = new User($db);
@@ -47,6 +58,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "Login successful but no role found.";
     } else {
         $message = "Invalid email or password.";
+    }
     }
     }
 }
@@ -190,6 +202,10 @@ input.error {
             <div class="field-error" id="passwordError">Password is required.</div>
 
             <button class="btn btn-block" type="submit" id="loginBtn">Login</button>
+
+            <p class="center" style="margin-top:12px;">
+                <a href="forgot_password.php" style="color:#5bbcff;font-size:14px;">Forgot Password?</a>
+            </p>
 
         </form>
 

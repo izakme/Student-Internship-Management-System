@@ -2,6 +2,8 @@
 session_start();
 
 require_once "../../backend/config/database.php";
+require_once "../../backend/classes/Application.php";
+require_once "../../backend/helpers/csrf.php";
 
 if (empty($_SESSION['user_id'])) {
     header("Location: ../authentication/login.php");
@@ -17,6 +19,24 @@ $student_id = $stmt->fetchColumn();
 
 if (!$student_id) {
     die("<div style='text-align:center;margin-top:60px;color:red;font-size:18px;'>Student profile not found.<br>Please ensure your account is linked to a student profile.</div>");
+}
+
+$app = new Application();
+
+// Handle withdraw
+if (isset($_POST['withdraw'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
+        $application_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
+        if ($application_id && $app->withdraw($application_id, $student_id)) {
+            $_SESSION['message'] = "Application withdrawn successfully.";
+        } else {
+            $_SESSION['error'] = "Could not withdraw application. Only pending applications can be withdrawn.";
+        }
+    }
+    header("Location: applications.php");
+    exit();
 }
 
 $stmt = $conn->prepare("
@@ -36,6 +56,14 @@ include "../layouts/sidebar.php";
 <div class="card">
     <h2 class="center">My Internship Applications</h2>
 
+    <?php if (isset($_SESSION['message'])): ?>
+        <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <p class="error-msg"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></p>
+    <?php endif; ?>
+
     <table>
         <thead>
             <tr>
@@ -43,6 +71,7 @@ include "../layouts/sidebar.php";
                 <th>Internship</th>
                 <th>Status</th>
                 <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -61,11 +90,22 @@ include "../layouts/sidebar.php";
                             <?php endif; ?>
                         </td>
                         <td data-label="Date"><?= htmlspecialchars(date("M j, Y", strtotime($row['application_date']))) ?></td>
+                        <td data-label="Actions">
+                            <?php if ($row['status'] === 'Pending'): ?>
+                                <form method="POST" onsubmit="return confirm('Withdraw this application?');">
+                                    <?= csrfField() ?>
+                                    <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
+                                    <button type="submit" name="withdraw" class="btn btn-danger btn-sm">Withdraw</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="badge badge-secondary">—</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="4" class="center">No applications found.</td>
+                    <td colspan="5" class="center">No applications found.</td>
                 </tr>
             <?php endif; ?>
         </tbody>

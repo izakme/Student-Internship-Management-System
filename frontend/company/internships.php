@@ -75,8 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
     }
 }
 
-if (isset($_GET['delete'])) {
-    $internship_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
+if (isset($_POST['delete']) && isset($_POST['internship_id'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
+    $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $internship = $internshipObj->getInternship($internship_id);
     if ($internship && $internship['company_id'] == $company_id) {
         $result = $internshipObj->deleteInternship($internship_id);
@@ -87,6 +90,7 @@ if (isset($_GET['delete'])) {
         }
     } else {
         $_SESSION['error'] = "Internship not found or unauthorized.";
+    }
     }
     header("Location: internships.php");
     exit();
@@ -168,9 +172,11 @@ include "../layouts/sidebar.php";
                         <div class="action-group">
                             <a href="internships.php?edit=<?php echo $row['internship_id']; ?>"
                                class="btn btn-sm">Edit</a>
-                            <a href="internships.php?delete=<?php echo $row['internship_id']; ?>"
-                               onclick="return confirm('Delete this internship?');"
-                               class="btn btn-danger btn-sm">Delete</a>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this internship?');">
+                                <?= csrfField() ?>
+                                <input type="hidden" name="internship_id" value="<?= $row['internship_id'] ?>">
+                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

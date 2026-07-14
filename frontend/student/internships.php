@@ -22,9 +22,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
     } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $student_id = $_SESSION['student_id'];
+    $cover_letter = trim($_POST['cover_letter'] ?? '');
 
     if ($internship_id && !$application->hasApplied($student_id, $internship_id)) {
-        if ($application->apply($student_id, $internship_id)) {
+        if ($application->apply($student_id, $internship_id, $cover_letter)) {
             $_SESSION['message'] = "Application submitted successfully.";
         } else {
             $_SESSION['error'] = "Failed to submit application. The internship may be expired.";
@@ -92,9 +93,10 @@ include "../layouts/sidebar.php";
                     <?php if ($has_applied): ?>
                         <span class="badge badge-success">✓ Applied</span>
                     <?php else: ?>
-                        <form method="POST" class="inline-form">
+                        <form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');">
                             <?= csrfField() ?>
                             <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
+                            <textarea name="cover_letter" placeholder="Optional cover letter / message to company..." rows="2" style="width:100%;margin-bottom:4px;font-size:11px;"></textarea>
                             <button type="submit" name="apply" class="btn btn-sm">Apply</button>
                         </form>
                     <?php endif; ?>

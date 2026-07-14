@@ -59,10 +59,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
     } else {
 
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
+    $cover_letter = trim($_POST['cover_letter'] ?? '');
 
     if ($internship_id) {
 
-        $applied = $application->apply($student_id, $internship_id);
+        $applied = $application->apply($student_id, $internship_id, $cover_letter);
 
         if ($applied) {
             $message = "<div class='badge badge-success'>Application submitted successfully.</div>";
@@ -149,9 +150,10 @@ value="<?= htmlspecialchars($keyword) ?>">
 <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
 
 <td data-label="Action">
-<form method="POST">
+<form method="POST" onsubmit="return confirm('Submit application?');">
     <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
+    <textarea name="cover_letter" placeholder="Optional cover letter..." rows="2" style="width:100%;margin-bottom:4px;font-size:11px;"></textarea>
     <button type="submit" name="apply" class="btn">Apply Now</button>
 </form>
 </td>

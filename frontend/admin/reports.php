@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Report.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Pdf.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -14,7 +15,7 @@ $reportObj = new Report();
 $reports = $reportObj->getAllReports();
 $search = "";
 
-// Download report
+// Download report (CSV)
 if (isset($_GET['download'])) {
     $report_id = filter_input(INPUT_GET, 'download', FILTER_VALIDATE_INT);
 
@@ -27,6 +28,24 @@ if (isset($_GET['download'])) {
     exit();
 }
 
+// Download report (PDF)
+if (isset($_GET['pdf'])) {
+    $report_id = filter_input(INPUT_GET, 'pdf', FILTER_VALIDATE_INT);
+    $report = $reportObj->getReport($report_id);
+
+    if ($report) {
+        $rows = json_decode($report['report_data'] ?? '[]', true);
+        $headers = !empty($rows) ? array_keys($rows[0]) : [];
+        $filename = preg_replace('/[^A-Za-z0-9_-]+/', '_', $report['report_name']) . '.pdf';
+        Pdf::generate($report['report_name'], $headers, $rows, $filename);
+        exit();
+    }
+
+    $_SESSION['error'] = "Report not found for PDF download.";
+    header("Location: reports.php");
+    exit();
+}
+
 // Generate report
 if (isset($_POST['generate_report'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
@@ -34,7 +53,7 @@ if (isset($_POST['generate_report'])) {
     } else {
     try {
         $report_type = $_POST['report_type'] ?? '';
-        
+
         switch ($report_type) {
             case 'applications':
                 $reportObj->generateApplicationsReport($_SESSION['user_id']);
@@ -69,9 +88,12 @@ if (isset($_GET['search'])) {
 }
 
 // Delete report
-if (isset($_GET['delete'])) {
+if (isset($_POST['delete']) && isset($_POST['report_id'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error'] = "Invalid form submission.";
+    } else {
     try {
-        $report_id = filter_input(INPUT_GET, 'delete', FILTER_VALIDATE_INT);
+        $report_id = filter_input(INPUT_POST, 'report_id', FILTER_VALIDATE_INT);
         if ($report_id === false || $report_id === null) {
             $_SESSION['error'] = "Invalid report ID.";
         } elseif ($reportObj->deleteReport($report_id)) {
@@ -81,6 +103,7 @@ if (isset($_GET['delete'])) {
         }
     } catch (Exception $e) {
         $_SESSION['error'] = "Error deleting report: " . $e->getMessage();
+    }
     }
     header("Location: reports.php");
     exit();
@@ -104,7 +127,7 @@ if (isset($_GET['delete'])) {
             <?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?>
         </p>
     <?php endif; ?>
-    
+
     <form method="POST">
         <?= csrfField() ?>
         <div class="form-group">
@@ -123,7 +146,7 @@ if (isset($_GET['delete'])) {
 <div class="card">
     <h2 class="center">Search Reports</h2>
     <form method="GET">
-        <input type="text" name="search" placeholder="Search by report name or type..." 
+        <input type="text" name="search" placeholder="Search by report name or type..."
                value="<?= htmlspecialchars($search) ?>">
         <button type="submit" class="btn">Search</button>
         <?php if ($search): ?>
@@ -134,7 +157,7 @@ if (isset($_GET['delete'])) {
 
 <div class="card">
     <h2 class="center">Generated Reports</h2>
-    
+
     <?php if ($reports && $reports->rowCount() > 0): ?>
         <table>
             <thead>
@@ -162,14 +185,14 @@ if (isset($_GET['delete'])) {
                         <td data-label="Actions">
                             <div class="action-group">
                                 <a href="reports.php?download=<?= $row['report_id']; ?>"
-                                   class="btn btn-sm btn-success">
-                                    Download
-                                </a>
-                                <a href="reports.php?delete=<?= $row['report_id']; ?>" 
-                                   onclick="return confirm('Are you sure you want to delete this report?');" 
-                                   class="btn btn-sm btn-danger">
-                                    Delete
-                                </a>
+                                   class="btn btn-sm btn-success">CSV</a>
+                                <a href="reports.php?pdf=<?= $row['report_id']; ?>"
+                                   class="btn btn-sm btn-primary">PDF</a>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                    <?= csrfField() ?>
+                                    <input type="hidden" name="report_id" value="<?= $row['report_id'] ?>">
+                                    <button type="submit" name="delete" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
