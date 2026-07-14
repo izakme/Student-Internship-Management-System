@@ -797,8 +797,9 @@ table tbody tr:hover {
 /* Internships table column widths */
 .internships-table {
   table-layout: fixed;
-  width: auto;
+  width: 100%;
   min-width: 700px;
+  overflow: visible;
 }
 
 .internships-table td,
