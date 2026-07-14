@@ -799,12 +799,12 @@ table tbody tr:hover {
   table-layout: fixed;
 }
 
-.internships-table .col-company  { width: 17%; }
-.internships-table .col-title    { width: 21%; }
-.internships-table .col-desc     { width: 24%; }
-.internships-table .col-req      { width: 20%; }
-.internships-table .col-deadline { width: 8%; }
-.internships-table .col-action   { width: 10%; }
+.internships-table .col-company  { width: 16%; }
+.internships-table .col-title    { width: 20%; }
+.internships-table .col-desc     { width: 23%; }
+.internships-table .col-req      { width: 19%; }
+.internships-table .col-deadline { width: 10%; }
+.internships-table .col-action   { width: 12%; }
 
 .internships-table td:nth-child(1),
 .internships-table th:nth-child(1),
@@ -822,6 +822,10 @@ table tbody tr:hover {
 .internships-table td:nth-child(6),
 .internships-table th:nth-child(6) {
   text-align: center;
+}
+
+.internships-table td:nth-child(6) {
+  overflow: visible;
 }
 
 .internships-table td:nth-child(6) .btn,
