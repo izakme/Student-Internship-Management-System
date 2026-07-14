@@ -115,10 +115,11 @@ include "../layouts/sidebar.php";
         <form method="POST" id="applyForm">
             <?= csrfField() ?>
             <input type="hidden" name="internship_id" id="modalInternshipId">
+            <input type="hidden" name="apply" value="1">
             <textarea name="cover_letter" placeholder="Optional cover letter / message to company..." rows="4" style="width:100%;margin-bottom:10px;"></textarea>
             <div style="display:flex;gap:8px;justify-content:flex-end;">
                 <button type="button" class="btn btn-sm" onclick="closeApplyModal()">Cancel</button>
-                <button type="submit" name="apply" class="btn btn-sm">Submit Application</button>
+                <button type="submit" class="btn btn-sm">Submit Application</button>
             </div>
         </form>
     </div>
