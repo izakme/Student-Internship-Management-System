@@ -798,6 +798,7 @@ table tbody tr:hover {
 .internships-table {
   table-layout: fixed;
   min-width: 700px;
+  overflow: visible;
 }
 
 .internships-table td,
@@ -807,10 +808,10 @@ table tbody tr:hover {
 
 .internships-table .col-company  { width: 15%; }
 .internships-table .col-title    { width: 19%; }
-.internships-table .col-desc     { width: 23%; }
-.internships-table .col-req      { width: 19%; }
+.internships-table .col-desc     { width: 22%; }
+.internships-table .col-req      { width: 18%; }
 .internships-table .col-deadline { width: 10%; }
-.internships-table .col-action   { width: 14%; }
+.internships-table .col-action   { width: 16%; }
 
 .internships-table td:nth-child(1),
 .internships-table th:nth-child(1),
