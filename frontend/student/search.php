@@ -153,8 +153,9 @@ value="<?= htmlspecialchars($keyword) ?>">
 <form method="POST" onsubmit="return confirm('Submit application?');">
     <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
-    <textarea name="cover_letter" placeholder="Optional cover letter..." rows="2" style="width:100%;margin-bottom:4px;font-size:11px;"></textarea>
-    <button type="submit" name="apply" class="btn">Apply Now</button>
+    <input type="hidden" name="apply" value="1">
+    <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;margin-bottom:4px;"></textarea>
+    <button type="submit" class="btn btn-sm" style="width:100%;font-size:11px;">Apply Now</button>
 </form>
 </td>
 
