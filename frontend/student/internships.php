@@ -98,7 +98,7 @@ include "../layouts/sidebar.php";
                             <input type="hidden" name="internship_id" value="<?= $row['internship_id'] ?>">
                             <input type="hidden" name="apply" value="1">
                             <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;margin-bottom:4px;"></textarea>
-                            <button type="submit" class="btn btn-sm" style="width:100%;font-size:11px;">Apply</button>
+                            <button type="submit" class="btn btn-sm" style="font-size:11px;">Apply</button>
                         </form>
                     <?php endif; ?>
                 </td>
