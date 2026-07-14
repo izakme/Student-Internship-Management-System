@@ -93,12 +93,7 @@ include "../layouts/sidebar.php";
                     <?php if ($has_applied): ?>
                         <span class="badge badge-success">✓ Applied</span>
                     <?php else: ?>
-                        <form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');" style="display:flex;gap:4px;align-items:flex-start;">
-                            <?= csrfField() ?>
-                            <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
-                            <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="1" style="flex:1;min-width:80px;font-size:11px;padding:4px;margin:0;"></textarea>
-                            <button type="submit" name="apply" class="btn btn-sm" style="white-space:nowrap;">Apply</button>
-                        </form>
+                        <button type="button" class="btn btn-sm" onclick="openApplyModal(<?= $row['internship_id'] ?>)">Apply</button>
                     <?php endif; ?>
                 </td>
             </tr>
@@ -113,5 +108,45 @@ include "../layouts/sidebar.php";
         <div class="empty-state">No internships available at the moment.</div>
     <?php endif; ?>
 </div>
+
+<div class="modal-overlay" id="applyModal" style="display:none;">
+    <div class="modal-card">
+        <h3>Apply for Internship</h3>
+        <form method="POST" id="applyForm">
+            <?= csrfField() ?>
+            <input type="hidden" name="internship_id" id="modalInternshipId">
+            <textarea name="cover_letter" placeholder="Optional cover letter / message to company..." rows="4" style="width:100%;margin-bottom:10px;"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button type="button" class="btn btn-sm" onclick="closeApplyModal()">Cancel</button>
+                <button type="submit" name="apply" class="btn btn-sm">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+}
+.modal-card {
+    background: #fff; padding: 24px; border-radius: var(--radius);
+    max-width: 480px; width: 90%; box-shadow: var(--shadow-hover);
+}
+</style>
+
+<script>
+function openApplyModal(id) {
+    document.getElementById('modalInternshipId').value = id;
+    document.getElementById('applyModal').style.display = 'flex';
+}
+function closeApplyModal() {
+    document.getElementById('applyModal').style.display = 'none';
+}
+document.getElementById('applyModal').addEventListener('click', function(e) {
+    if (e.target === this) closeApplyModal();
+});
+</script>
 
 <?php include "../layouts/footer.php"; ?>
