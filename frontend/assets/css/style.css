@@ -796,16 +796,13 @@ table tbody tr:hover {
 
 /* Internships table column widths */
 .internships-table {
-  table-layout: fixed;
   min-width: 700px;
 }
 
-.internships-table .col-company  { width: 16%; }
-.internships-table .col-title    { width: 22%; }
-.internships-table .col-desc     { width: 24%; }
-.internships-table .col-req      { width: 20%; }
-.internships-table .col-deadline { width: 8%; }
-.internships-table .col-action   { width: 10%; }
+.internships-table .col-desc,
+.internships-table .col-req {
+  width: 100%;
+}
 
 .internships-table td:nth-child(1),
 .internships-table th:nth-child(1),
@@ -826,14 +823,14 @@ table tbody tr:hover {
 }
 
 .internships-table td:nth-child(6) {
-  min-width: 90px;
+  padding: 6px;
 }
 
 .internships-table td:nth-child(6) .btn,
 .internships-table td:nth-child(6) .btn-sm,
 .internships-table td:nth-child(6) .badge {
-  padding: 4px 8px;
-  font-size: 11px;
+  padding: 6px 12px;
+  font-size: 12px;
   margin: 0;
   white-space: nowrap;
 }
