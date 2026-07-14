@@ -57,25 +57,25 @@ include "../layouts/sidebar.php";
 <div class="grid">
 
     <div class="stat-card">
-        <div class="stat-icon">&#128218;</div>
+        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
         <div class="stat-title">Available Internships</div>
         <div class="stat-number"><?php echo $availableCount; ?></div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon">&#128203;</div>
+        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
         <div class="stat-title">My Applications</div>
         <div class="stat-number"><?php echo $totalApplications; ?></div>
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon">&#9989;</div>
+        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
         <div class="stat-title">Accepted</div>
         <div class="stat-number"><?php echo $accepted; ?></div>
     </div>
 
     <div class="stat-card stat-card-warning">
-        <div class="stat-icon">&#9200;</div>
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
         <div class="stat-title">Pending</div>
         <div class="stat-number"><?php echo $pending; ?></div>
     </div>

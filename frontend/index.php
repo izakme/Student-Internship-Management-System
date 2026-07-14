@@ -10,6 +10,7 @@ session_start();
     <title>Student Internship Management System</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 
     <!-- Optional modern font -->
@@ -21,7 +22,7 @@ session_start();
 <!-- TOP BAR -->
 <div class="topbar">
     <span class="topbar-title">Student Internship Management System</span>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
 </div>
 
 <!-- HERO SECTION -->
@@ -54,19 +55,19 @@ session_start();
 
             <div class="stat-card">
                 <div class="stat-title">Step 1</div>
-                <div class="stat-number" style="font-size:28px;">🎓</div>
+                <div class="stat-number" style="font-size:28px;"><i class="fas fa-graduation-cap"></i></div>
                 <p>Students register and build professional profiles.</p>
             </div>
 
             <div class="stat-card">
                 <div class="stat-title">Step 2</div>
-                <div class="stat-number" style="font-size:28px;">🏢</div>
+                <div class="stat-number" style="font-size:28px;"><i class="fas fa-building"></i></div>
                 <p>Companies post internship opportunities easily.</p>
             </div>
 
             <div class="stat-card">
                 <div class="stat-title">Step 3</div>
-                <div class="stat-number" style="font-size:28px;">📝</div>
+                <div class="stat-number" style="font-size:28px;"><i class="fas fa-file-alt"></i></div>
                 <p>Students apply and get selected online.</p>
             </div>
 
@@ -116,18 +117,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var html = document.documentElement;
     if (localStorage.getItem('theme') === 'dark') {
         html.setAttribute('data-theme', 'dark');
-        if (themeToggle) themeToggle.textContent = '\u2600';
+        if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
     }
     if (themeToggle) {
         themeToggle.addEventListener('click', function() {
             if (html.getAttribute('data-theme') === 'dark') {
                 html.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
-                themeToggle.textContent = '\u263E';
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             } else {
                 html.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                themeToggle.textContent = '\u2600';
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
         });
     }

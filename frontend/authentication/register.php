@@ -77,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <link rel="stylesheet"
       href="../assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 
 <style>
@@ -102,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="topbar">
     <span class="topbar-title">SIMS</span>
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
 </div>
 
 <div class="content">
@@ -260,18 +261,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var html = document.documentElement;
     if (localStorage.getItem('theme') === 'dark') {
         html.setAttribute('data-theme', 'dark');
-        if (themeToggle) themeToggle.textContent = '\u2600';
+        if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
     }
     if (themeToggle) {
         themeToggle.addEventListener('click', function() {
             if (html.getAttribute('data-theme') === 'dark') {
                 html.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
-                themeToggle.textContent = '\u263E';
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             } else {
                 html.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                themeToggle.textContent = '\u2600';
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
         });
     }

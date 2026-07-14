@@ -69,7 +69,7 @@ include "../layouts/sidebar.php";
 <div class="grid">
 
     <div class="stat-card">
-        <div class="stat-icon">&#128101;</div>
+        <div class="stat-icon"><i class="fas fa-users"></i></div>
         <div class="stat-title">Total Users</div>
         <div class="stat-number">
             <?php echo $totalUsers; ?>
@@ -77,7 +77,7 @@ include "../layouts/sidebar.php";
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon">&#128218;</div>
+        <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
         <div class="stat-title">Internships</div>
         <div class="stat-number">
             <?php echo $totalInternships; ?>
@@ -85,7 +85,7 @@ include "../layouts/sidebar.php";
     </div>
 
     <div class="stat-card">
-        <div class="stat-icon">&#128203;</div>
+        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
         <div class="stat-title">Applications</div>
         <div class="stat-number">
             <?php echo $totalApplications; ?>
@@ -93,7 +93,7 @@ include "../layouts/sidebar.php";
     </div>
 
     <div class="stat-card stat-card-warning">
-        <div class="stat-icon">&#9200;</div>
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
         <div class="stat-title">Pending</div>
         <div class="stat-number">
             <?php echo $pendingApplications; ?>

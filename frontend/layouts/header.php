@@ -35,6 +35,7 @@ if (!isset($recentApps)) $recentApps = [];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internship System</title>
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>if (localStorage.getItem('theme')==='dark') document.documentElement.setAttribute('data-theme','dark');</script>
     <script>
@@ -70,18 +71,18 @@ if (!isset($recentApps)) $recentApps = [];
         var html = document.documentElement;
         if (localStorage.getItem('theme') === 'dark') {
             html.setAttribute('data-theme', 'dark');
-            if (themeToggle) themeToggle.textContent = '\u2600';
+            if (themeToggle) themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
         if (themeToggle) {
             themeToggle.addEventListener('click', function() {
                 if (html.getAttribute('data-theme') === 'dark') {
                     html.removeAttribute('data-theme');
                     localStorage.setItem('theme', 'light');
-                    themeToggle.textContent = '\u263E';
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
                 } else {
                     html.setAttribute('data-theme', 'dark');
                     localStorage.setItem('theme', 'dark');
-                    themeToggle.textContent = '\u2600';
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
                 }
             });
         }
@@ -140,10 +141,10 @@ if (!isset($recentApps)) $recentApps = [];
 <body>
 
 <div class="topbar">
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">&#9776;</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
 
     <div class="search-bar">
-        <span class="search-icon">&#128269;</span>
+        <span class="search-icon"><i class="fas fa-search"></i></span>
         <input type="text" placeholder="Search pages..." id="searchInput">
     </div>
 
@@ -152,14 +153,14 @@ if (!isset($recentApps)) $recentApps = [];
     <div class="topbar-datetime" id="topbarClock"></div>
 
     <div class="topbar-user">
-        <span class="topbar-user-icon">&#128100;</span>
+        <span class="topbar-user-icon"><i class="fas fa-user"></i></span>
         <span class="topbar-user-name"><?php echo $loggedInName; ?></span>
     </div>
 
     <?php if ($loggedInRole === 'admin' && isset($pendingCount)): ?>
     <div class="notification-wrapper">
         <button class="notification-btn" id="notifBtn">
-            &#128276;
+            <i class="fas fa-bell"></i>
             <?php if ($pendingCount > 0): ?>
             <span class="notification-badge"><?php echo $pendingCount; ?></span>
             <?php endif; ?>
@@ -171,7 +172,7 @@ if (!isset($recentApps)) $recentApps = [];
             <?php if (!empty($recentApps)): ?>
                 <?php foreach ($recentApps as $app): ?>
                 <div class="notification-item">
-                    <span class="notif-icon">&#128100;</span>
+                    <span class="notif-icon"><i class="fas fa-user"></i></span>
                     <div class="notif-text">
                         <strong><?php echo htmlspecialchars($app['full_name']); ?></strong>
                         applied for <em><?php echo htmlspecialchars($app['title']); ?></em>
@@ -181,7 +182,7 @@ if (!isset($recentApps)) $recentApps = [];
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="notification-item">
-                    <span class="notif-icon">&#9989;</span>
+                    <span class="notif-icon"><i class="fas fa-check-circle"></i></span>
                     <div class="notif-text">No new applications</div>
                 </div>
             <?php endif; ?>
@@ -189,7 +190,7 @@ if (!isset($recentApps)) $recentApps = [];
     </div>
     <?php endif; ?>
 
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">&#9790;</button>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
 </div>
 
 <div class="layout">

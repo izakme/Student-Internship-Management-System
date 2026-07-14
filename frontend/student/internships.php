@@ -91,7 +91,7 @@ include "../layouts/sidebar.php";
                 <td data-label="Deadline"><?php echo htmlspecialchars(date("M j, Y", strtotime($row['deadline']))); ?></td>
                 <td data-label="Action">
                     <?php if ($has_applied): ?>
-                        <span class="badge badge-success">✓ Applied</span>
+                        <span class="badge badge-success"><i class="fas fa-check"></i> Applied</span>
                     <?php else: ?>
                         <button type="button" class="btn btn-sm" onclick="openApplyModal(<?= $row['internship_id'] ?>)">Apply</button>
                     <?php endif; ?>
