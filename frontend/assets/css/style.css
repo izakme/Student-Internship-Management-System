@@ -797,14 +797,15 @@ table tbody tr:hover {
 /* Internships table column widths */
 .internships-table {
   table-layout: fixed;
+  min-width: 700px;
 }
 
 .internships-table .col-company  { width: 16%; }
-.internships-table .col-title    { width: 20%; }
-.internships-table .col-desc     { width: 23%; }
-.internships-table .col-req      { width: 19%; }
-.internships-table .col-deadline { width: 10%; }
-.internships-table .col-action   { width: 12%; }
+.internships-table .col-title    { width: 22%; }
+.internships-table .col-desc     { width: 24%; }
+.internships-table .col-req      { width: 20%; }
+.internships-table .col-deadline { width: 8%; }
+.internships-table .col-action   { width: 10%; }
 
 .internships-table td:nth-child(1),
 .internships-table th:nth-child(1),
@@ -825,7 +826,7 @@ table tbody tr:hover {
 }
 
 .internships-table td:nth-child(6) {
-  overflow: visible;
+  min-width: 90px;
 }
 
 .internships-table td:nth-child(6) .btn,
@@ -835,12 +836,6 @@ table tbody tr:hover {
   font-size: 11px;
   margin: 0;
   white-space: nowrap;
-}
-
-@media (max-width: 768px) {
-  .internships-table {
-    table-layout: auto;
-  }
 }
 
 /* AUTH */
