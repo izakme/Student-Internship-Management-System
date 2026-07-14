@@ -93,11 +93,11 @@ include "../layouts/sidebar.php";
                     <?php if ($has_applied): ?>
                         <span class="badge badge-success">✓ Applied</span>
                     <?php else: ?>
-                        <form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');">
+                        <form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');" style="display:flex;gap:4px;align-items:flex-start;">
                             <?= csrfField() ?>
                             <input type="hidden" name="internship_id" value="<?php echo $row['internship_id']; ?>">
-                            <textarea name="cover_letter" placeholder="Optional cover letter / message to company..." rows="2" style="width:100%;margin-bottom:4px;font-size:11px;"></textarea>
-                            <button type="submit" name="apply" class="btn btn-sm">Apply</button>
+                            <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="1" style="flex:1;min-width:80px;font-size:11px;padding:4px;margin:0;"></textarea>
+                            <button type="submit" name="apply" class="btn btn-sm" style="white-space:nowrap;">Apply</button>
                         </form>
                     <?php endif; ?>
                 </td>
