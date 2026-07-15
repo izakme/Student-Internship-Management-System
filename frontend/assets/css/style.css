@@ -798,6 +798,7 @@ table tbody tr:hover {
 .internships-table {
   width: auto;
   min-width: 700px;
+  overflow: visible;
 }
 
 .internships-table td,
