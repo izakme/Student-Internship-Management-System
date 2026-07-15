@@ -150,11 +150,11 @@ value="<?= htmlspecialchars($keyword) ?>">
 <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
 
 <td data-label="Action">
-<form method="POST" onsubmit="return confirm('Submit application?');">
+<form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');">
     <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
     <input type="hidden" name="apply" value="1">
-    <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;margin-bottom:4px;"></textarea>
+    <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;"></textarea>
     <button type="submit" class="btn btn-sm" style="font-size:11px;">Apply</button>
 </form>
 </td>

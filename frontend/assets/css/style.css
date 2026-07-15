@@ -759,7 +759,9 @@ table tbody tr:hover {
 
 /* INLINE FORM */
 .inline-form {
-  display: inline;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 /* SUCCESS / ERROR MESSAGES */
