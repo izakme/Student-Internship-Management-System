@@ -53,6 +53,7 @@ return [
     'Enter your email' => 'Weka barua pepe yako',
     'Enter your email or username' => 'Weka barua pepe au jina la mtumiaji',
     'Please enter your email or username.' => 'Tafadhali weka barua pepe au jina la mtumiaji.',
+    'This field is required.' => 'Sehemu hii inahitajika.',
     'Password' => 'Nywila',
     'Enter your password' => 'Weka nywila yako',
     'Password is required.' => 'Nywila inahitajika.',

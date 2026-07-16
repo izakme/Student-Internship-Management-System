@@ -53,6 +53,7 @@ return [
     'Enter your email' => 'Enter your email',
     'Enter your email or username' => 'Enter your email or username',
     'Please enter your email or username.' => 'Please enter your email or username.',
+    'This field is required.' => 'This field is required.',
     'Password' => 'Password',
     'Enter your password' => 'Enter your password',
     'Password is required.' => 'Password is required.',

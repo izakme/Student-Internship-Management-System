@@ -264,8 +264,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (email === '') {
             emailInput.classList.add('error');
+            emailError.textContent = '<?= __('This field is required.') ?>';
             emailError.classList.add('show');
             valid = false;
+        } else if (email.indexOf('@') !== -1) {
+            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                emailInput.classList.add('error');
+                emailError.textContent = '<?= __('Please enter a valid email address.') ?>';
+                emailError.classList.add('show');
+                valid = false;
+            } else {
+                emailInput.classList.remove('error');
+                emailError.classList.remove('show');
+            }
         } else {
             emailInput.classList.remove('error');
             emailError.classList.remove('show');
