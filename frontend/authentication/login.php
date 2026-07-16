@@ -20,30 +20,38 @@ require_once __DIR__ . "/../../backend/classes/auth.php";
 require_once __DIR__ . "/../../backend/helpers/csrf.php";
 require_once __DIR__ . "/../../backend/helpers/App.php";
 
-$message = "";
+$message = $_SESSION['_flash_message'] ?? '';
+unset($_SESSION['_flash_message']);
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $message = __("Invalid form submission.");
-    } else {
+        $_SESSION['_flash_message'] = __("Invalid form submission.");
+        header("Location: login.php");
+        exit();
+    }
 
-    $rateCheck = App::rateLimitCheck('login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 900);
+    $email = trim($_POST['email']);
+    $rateKey = 'login_' . $email . '_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown');
+    $rateCheck = App::rateLimitCheck($rateKey, 5, 900);
     if ($rateCheck !== true) {
-        $message = __("Too many attempts. Try again in") . " " . ceil($rateCheck / 60) . " " . __("minutes.");
-    } else {
+        $_SESSION['_flash_message'] = __("Too many attempts. Try again in") . " " . ceil($rateCheck / 60) . " " . __("minutes.");
+        header("Location: login.php");
+        exit();
+    }
 
     $db = (new Database())->connect();
 
     $user = new User($db);
     $auth = new Auth($user);
 
-    $email = trim($_POST['email']);
     $password = trim($_POST['password']);
 
     $login = $auth->login($email, $password);
 
     if ($login) {
+
+        unset($_SESSION['rate_limit_' . $rateKey]);
 
         if (isset($_SESSION['role'])) {
 
@@ -63,12 +71,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        $message = __("Login successful but no role found.");
-    } else {
-        $message = __("Invalid email or password.");
+        $_SESSION['_flash_message'] = __("Login successful but no role found.");
+        header("Location: login.php");
+        exit();
     }
-    }
-    }
+
+    $_SESSION['_flash_message'] = __("Invalid email or password.");
+    header("Location: login.php");
+    exit();
 }
 ?>
 

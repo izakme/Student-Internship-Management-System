@@ -210,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 type="password"
                 name="password"
                 id="regPassword"
-                placeholder="Create a password (min 8 chars, 1 uppercase, 1 digit)"
+                placeholder="Create a password"
                 onkeyup="checkPasswordStrength()"
                 required
             >
