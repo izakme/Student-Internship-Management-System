@@ -2,13 +2,13 @@
 session_start();
 
 if (isset($_GET['lang'])) {
-    require_once __DIR__ . "/../../backend/helpers/Language.php";
+    require_once __DIR__ . "/../backend/helpers/Language.php";
     setLanguage($_GET['lang']);
     header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
     exit();
 }
 
-require_once __DIR__ . "/../../backend/helpers/Language.php";
+require_once __DIR__ . "/../backend/helpers/Language.php";
 ?>
 
 <!DOCTYPE html>
