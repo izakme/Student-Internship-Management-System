@@ -150,7 +150,14 @@ include "../layouts/sidebar.php";
 </div>
 
 <div class="card">
-    <h2><?= __('My Internship Listings') ?></h2>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;"><?= __('My Internship Listings') ?></h2>
+        <?php if ($internships->rowCount() > 0): ?>
+        <button onclick="window.print()" class="btn btn-sm no-print" style="display:inline-flex;align-items:center;gap:6px;">
+            <i class="fas fa-print"></i> <?= __('Print') ?>
+        </button>
+        <?php endif; ?>
+    </div>
 
     <div class="table-wrap">
     <table>
@@ -159,7 +166,7 @@ include "../layouts/sidebar.php";
             <th><?= __('ID') ?></th>
             <th><?= __('Title') ?></th>
             <th><?= __('Deadline') ?></th>
-            <th><?= __('Actions') ?></th>
+            <th class="no-print"><?= __('Actions') ?></th>
         </tr>
         </thead>
         <tbody>
@@ -169,7 +176,7 @@ include "../layouts/sidebar.php";
                     <td data-label="ID"><?= htmlspecialchars($row['internship_id']) ?></td>
                     <td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
                     <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
-                    <td data-label="Actions">
+                    <td data-label="Actions" class="no-print">
                         <div class="action-group">
                             <a href="internships.php?edit=<?php echo $row['internship_id']; ?>"
                                class="btn btn-sm"><?= __('Edit') ?></a>
@@ -191,5 +198,17 @@ include "../layouts/sidebar.php";
     </table>
     </div>
 </div>
+
+<style>
+@media print {
+    .topbar, .sidebar, .sidebar-overlay, .site-footer, .no-print,
+    .card:first-of-type { display: none !important; }
+    .layout, .content { margin: 0 !important; padding: 0 !important; }
+    body { background: white !important; }
+    .card { box-shadow: none !important; border: 1px solid #ddd !important; break-inside: avoid; }
+    table { font-size: 12px; }
+    th { background: #0d6efd !important; color: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
 
 <?php include "../layouts/footer.php"; ?>
