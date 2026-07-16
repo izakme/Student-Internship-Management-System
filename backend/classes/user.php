@@ -212,4 +212,15 @@ class User
 
         return $stmt->execute([$username, $email, $user_id]);
     }
+
+    /* =========================
+       UPDATE PASSWORD
+    ========================= */
+    public function updatePassword($user_id, $newPassword)
+    {
+        $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
+        $query = "UPDATE users SET password = ? WHERE user_id = ?";
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$hashed, $user_id]);
+    }
 }

@@ -30,6 +30,7 @@
     <?php endif; ?>
 
     <?php if (isset($_SESSION['role'])): ?>
+        <a href="../authentication/change_password.php"><?= __('Change Password') ?></a>
         <a href="../authentication/logout.php"><?= __('Logout') ?></a>
     <?php endif; ?>
 
