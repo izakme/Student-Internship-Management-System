@@ -297,6 +297,13 @@ document.addEventListener('DOMContentLoaded', function() {
         emailError.classList.remove('show');
     });
 
+    passwordInput.addEventListener('blur', function() {
+        if (this.value.trim() === '') {
+            this.classList.add('error');
+            passwordError.classList.add('show');
+        }
+    });
+
     passwordInput.addEventListener('input', function() {
         this.classList.remove('error');
         passwordError.classList.remove('show');
