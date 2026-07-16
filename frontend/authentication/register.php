@@ -211,11 +211,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 name="password"
                 id="regPassword"
                 placeholder="Create a password (min 8 chars, 1 uppercase, 1 digit)"
+                onkeyup="checkPasswordStrength()"
                 required
             >
             <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:12px;">
                 Must be at least 8 characters with an uppercase letter and a digit.
             </div>
+            <div id="passwordStrength" style="margin-top:5px;margin-bottom:12px;"></div>
 
             <label>Confirm Password</label>
 
@@ -280,6 +282,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </footer>
 
 <script>
+function checkPasswordStrength() {
+    var pw = document.getElementById('regPassword').value;
+    var el = document.getElementById('passwordStrength');
+    var lenOk = pw.length >= 8;
+    var upperOk = /[A-Z]/.test(pw);
+    var digitOk = /[0-9]/.test(pw);
+    var score = (lenOk ? 1 : 0) + (upperOk ? 1 : 0) + (digitOk ? 1 : 0);
+
+    if (pw.length === 0) {
+        el.innerHTML = '';
+        return;
+    }
+
+    if (score === 3) {
+        el.innerHTML = '<span style="color:#28a745;font-weight:600;"><i class="fas fa-shield-alt"></i> Strong</span>';
+    } else if (score === 2) {
+        el.innerHTML = '<span style="color:#e67e22;font-weight:600;"><i class="fas fa-exclamation-triangle"></i> Medium</span>';
+    } else {
+        el.innerHTML = '<span style="color:#e74c3c;font-weight:600;"><i class="fas fa-times-circle"></i> Weak</span>';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var themeToggle = document.getElementById('themeToggle');
     var html = document.documentElement;
