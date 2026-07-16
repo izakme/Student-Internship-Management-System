@@ -42,7 +42,7 @@ class Report
     ========================= */
     public function getAllReports()
     {
-        $sql = "SELECT r.*, u.full_name
+        $sql = "SELECT r.*, u.username
                 FROM {$this->table} r
                 LEFT JOIN users u ON r.generated_by = u.user_id
                 ORDER BY r.generated_date DESC";
@@ -58,7 +58,7 @@ class Report
     ========================= */
     public function getReport($report_id)
     {
-        $sql = "SELECT r.*, u.full_name
+        $sql = "SELECT r.*, u.username
                 FROM {$this->table} r
                 LEFT JOIN users u ON r.generated_by = u.user_id
                 WHERE r.report_id = ?
@@ -116,7 +116,7 @@ class Report
     ========================= */
     public function searchReports($keyword)
     {
-        $sql = "SELECT r.*, u.full_name
+        $sql = "SELECT r.*, u.username
                 FROM {$this->table} r
                 LEFT JOIN users u ON r.generated_by = u.user_id
                 WHERE r.report_name LIKE ?
@@ -139,7 +139,7 @@ class Report
         try {
             $sql = "SELECT 
                         a.application_id,
-                        u.full_name as student_name,
+                        u.username as student_name,
                         s.registration_no,
                         i.title as internship_title,
                         c.company_name,
@@ -208,7 +208,7 @@ class Report
     {
         try {
             $sql = "SELECT 
-                        u.full_name,
+                        u.username,
                         s.registration_no,
                         s.course,
                         s.year_of_study,
@@ -218,7 +218,7 @@ class Report
                     INNER JOIN users u ON s.user_id = u.user_id
                     LEFT JOIN applications a ON s.student_id = a.student_id
                     GROUP BY s.student_id
-                    ORDER BY u.full_name ASC";
+                    ORDER BY u.username ASC";
 
             $stmt = $this->conn->prepare($sql);
             $stmt->execute();

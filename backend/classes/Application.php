@@ -64,7 +64,7 @@ class Application
     {
         try {
             $stmt = $this->conn->prepare("
-                SELECT u.email, c.company_name, stu.full_name as student_name, i.title
+                SELECT u.email, c.company_name, stu.username as student_name, i.title
                 FROM internships i
                 JOIN companies c ON i.company_id = c.company_id
                 JOIN users u ON c.user_id = u.user_id
@@ -116,7 +116,7 @@ class Application
             SELECT
                 a.application_id,
                 s.registration_no,
-                u.full_name,
+                u.username,
                 i.title,
                 a.status,
                 a.cover_letter,
@@ -196,7 +196,7 @@ class Application
     {
         try {
             $stmt = $this->conn->prepare("
-                SELECT u.email, u.full_name, a.status, i.title
+                SELECT u.email, u.username, a.status, i.title
                 FROM applications a
                 JOIN students s ON a.student_id = s.student_id
                 JOIN users u ON s.user_id = u.user_id
@@ -211,7 +211,7 @@ class Application
                 $mailer = new Mailer();
                 $mailer->sendApplicationStatus(
                     $data['email'],
-                    $data['full_name'],
+                    $data['username'],
                     $data['title'],
                     $data['status']
                 );
@@ -317,7 +317,7 @@ class Application
         $stmt = $this->conn->prepare("
             SELECT
                 a.application_id,
-                u.full_name,
+                u.username,
                 s.registration_no,
                 i.title,
                 a.status,

@@ -18,12 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $db = (new Database())->connect();
         $user = new User($db);
 
-        $full_name = trim($_POST['full_name'] ?? '');
+        $username = trim($_POST['username'] ?? '');
         $email     = trim($_POST['email'] ?? '');
         $password  = trim($_POST['password'] ?? '');
         $role      = $_POST['role'] ?? '';
 
-        if (empty($full_name) || empty($email) || empty($password) || empty($role)) {
+        if (empty($username) || empty($email) || empty($password) || empty($role)) {
 
             $error = "All fields are required.";
 
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             try {
                 $result = $user->register(
-                    $full_name,
+                    $username,
                     $email,
                     $password,
                     $role
@@ -175,7 +175,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             <input
                 type="text"
-                name="full_name"
+                name="username"
                 placeholder="Enter your full name"
                 required
             >

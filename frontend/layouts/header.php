@@ -174,7 +174,7 @@ if (!isset($recentApps)) $recentApps = [];
                 <div class="notification-item">
                     <span class="notif-icon"><i class="fas fa-user"></i></span>
                     <div class="notif-text">
-                        <strong><?php echo htmlspecialchars($app['full_name']); ?></strong>
+                        <strong><?php echo htmlspecialchars($app['username']); ?></strong>
                         applied for <em><?php echo htmlspecialchars($app['title']); ?></em>
                         <div class="notif-time"><?php echo date('M j, g:i A', strtotime($app['application_date'])); ?></div>
                     </div>

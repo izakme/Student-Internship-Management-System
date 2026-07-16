@@ -13,7 +13,7 @@ class User
     /* =========================
        REGISTER USER
     ========================= */
-    public function register($full_name, $email, $password, $role)
+    public function register($username, $email, $password, $role)
     {
         $allowedRoles = ['student', 'company'];
         if (!in_array($role, $allowedRoles, true)) {
@@ -26,15 +26,15 @@ class User
             throw new Exception("An account with this email already exists.");
         }
 
-        $query = "INSERT INTO users (full_name, email, password, role)
-                  VALUES (:full_name, :email, :password, :role)";
+        $query = "INSERT INTO users (username, email, password, role)
+                  VALUES (:username, :email, :password, :role)";
 
         $stmt = $this->conn->prepare($query);
 
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         $stmt->execute([
-            ":full_name" => $full_name,
+            ":username" => $username,
             ":email" => $email,
             ":password" => $hashedPassword,
             ":role" => $role
@@ -161,14 +161,14 @@ class User
     /* =========================
        UPDATE USER
     ========================= */
-    public function updateUser($user_id, $full_name, $email)
+    public function updateUser($user_id, $username, $email)
     {
         $query = "UPDATE users 
-                  SET full_name = ?, email = ?
+                  SET username = ?, email = ?
                   WHERE user_id = ?";
 
         $stmt = $this->conn->prepare($query);
 
-        return $stmt->execute([$full_name, $email, $user_id]);
+        return $stmt->execute([$username, $email, $user_id]);
     }
 }

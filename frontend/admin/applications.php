@@ -17,7 +17,7 @@ $statusFilter = $_GET['status'] ?? '';
 $search = $_GET['search'] ?? '';
 
 if ($statusFilter || $search) {
-    $sql = "SELECT a.application_id, s.registration_no, u.full_name, i.title, a.status, a.application_date
+    $sql = "SELECT a.application_id, s.registration_no, u.username, i.title, a.status, a.application_date
             FROM applications a
             INNER JOIN students s ON a.student_id = s.student_id
             INNER JOIN users u ON s.user_id = u.user_id
@@ -29,7 +29,7 @@ if ($statusFilter || $search) {
         $params[] = $statusFilter;
     }
     if ($search) {
-        $sql .= " AND (u.full_name LIKE ? OR i.title LIKE ? OR s.registration_no LIKE ?)";
+        $sql .= " AND (u.username LIKE ? OR i.title LIKE ? OR s.registration_no LIKE ?)";
         $params[] = "%$search%";
         $params[] = "%$search%";
         $params[] = "%$search%";
@@ -87,7 +87,7 @@ include "../layouts/sidebar.php";
         <?php while ($row = $applications->fetch(PDO::FETCH_ASSOC)): ?>
             <tr>
                 <td data-label="ID"><?= htmlspecialchars($row['application_id']) ?></td>
-                <td data-label="Student"><?= htmlspecialchars($row['full_name']) ?></td>
+                <td data-label="Student"><?= htmlspecialchars($row['username']) ?></td>
                 <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
                 <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
                 <td data-label="Status">

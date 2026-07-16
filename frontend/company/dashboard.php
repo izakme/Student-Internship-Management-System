@@ -93,7 +93,7 @@ include "../layouts/sidebar.php";
             <tbody>
                 <?php foreach ($recentApplicants as $app): ?>
                 <tr>
-                    <td data-label="Name"><?php echo htmlspecialchars($app['full_name']); ?></td>
+                    <td data-label="Name"><?php echo htmlspecialchars($app['username']); ?></td>
                     <td data-label="Internship"><?php echo htmlspecialchars($app['title']); ?></td>
                     <td data-label="Status">
                         <span class="badge badge-<?php

@@ -88,7 +88,7 @@ include "../layouts/sidebar.php";
         <?= csrfField() ?>
         <div class="form-group">
             <label>Full Name</label>
-            <input type="text" value="<?= htmlspecialchars($data['full_name'] ?? '') ?>" disabled>
+            <input type="text" value="<?= htmlspecialchars($data['username'] ?? '') ?>" disabled>
         </div>
         <div class="form-group">
             <label>Email</label>

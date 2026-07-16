@@ -73,7 +73,7 @@ include "../layouts/sidebar.php";
         <?php while ($row = $students->fetch(PDO::FETCH_ASSOC)): ?>
             <tr>
                 <td><?= htmlspecialchars($row['student_id']) ?></td>
-                <td><?= htmlspecialchars($row['full_name']) ?></td>
+                <td><?= htmlspecialchars($row['username']) ?></td>
                 <td><?= htmlspecialchars($row['email']) ?></td>
                 <td><?= htmlspecialchars($row['registration_no'] ?? 'N/A') ?></td>
                 <td><?= htmlspecialchars($row['course'] ?? 'N/A') ?></td>

@@ -81,7 +81,7 @@ include "../layouts/sidebar.php";
             <?php while ($row = $applicants->fetch(PDO::FETCH_ASSOC)): ?>
                 <tr>
                     <td data-label="ID"><?= htmlspecialchars($row['application_id']) ?></td>
-                    <td data-label="Student"><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td data-label="Student"><?= htmlspecialchars($row['username']) ?></td>
                     <td data-label="Reg No"><?= htmlspecialchars($row['registration_no']) ?></td>
                     <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
                     <td data-label="Cover Letter" style="max-width:200px;">

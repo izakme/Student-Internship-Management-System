@@ -112,7 +112,7 @@ CREATE TABLE `reports` (
 
 INSERT INTO `reports` (`report_id`, `generated_by`, `report_type`, `generated_date`, `report_name`, `report_data`) VALUES
 (1, 1, 'Applications', '2026-07-02 17:23:02', 'Applications Report - 2026-07-02 19:23:02', '[]'),
-(2, 1, 'Students', '2026-07-03 18:40:47', 'Students Report - 2026-07-03 20:40:47', '[{\"full_name\":\"Alvin Frank Changawa\",\"registration_no\":null,\"course\":null,\"year_of_study\":null,\"email\":\"changawalvin@gmail.com\",\"applications\":1},{\"full_name\":\"Isaack Changawa\",\"registration_no\":\"02.9198.01.01.2021\",\"course\":\"Diploma in Information Technology\",\"year_of_study\":2021,\"email\":\"changawaisaac016@gmail.com\",\"applications\":2}]');
+(2, 1, 'Students', '2026-07-03 18:40:47', 'Students Report - 2026-07-03 20:40:47', '[{\"username\":\"Alvin Frank Changawa\",\"registration_no\":null,\"course\":null,\"year_of_study\":null,\"email\":\"changawalvin@gmail.com\",\"applications\":1},{\"username\":\"Isaack Changawa\",\"registration_no\":\"02.9198.01.01.2021\",\"course\":\"Diploma in Information Technology\",\"year_of_study\":2021,\"email\":\"changawaisaac016@gmail.com\",\"applications\":2}]');
 
 -- --------------------------------------------------------
 
@@ -145,7 +145,7 @@ INSERT INTO `students` (`student_id`, `user_id`, `registration_no`, `course`, `y
 
 CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
-  `full_name` varchar(100) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `role` enum('student','company','admin') DEFAULT NULL,
@@ -156,7 +156,7 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `full_name`, `email`, `password`, `role`, `created_at`) VALUES
+INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `created_at`) VALUES
 (1, 'System Administrator', 'admin@internship.com', '$2b$12$uyhjd.em1dkpDe8uDNwfbOumdBzsGuzyHiiRT8.pq60/vcZgj.7IW', 'admin', '2026-07-01 11:33:17'),
 (2, 'ABC Technologies', 'abc@gmail.com', '$2y$10$09LiCzZb.SzOfF/PWmA3AeE313vkN0SkNe3vaR7ii29zeYkFlcSKy', 'company', '2026-07-01 11:38:19'),
 (3, 'Prime Cargo Logistics', 'prime@gmail.com', '$2y$10$5CSTq/5XjJZgem15fD/rLu0P0zi3kXarunYXRCd0wkgtu3h06OKu2', 'company', '2026-07-01 11:38:55'),

@@ -18,7 +18,7 @@ class Student
     ========================= */
     public function getStudentByUser($user_id)
     {
-        $sql = "SELECT s.*, u.email, u.full_name
+        $sql = "SELECT s.*, u.email, u.username
                 FROM {$this->table} s
                 JOIN users u ON s.user_id = u.user_id
                 WHERE s.user_id = ?
@@ -35,7 +35,7 @@ class Student
     ========================= */
     public function getStudent($student_id)
     {
-        $sql = "SELECT s.*, u.email, u.full_name
+        $sql = "SELECT s.*, u.email, u.username
                 FROM {$this->table} s
                 JOIN users u ON s.user_id = u.user_id
                 WHERE s.student_id = ?
@@ -52,10 +52,10 @@ class Student
     ========================= */
     public function getAllStudents()
     {
-        $sql = "SELECT s.*, u.email, u.full_name
+        $sql = "SELECT s.*, u.email, u.username
                 FROM {$this->table} s
                 JOIN users u ON s.user_id = u.user_id
-                ORDER BY u.full_name ASC";
+                ORDER BY u.username ASC";
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();

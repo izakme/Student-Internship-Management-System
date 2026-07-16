@@ -48,7 +48,7 @@ foreach ($monthlyData as $row) {
 /* Recent applications for notifications */
 $recentApps = [];
 $stmt = $db->query("
-    SELECT a.application_id, u.full_name, i.title, a.application_date
+    SELECT a.application_id, u.username, i.title, a.application_date
     FROM applications a
     INNER JOIN students s ON a.student_id = s.student_id
     INNER JOIN users u ON s.user_id = u.user_id

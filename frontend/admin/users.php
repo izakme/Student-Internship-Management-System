@@ -63,7 +63,7 @@ if ($roleFilter || $search) {
         $params[] = $roleFilter;
     }
     if ($search) {
-        $sql .= " AND (full_name LIKE ? OR email LIKE ?)";
+        $sql .= " AND (username LIKE ? OR email LIKE ?)";
         $params[] = "%$search%";
         $params[] = "%$search%";
     }
@@ -127,7 +127,7 @@ include "../layouts/sidebar.php";
                 <tr>
                     <td><input type="checkbox" name="selected[]" value="<?= $row['user_id'] ?>" class="rowCheckbox" <?= $row['user_id'] === $_SESSION['user_id'] ? 'disabled' : '' ?>></td>
                     <td><?= htmlspecialchars($row['user_id']) ?></td>
-                    <td><?= htmlspecialchars($row['full_name']) ?></td>
+                    <td><?= htmlspecialchars($row['username']) ?></td>
                     <td><?= htmlspecialchars($row['email']) ?></td>
                     <td>
                         <span class="badge badge-<?php

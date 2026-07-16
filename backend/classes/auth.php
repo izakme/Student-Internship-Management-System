@@ -22,7 +22,7 @@ class Auth
         session_regenerate_id(true);
 
         $_SESSION['user_id'] = $user['user_id'];
-        $_SESSION['name'] = $user['full_name'];
+        $_SESSION['name'] = $user['username'];
         $_SESSION['role'] = $user['role'];
 
         // GET STUDENT ID IF STUDENT

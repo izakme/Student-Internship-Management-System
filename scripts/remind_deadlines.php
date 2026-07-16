@@ -32,7 +32,7 @@ foreach ($expiring as $internship) {
 
     // Notify students who applied
     $stuStmt = $db->prepare("
-        SELECT DISTINCT u.email, u.full_name
+        SELECT DISTINCT u.email, u.username
         FROM applications a
         JOIN students s ON a.student_id = s.student_id
         JOIN users u ON s.user_id = u.user_id
@@ -41,7 +41,7 @@ foreach ($expiring as $internship) {
     $stuStmt->execute([$internship['internship_id']]);
     while ($student = $stuStmt->fetch(PDO::FETCH_ASSOC)) {
         $body = "<h2>Deadline Reminder</h2>
-                 <p>Dear {$student['full_name']},</p>
+                 <p>Dear {$student['username']},</p>
                  <p>The internship <strong>{$internship['title']}</strong> at {$internship['company_name']} is closing in 3 days.</p>
                  <p>Deadline: {$internship['deadline']}</p>";
         $mailer->send($student['email'], $subject, $body);
