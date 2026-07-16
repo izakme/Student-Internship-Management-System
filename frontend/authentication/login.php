@@ -277,9 +277,11 @@ document.addEventListener('DOMContentLoaded', function() {
         var input = document.getElementById('email');
         if (method === 'email') {
             label.textContent = '<?= __('Email Address') ?>';
+            input.type = 'email';
             input.placeholder = '<?= __('Enter your email') ?>';
         } else {
             label.textContent = '<?= __('Username') ?>';
+            input.type = 'text';
             input.placeholder = '<?= __('Enter your username') ?>';
         }
     }
