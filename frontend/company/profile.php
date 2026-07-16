@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/company.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -20,7 +21,7 @@ $company = $companyObj->getCompanyByUserId($company_user_id);
 // Update profile
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $company_name = $_POST['company_name'] ?? '';
     $location = $_POST['location'] ?? '';
@@ -28,10 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($company_name && $location) {
         if ($companyObj->updateCompany($company['company_id'], $company_name, $location, $phone)) {
-            $_SESSION['message'] = "Profile updated successfully.";
+            $_SESSION['message'] = __("Profile updated successfully.");
             $company = $companyObj->getCompany($company['company_id']);
         } else {
-            $_SESSION['error'] = "Error updating profile.";
+            $_SESSION['error'] = __("Error updating profile.");
         }
     }
     }
@@ -60,7 +61,7 @@ include "../layouts/sidebar.php";
 </style>
 
 <div class="card">
-    <h2>Company Profile</h2>
+    <h2><?= __('Company Profile') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -71,21 +72,21 @@ include "../layouts/sidebar.php";
             <form method="POST">
                 <?= csrfField() ?>
                 <div class="form-group">
-                    <label>Company Name</label>
+                    <label><?= __('Company Name') ?></label>
                     <input type="text" name="company_name" value="<?= htmlspecialchars($company['company_name'] ?? '') ?>" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Location</label>
+                    <label><?= __('Location') ?></label>
                     <input type="text" name="location" value="<?= htmlspecialchars($company['location'] ?? '') ?>" required>
                 </div>
                 
                 <div class="form-group">
-                    <label>Phone</label>
+                    <label><?= __('Phone') ?></label>
                     <input type="tel" name="phone" value="<?= htmlspecialchars($company['phone'] ?? '') ?>">
                 </div>
                 
-                <button type="submit" class="btn">Update Profile</button>
+                <button type="submit" class="btn"><?= __('Update Profile') ?></button>
             </form>
     </div>
 

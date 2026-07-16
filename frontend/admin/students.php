@@ -5,6 +5,7 @@ require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Student.php";
 require_once "../../backend/classes/user.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -17,7 +18,7 @@ $studentObj = new Student();
 // Delete student
 if (isset($_POST['delete_student']) && isset($_POST['student_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
         $studentId = filter_input(INPUT_POST, 'student_id', FILTER_VALIDATE_INT);
         $userObj = new User($db);
@@ -27,12 +28,12 @@ if (isset($_POST['delete_student']) && isset($_POST['student_id'])) {
             $stu = $stmt->fetch(PDO::FETCH_ASSOC);
             if ($stu && $studentObj->deleteStudent($studentId)) {
                 $userObj->deleteUser($stu['user_id']);
-                $_SESSION['message'] = "Student deleted successfully.";
+                $_SESSION['message'] = __("Student deleted successfully.");
             } else {
-                $_SESSION['error'] = "Failed to delete student.";
+                $_SESSION['error'] = __("Failed to delete student.");
             }
         } else {
-            $_SESSION['error'] = "Invalid student ID.";
+            $_SESSION['error'] = __("Invalid student ID.");
         }
     }
     header("Location: students.php");
@@ -46,7 +47,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>Registered Students</h2>
+    <h2><?= __('Registered Students') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -59,14 +60,14 @@ include "../layouts/sidebar.php";
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Registration No</th>
-            <th>Course</th>
-            <th>Year</th>
-            <th>Phone</th>
-            <th>Actions</th>
+            <th><?= __('ID') ?></th>
+            <th><?= __('Name') ?></th>
+            <th><?= __('Email') ?></th>
+            <th><?= __('Registration No') ?></th>
+            <th><?= __('Course') ?></th>
+            <th><?= __('Year') ?></th>
+            <th><?= __('Phone') ?></th>
+            <th><?= __('Actions') ?></th>
         </tr>
         </thead>
         <tbody>
@@ -75,15 +76,15 @@ include "../layouts/sidebar.php";
                 <td><?= htmlspecialchars($row['student_id']) ?></td>
                 <td><?= htmlspecialchars($row['username']) ?></td>
                 <td><?= htmlspecialchars($row['email']) ?></td>
-                <td><?= htmlspecialchars($row['registration_no'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($row['course'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($row['year_of_study'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($row['phone'] ?? 'N/A') ?></td>
+                <td><?= htmlspecialchars($row['registration_no'] ?? __('N/A')) ?></td>
+                <td><?= htmlspecialchars($row['course'] ?? __('N/A')) ?></td>
+                <td><?= htmlspecialchars($row['year_of_study'] ?? __('N/A')) ?></td>
+                <td><?= htmlspecialchars($row['phone'] ?? __('N/A')) ?></td>
                 <td>
-                    <form method="POST" onsubmit="return confirm('Delete this student?');">
+                    <form method="POST" onsubmit="return confirm('<?= __('Delete this student?') ?>');">
                         <?= csrfField() ?>
                         <input type="hidden" name="student_id" value="<?= $row['student_id'] ?>">
-                        <button type="submit" name="delete_student" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" name="delete_student" class="btn btn-danger btn-sm"><?= __('Delete') ?></button>
                     </form>
                 </td>
             </tr>

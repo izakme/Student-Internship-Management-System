@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Application.php";
 require_once "../../backend/helpers/csrf.php";
@@ -18,7 +19,7 @@ $stmt->execute([$_SESSION['user_id']]);
 $student_id = $stmt->fetchColumn();
 
 if (!$student_id) {
-    die("<div style='text-align:center;margin-top:60px;color:red;font-size:18px;'>Student profile not found.<br>Please ensure your account is linked to a student profile.</div>");
+    die("<div style='text-align:center;margin-top:60px;color:red;font-size:18px;'>" . __("Student profile not found.") . "<br>" . __("Please ensure your account is linked to a student profile.") . "</div>");
 }
 
 $app = new Application();
@@ -26,13 +27,13 @@ $app = new Application();
 // Handle withdraw
 if (isset($_POST['withdraw'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
         $application_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
         if ($application_id && $app->withdraw($application_id, $student_id)) {
-            $_SESSION['message'] = "Application withdrawn successfully.";
+            $_SESSION['message'] = __("Application withdrawn successfully.");
         } else {
-            $_SESSION['error'] = "Could not withdraw application. Only pending applications can be withdrawn.";
+            $_SESSION['error'] = __("Could not withdraw application. Only pending applications can be withdrawn.");
         }
     }
     header("Location: applications.php");
@@ -54,7 +55,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2 class="center">My Internship Applications</h2>
+    <h2 class="center"><?= __('My Internship Applications') ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
@@ -67,11 +68,11 @@ include "../layouts/sidebar.php";
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Internship</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
+                <th><?= __('ID') ?></th>
+                <th><?= __('Internship') ?></th>
+                <th><?= __('Status') ?></th>
+                <th><?= __('Date') ?></th>
+                <th><?= __('Actions') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -82,20 +83,20 @@ include "../layouts/sidebar.php";
                         <td data-label="Internship"><?= htmlspecialchars($row['title']) ?></td>
                         <td data-label="Status">
                             <?php if ($row['status'] === "Accepted"): ?>
-                                <span class="badge badge-success">Accepted</span>
+                                <span class="badge badge-success"><?= __('Accepted') ?></span>
                             <?php elseif ($row['status'] === "Rejected"): ?>
-                                <span class="badge badge-danger">Rejected</span>
+                                <span class="badge badge-danger"><?= __('Rejected') ?></span>
                             <?php else: ?>
-                                <span class="badge badge-pending">Pending</span>
+                                <span class="badge badge-pending"><?= __('Pending') ?></span>
                             <?php endif; ?>
                         </td>
                         <td data-label="Date"><?= htmlspecialchars(date("M j, Y", strtotime($row['application_date']))) ?></td>
                         <td data-label="Actions">
                             <?php if ($row['status'] === 'Pending'): ?>
-                                <form method="POST" onsubmit="return confirm('Withdraw this application?');">
+                                <form method="POST" onsubmit="return confirm('<?= __("Withdraw this application?") ?>');">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
-                                    <button type="submit" name="withdraw" class="btn btn-danger btn-sm">Withdraw</button>
+                                    <button type="submit" name="withdraw" class="btn btn-danger btn-sm"><?= __('Withdraw') ?></button>
                                 </form>
                             <?php else: ?>
                                 <span class="badge badge-secondary">—</span>
@@ -105,7 +106,7 @@ include "../layouts/sidebar.php";
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5" class="center">No applications found.</td>
+                    <td colspan="5" class="center"><?= __('No applications found.') ?></td>
                 </tr>
             <?php endif; ?>
         </tbody>

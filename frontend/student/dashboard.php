@@ -2,6 +2,7 @@
 session_start();
 
 require_once __DIR__ . "/../../backend/config/database.php";
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'student') {
     header("Location: ../authentication/login.php");
@@ -58,25 +59,25 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
-        <div class="stat-title">Available Internships</div>
+        <div class="stat-title"><?= __('Available Internships') ?></div>
         <div class="stat-number"><?php echo $availableCount; ?></div>
     </div>
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
-        <div class="stat-title">My Applications</div>
+        <div class="stat-title"><?= __('My Applications') ?></div>
         <div class="stat-number"><?php echo $totalApplications; ?></div>
     </div>
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-title">Accepted</div>
+        <div class="stat-title"><?= __('Accepted') ?></div>
         <div class="stat-number"><?php echo $accepted; ?></div>
     </div>
 
     <div class="stat-card stat-card-warning">
         <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        <div class="stat-title">Pending</div>
+        <div class="stat-title"><?= __('Pending') ?></div>
         <div class="stat-number"><?php echo $pending; ?></div>
     </div>
 
@@ -84,18 +85,18 @@ include "../layouts/sidebar.php";
 
 <div class="charts-row">
     <div class="chart-card">
-        <h3>My Application Status</h3>
+        <h3><?= __('My Application Status') ?></h3>
         <canvas id="statusChart"></canvas>
     </div>
     <div class="chart-card">
-        <h3>Recent Activity</h3>
+        <h3><?= __('Recent Activity') ?></h3>
         <?php if (!empty($recentApps)): ?>
         <table>
             <thead>
                 <tr>
-                    <th>Internship</th>
-                    <th>Status</th>
-                    <th>Date</th>
+                    <th><?= __('Internship') ?></th>
+                    <th><?= __('Status') ?></th>
+                    <th><?= __('Date') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -113,7 +114,7 @@ include "../layouts/sidebar.php";
             </tbody>
         </table>
         <?php else: ?>
-        <p style="text-align:center;color:var(--text-light);padding:30px;">No applications yet.</p>
+        <p style="text-align:center;color:var(--text-light);padding:30px;"><?= __('No applications yet.') ?></p>
         <?php endif; ?>
     </div>
 </div>

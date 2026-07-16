@@ -5,6 +5,7 @@ require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Report.php";
 require_once "../../backend/helpers/csrf.php";
 require_once "../../backend/helpers/Pdf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -23,7 +24,7 @@ if (isset($_GET['download'])) {
         exit();
     }
 
-    $_SESSION['error'] = "Report not found or unavailable for download.";
+    $_SESSION['error'] = __("Report not found or unavailable for download.");
     header("Location: reports.php");
     exit();
 }
@@ -41,7 +42,7 @@ if (isset($_GET['pdf'])) {
         exit();
     }
 
-    $_SESSION['error'] = "Report not found for PDF download.";
+    $_SESSION['error'] = __("Report not found for PDF download.");
     header("Location: reports.php");
     exit();
 }
@@ -49,7 +50,7 @@ if (isset($_GET['pdf'])) {
 // Generate report
 if (isset($_POST['generate_report'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     try {
         $report_type = $_POST['report_type'] ?? '';
@@ -57,21 +58,21 @@ if (isset($_POST['generate_report'])) {
         switch ($report_type) {
             case 'applications':
                 $reportObj->generateApplicationsReport($_SESSION['user_id']);
-                $_SESSION['message'] = "Applications report generated successfully.";
+                $_SESSION['message'] = __("Applications report generated successfully.");
                 break;
             case 'internships':
                 $reportObj->generateInternshipsReport($_SESSION['user_id']);
-                $_SESSION['message'] = "Internships report generated successfully.";
+                $_SESSION['message'] = __("Internships report generated successfully.");
                 break;
             case 'students':
                 $reportObj->generateStudentsReport($_SESSION['user_id']);
-                $_SESSION['message'] = "Students report generated successfully.";
+                $_SESSION['message'] = __("Students report generated successfully.");
                 break;
             default:
-                $_SESSION['error'] = "Invalid report type.";
+                $_SESSION['error'] = __("Invalid report type.");
         }
     } catch (Exception $e) {
-        $_SESSION['error'] = "Error generating report: " . $e->getMessage();
+        $_SESSION['error'] = __("Error generating report: ") . $e->getMessage();
         error_log("Report generation error: " . $e->getMessage());
     }
     header("Location: reports.php");
@@ -90,19 +91,19 @@ if (isset($_GET['search'])) {
 // Delete report
 if (isset($_POST['delete']) && isset($_POST['report_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     try {
         $report_id = filter_input(INPUT_POST, 'report_id', FILTER_VALIDATE_INT);
         if ($report_id === false || $report_id === null) {
-            $_SESSION['error'] = "Invalid report ID.";
+            $_SESSION['error'] = __("Invalid report ID.");
         } elseif ($reportObj->deleteReport($report_id)) {
-            $_SESSION['message'] = "Report deleted successfully.";
+            $_SESSION['message'] = __("Report deleted successfully.");
         } else {
-            $_SESSION['error'] = "Failed to delete report.";
+            $_SESSION['error'] = __("Failed to delete report.");
         }
     } catch (Exception $e) {
-        $_SESSION['error'] = "Error deleting report: " . $e->getMessage();
+        $_SESSION['error'] = __("Error deleting report: ") . $e->getMessage();
     }
     }
     header("Location: reports.php");
@@ -114,7 +115,7 @@ if (isset($_POST['delete']) && isset($_POST['report_id'])) {
 <?php include "../layouts/sidebar.php"; ?>
 
 <div class="card">
-    <h2 class="center">Generate Reports</h2>
+    <h2 class="center"><?= __('Generate Reports') ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="alert alert-success">
@@ -131,43 +132,43 @@ if (isset($_POST['delete']) && isset($_POST['report_id'])) {
     <form method="POST">
         <?= csrfField() ?>
         <div class="form-group">
-            <label for="report_type">Select Report Type:</label>
+            <label for="report_type"><?= __('Select Report Type:') ?></label>
             <select name="report_type" id="report_type" required>
-                <option value="">-- Choose a Report --</option>
-                <option value="applications">Applications Report</option>
-                <option value="internships">Internships Report</option>
-                <option value="students">Students Report</option>
+                <option value=""><?= __('-- Choose a Report --') ?></option>
+                <option value="applications"><?= __('Applications Report') ?></option>
+                <option value="internships"><?= __('Internships Report') ?></option>
+                <option value="students"><?= __('Students Report') ?></option>
             </select>
         </div>
-        <button type="submit" name="generate_report" class="btn">Generate Report</button>
+        <button type="submit" name="generate_report" class="btn"><?= __('Generate Report') ?></button>
     </form>
 </div>
 
 <div class="card">
-    <h2 class="center">Search Reports</h2>
+    <h2 class="center"><?= __('Search Reports') ?></h2>
     <form method="GET">
-        <input type="text" name="search" placeholder="Search by report name or type..."
+        <input type="text" name="search" placeholder="<?= __('Search by report name or type...') ?>"
                value="<?= htmlspecialchars($search) ?>">
-        <button type="submit" class="btn">Search</button>
+        <button type="submit" class="btn"><?= __('Search') ?></button>
         <?php if ($search): ?>
-            <a href="reports.php" class="btn btn-secondary">Clear</a>
+            <a href="reports.php" class="btn btn-secondary"><?= __('Clear') ?></a>
         <?php endif; ?>
     </form>
 </div>
 
 <div class="card">
-    <h2 class="center">Generated Reports</h2>
+    <h2 class="center"><?= __('Generated Reports') ?></h2>
 
     <?php if ($reports && $reports->rowCount() > 0): ?>
         <table>
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Report Name</th>
-                    <th>Type</th>
-                    <th>Generated By</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th><?= __('ID') ?></th>
+                    <th><?= __('Report Name') ?></th>
+                    <th><?= __('Type') ?></th>
+                    <th><?= __('Generated By') ?></th>
+                    <th><?= __('Date') ?></th>
+                    <th><?= __('Actions') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -180,18 +181,18 @@ if (isset($_POST['delete']) && isset($_POST['report_id'])) {
                                 <?= htmlspecialchars($row['report_type']) ?>
                             </span>
                         </td>
-                        <td data-label="Generated By"><?= htmlspecialchars($row['username'] ?? 'Unknown') ?></td>
+                        <td data-label="Generated By"><?= htmlspecialchars($row['username'] ?? __('Unknown')) ?></td>
                         <td data-label="Date"><?= htmlspecialchars(date('M d, Y H:i', strtotime($row['generated_date']))) ?></td>
                         <td data-label="Actions">
                             <div class="action-group">
                                 <a href="reports.php?download=<?= $row['report_id']; ?>"
-                                   class="btn btn-sm btn-success">CSV</a>
+                                   class="btn btn-sm btn-success"><?= __('CSV') ?></a>
                                 <a href="reports.php?pdf=<?= $row['report_id']; ?>"
-                                   class="btn btn-sm btn-primary">PDF</a>
-                                <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this report?');">
+                                   class="btn btn-sm btn-primary"><?= __('PDF') ?></a>
+                                <form method="POST" style="display:inline;" onsubmit="return confirm('<?= __('Are you sure you want to delete this report?') ?>');">
                                     <?= csrfField() ?>
                                     <input type="hidden" name="report_id" value="<?= $row['report_id'] ?>">
-                                    <button type="submit" name="delete" class="btn btn-sm btn-danger">Delete</button>
+                                    <button type="submit" name="delete" class="btn btn-sm btn-danger"><?= __('Delete') ?></button>
                                 </form>
                             </div>
                         </td>
@@ -201,7 +202,7 @@ if (isset($_POST['delete']) && isset($_POST['report_id'])) {
         </table>
     <?php else: ?>
         <p class="empty-state">
-            No reports found. Generate a new report to get started.
+            <?= __('No reports found. Generate a new report to get started.') ?>
         </p>
     <?php endif; ?>
 </div>

@@ -1,6 +1,14 @@
 <?php
 session_start();
 
+if (isset($_GET['lang'])) {
+    require_once __DIR__ . "/../../backend/helpers/Language.php";
+    setLanguage($_GET['lang']);
+    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+    exit();
+}
+
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/user.php";
 require_once "../../backend/helpers/csrf.php";
@@ -109,6 +117,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="topbar">
     <span class="topbar-title">SIMS</span>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    <a href="?lang=en" style="color:white;text-decoration:none;margin:0 5px;font-size:13px;">EN</a>
+    <a href="?lang=sw" style="color:white;text-decoration:none;margin:0 5px;font-size:13px;">SW</a>
 </div>
 
 <div class="content">

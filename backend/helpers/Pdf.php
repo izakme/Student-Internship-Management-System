@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/../helpers/Language.php";
+
 class Pdf
 {
     public static function generate($title, $headers, $rows, $filename = 'report.pdf')
@@ -40,7 +42,7 @@ class Pdf
 
         $body .= "BT\n/F1 18 Tf\n1 1 1 rg\n";
         $body .= sprintf("%.2f %.2f Td\n", $ml, $h - 42);
-        $body .= '(' . $this->escape('Student Internship Management System') . ") Tj\n";
+        $body .= '(' . $this->escape(__('Student Internship Management System')) . ") Tj\n";
         $body .= "ET\n";
 
         $body .= "BT\n/F1 9 Tf\n1 1 1 rg\n";
@@ -136,12 +138,12 @@ class Pdf
 
         $body .= "BT\n/F1 8 Tf\n0.5 0.5 0.5 rg\n";
         $body .= sprintf("%.2f %.2f Td\n", $ml, $fy - 14);
-        $body .= '(' . $this->escape('Student Internship Management System | Generated: ' . date('M d, Y H:i')) . ") Tj\n";
+        $body .= '(' . $this->escape(__('Student Internship Management System') . ' | ' . __('Generated:') . ' ' . date('M d, Y H:i')) . ") Tj\n";
         $body .= "ET\n";
 
         $body .= "BT\n/F1 8 Tf\n0.5 0.5 0.5 rg\n";
         $body .= sprintf("%.2f %.2f Td\n", $ml + $aw - 40, $fy - 14);
-        $body .= '(' . $this->escape('Page 1 of 1') . ") Tj\n";
+        $body .= '(' . $this->escape(__('Page 1 of 1')) . ") Tj\n";
         $body .= "ET\n";
 
         // --- Build PDF structure ---

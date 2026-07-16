@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 require_once "../../backend/classes/Internship.php";
 require_once "../../backend/classes/Application.php";
 require_once "../../backend/config/database.php";
@@ -36,7 +37,7 @@ $student_id = $stmt->fetchColumn();
 if (!$student_id) {
     die("
         <div style='text-align:center;margin-top:50px;color:red;'>
-            Student profile not found. Please complete your profile.
+            " . __("Student profile not found. Please complete your profile.") . "
         </div>
     ");
 }
@@ -55,7 +56,7 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $message = "<div class='badge badge-danger'>Invalid form submission.</div>";
+        $message = "<div class='badge badge-danger'>" . __("Invalid form submission.") . "</div>";
     } else {
 
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
@@ -66,13 +67,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
         $applied = $application->apply($student_id, $internship_id, $cover_letter);
 
         if ($applied) {
-            $message = "<div class='badge badge-success'>Application submitted successfully.</div>";
+            $message = "<div class='badge badge-success'>" . __("Application submitted successfully.") . "</div>";
         } else {
-            $message = "<div class='badge badge-danger'>Already applied or invalid request.</div>";
+            $message = "<div class='badge badge-danger'>" . __("Already applied or invalid request.") . "</div>";
         }
 
     } else {
-        $message = "<div class='badge badge-danger'>Invalid internship selected.</div>";
+        $message = "<div class='badge badge-danger'>" . __("Invalid internship selected.") . "</div>";
     }
     }
 }
@@ -94,7 +95,7 @@ if (!empty($keyword)) {
 
 <div class="card">
 
-<h2>Search Internship</h2>
+<h2><?= __('Search Internship') ?></h2>
 
 <?= $message ?>
 
@@ -103,10 +104,10 @@ if (!empty($keyword)) {
 <input
 type="text"
 name="search"
-placeholder="Search by title, company or description..."
+placeholder="<?= __('Search by title, company or description...') ?>"
 value="<?= htmlspecialchars($keyword) ?>">
 
-<button type="submit" class="btn">Search</button>
+<button type="submit" class="btn"><?= __('Search') ?></button>
 
 </form>
 
@@ -126,12 +127,12 @@ value="<?= htmlspecialchars($keyword) ?>">
 </colgroup>
 <thead>
 <tr>
-<th>Company</th>
-<th>Title</th>
-<th>Description</th>
-<th>Requirements</th>
-<th>Deadline</th>
-<th>Action</th>
+<th><?= __('Company') ?></th>
+<th><?= __('Title') ?></th>
+<th><?= __('Description') ?></th>
+<th><?= __('Requirements') ?></th>
+<th><?= __('Deadline') ?></th>
+<th><?= __('Action') ?></th>
 </tr>
 </thead>
 
@@ -150,12 +151,12 @@ value="<?= htmlspecialchars($keyword) ?>">
 <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
 
 <td data-label="Action">
-<form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');">
+<form method="POST" class="inline-form" onsubmit="return confirm('<?= __("Submit application?") ?>');">
     <?= csrfField() ?>
     <input type="hidden" name="internship_id" value="<?= (int)$row['internship_id'] ?>">
     <input type="hidden" name="apply" value="1">
-    <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;"></textarea>
-    <button type="submit" class="btn btn-sm" style="font-size:11px;">Apply</button>
+    <textarea name="cover_letter" placeholder="<?= __('Cover letter (optional)') ?>..." rows="2" style="width:100%;font-size:11px;padding:4px;"></textarea>
+    <button type="submit" class="btn btn-sm" style="font-size:11px;"><?= __('Apply') ?></button>
 </form>
 </td>
 
@@ -166,7 +167,7 @@ value="<?= htmlspecialchars($keyword) ?>">
 <?php else: ?>
 
 <tr>
-<td colspan="6" class="center">No internships found.</td>
+<td colspan="6" class="center"><?= __('No internships found.') ?></td>
 </tr>
 
 <?php endif; ?>

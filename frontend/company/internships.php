@@ -5,6 +5,7 @@ require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Internship.php";
 require_once "../../backend/classes/company.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -20,7 +21,7 @@ $company = $companyObj->getCompanyByUserId($company_user_id);
 $company_id = $company['company_id'] ?? null;
 
 if (!$company_id) {
-    die("Company profile not found.");
+    die(__("Company profile not found."));
 }
 
 $editInternship = null;
@@ -29,7 +30,7 @@ if (isset($_GET['edit'])) {
     $editInternship = $internshipObj->getInternship($edit_id);
     if (!$editInternship || $editInternship['company_id'] != $company_id) {
         $editInternship = null;
-        $_SESSION['error'] = "Internship not found or unauthorized.";
+        $_SESSION['error'] = __("Internship not found or unauthorized.");
         header("Location: internships.php");
         exit();
     }
@@ -37,7 +38,7 @@ if (isset($_GET['edit'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $title = $_POST['title'] ?? '';
     $description = $_POST['description'] ?? '';
@@ -52,32 +53,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
             $internship = $internshipObj->getInternship($internship_id);
             if ($internship && $internship['company_id'] == $company_id) {
                 if ($internshipObj->updateInternship($internship_id, $title, $description, $requirements, $deadline)) {
-                    $_SESSION['message'] = "Internship updated successfully.";
+                    $_SESSION['message'] = __("Internship updated successfully.");
                 } else {
-                    $_SESSION['error'] = "Error updating internship.";
+                    $_SESSION['error'] = __("Error updating internship.");
                 }
             } else {
-                $_SESSION['error'] = "Internship not found or unauthorized.";
+                $_SESSION['error'] = __("Internship not found or unauthorized.");
             }
         } else {
             // Create new
             if ($internshipObj->addInternship($company_id, $title, $description, $requirements, $deadline)) {
-                $_SESSION['message'] = "Internship posted successfully.";
+                $_SESSION['message'] = __("Internship posted successfully.");
             } else {
-                $_SESSION['error'] = "Error posting internship.";
+                $_SESSION['error'] = __("Error posting internship.");
             }
         }
         header("Location: internships.php");
         exit();
     } else {
-        $_SESSION['error'] = "Please fill all required fields.";
+        $_SESSION['error'] = __("Please fill all required fields.");
     }
     }
 }
 
 if (isset($_POST['delete']) && isset($_POST['internship_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $internship = $internshipObj->getInternship($internship_id);
@@ -89,7 +90,7 @@ if (isset($_POST['delete']) && isset($_POST['internship_id'])) {
             $_SESSION['error'] = $result['message'];
         }
     } else {
-        $_SESSION['error'] = "Internship not found or unauthorized.";
+        $_SESSION['error'] = __("Internship not found or unauthorized.");
     }
     }
     header("Location: internships.php");
@@ -105,7 +106,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2><?php echo $editInternship ? 'Edit Internship' : 'Post New Internship'; ?></h2>
+    <h2><?php echo $editInternship ? __('Edit Internship') : __('Post New Internship'); ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
@@ -120,45 +121,45 @@ include "../layouts/sidebar.php";
             <input type="hidden" name="internship_id" value="<?php echo $editInternship['internship_id']; ?>">
         <?php endif; ?>
         <div class="form-group">
-            <label>Title *</label>
+            <label><?= __('Title') ?> *</label>
             <input type="text" name="title" value="<?php echo htmlspecialchars($editInternship['title'] ?? ''); ?>" required>
         </div>
 
         <div class="form-group">
-            <label>Description *</label>
+            <label><?= __('Description') ?> *</label>
             <textarea name="description" required><?php echo htmlspecialchars($editInternship['description'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group">
-            <label>Requirements</label>
+            <label><?= __('Requirements') ?></label>
             <textarea name="requirements"><?php echo htmlspecialchars($editInternship['requirements'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group">
-            <label>Deadline *</label>
+            <label><?= __('Deadline') ?> *</label>
             <input type="date" name="deadline" value="<?php echo htmlspecialchars($editInternship['deadline'] ?? ''); ?>" required>
         </div>
 
         <div class="form-buttons">
-            <button type="submit" name="save_internship" class="btn"><?php echo $editInternship ? 'Update Internship' : 'Post Internship'; ?></button>
+            <button type="submit" name="save_internship" class="btn"><?php echo $editInternship ? __('Update Internship') : __('Post Internship'); ?></button>
             <?php if ($editInternship): ?>
-                <a href="internships.php" class="btn btn-secondary">Cancel</a>
+                <a href="internships.php" class="btn btn-secondary"><?= __('Cancel') ?></a>
             <?php endif; ?>
         </div>
     </form>
 </div>
 
 <div class="card">
-    <h2>My Internship Listings</h2>
+    <h2><?= __('My Internship Listings') ?></h2>
 
     <div class="table-wrap">
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Deadline</th>
-            <th>Actions</th>
+            <th><?= __('ID') ?></th>
+            <th><?= __('Title') ?></th>
+            <th><?= __('Deadline') ?></th>
+            <th><?= __('Actions') ?></th>
         </tr>
         </thead>
         <tbody>
@@ -171,11 +172,11 @@ include "../layouts/sidebar.php";
                     <td data-label="Actions">
                         <div class="action-group">
                             <a href="internships.php?edit=<?php echo $row['internship_id']; ?>"
-                               class="btn btn-sm">Edit</a>
-                            <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this internship?');">
+                               class="btn btn-sm"><?= __('Edit') ?></a>
+                            <form method="POST" style="display:inline;" onsubmit="return confirm('<?= __('Delete this internship?') ?>');">
                                 <?= csrfField() ?>
                                 <input type="hidden" name="internship_id" value="<?= $row['internship_id'] ?>">
-                                <button type="submit" name="delete" class="btn btn-danger btn-sm">Delete</button>
+                                <button type="submit" name="delete" class="btn btn-danger btn-sm"><?= __('Delete') ?></button>
                             </form>
                         </div>
                     </td>
@@ -183,7 +184,7 @@ include "../layouts/sidebar.php";
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="4" class="center">No internships posted yet.</td>
+                <td colspan="4" class="center"><?= __('No internships posted yet.') ?></td>
             </tr>
         <?php endif; ?>
         </tbody>

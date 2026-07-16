@@ -6,6 +6,14 @@ session_set_cookie_params([
 ]);
 session_start();
 
+if (isset($_GET['lang'])) {
+    require_once __DIR__ . "/../../backend/helpers/Language.php";
+    setLanguage($_GET['lang']);
+    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+    exit();
+}
+
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 require_once __DIR__ . "/../../backend/config/database.php";
 require_once __DIR__ . "/../../backend/classes/user.php";
 require_once __DIR__ . "/../../backend/classes/auth.php";
@@ -17,12 +25,12 @@ $message = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $message = "Invalid form submission.";
+        $message = __("Invalid form submission.");
     } else {
 
     $rateCheck = App::rateLimitCheck('login_' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'), 5, 900);
     if ($rateCheck !== true) {
-        $message = "Too many attempts. Try again in " . ceil($rateCheck / 60) . " minutes.";
+        $message = __("Too many attempts. Try again in") . " " . ceil($rateCheck / 60) . " " . __("minutes.");
     } else {
 
     $db = (new Database())->connect();
@@ -55,9 +63,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
-        $message = "Login successful but no role found.";
+        $message = __("Login successful but no role found.");
     } else {
-        $message = "Invalid email or password.";
+        $message = __("Invalid email or password.");
     }
     }
     }
@@ -73,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Login | Student Internship Management System</title>
+<title><?= __('Login') ?> | <?= __('Student Internship Management System') ?></title>
 
 <link rel="stylesheet" href="../assets/css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -143,16 +151,18 @@ input.error {
 <div class="topbar">
     <span class="topbar-title">SIMS</span>
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+    <a href="?lang=en" style="color:white;text-decoration:none;margin:0 5px;font-size:13px;">EN</a>
+    <a href="?lang=sw" style="color:white;text-decoration:none;margin:0 5px;font-size:13px;">SW</a>
 </div>
 
 <div class="content">
 
     <div class="card" style="max-width:450px; margin-top:40px;">
 
-        <h2 class="center">Welcome Back</h2>
+        <h2 class="center"><?= __('Welcome Back') ?></h2>
 
         <p class="center" style="margin-bottom:25px;">
-            Login to continue to your account.
+            <?= __('Login to continue to your account.') ?>
         </p>
 
         <?php if (!empty($message)) { ?>
@@ -177,35 +187,35 @@ input.error {
 
             <?= csrfField() ?>
 
-            <label>Email Address</label>
+            <label><?= __('Email Address') ?></label>
 
             <input
                 type="email"
                 name="email"
                 id="email"
-                placeholder="Enter your email"
+                placeholder="<?= __('Enter your email') ?>"
                 required
             >
-            <div class="field-error" id="emailError">Please enter a valid email address.</div>
+            <div class="field-error" id="emailError"><?= __('Please enter a valid email address.') ?></div>
 
-            <label>Password</label>
+            <label><?= __('Password') ?></label>
 
             <div class="password-wrapper">
                 <input
                     type="password"
                     name="password"
                     id="password"
-                    placeholder="Enter your password"
+                    placeholder="<?= __('Enter your password') ?>"
                     required
                 >
                 <button type="button" class="toggle-password" id="togglePassword" tabindex="-1"><i class="fas fa-eye"></i></button>
             </div>
-            <div class="field-error" id="passwordError">Password is required.</div>
+            <div class="field-error" id="passwordError"><?= __('Password is required.') ?></div>
 
-            <button class="btn btn-block" type="submit" id="loginBtn">Login</button>
+            <button class="btn btn-block" type="submit" id="loginBtn"><?= __('Login') ?></button>
 
             <p class="center" style="margin-top:12px;">
-                <a href="forgot_password.php" style="color:#5bbcff;font-size:14px;">Forgot Password?</a>
+                <a href="forgot_password.php" style="color:#5bbcff;font-size:14px;"><?= __('Forgot Password?') ?></a>
             </p>
 
         </form>
@@ -214,7 +224,7 @@ input.error {
 
         <p class="center">
 
-            Don't have an account?
+            <?= __("Don't have an account?") ?>
 
             <br><br>
 
@@ -222,7 +232,7 @@ input.error {
                 href="register.php"
                 style="color:#5bbcff;font-weight:600;">
 
-                Register Here
+                <?= __('Register Here') ?>
 
             </a>
 
@@ -234,7 +244,7 @@ input.error {
 
 <footer class="site-footer">
     <hr class="footer-separator">
-    <p>&copy; <?php echo date("Y"); ?> Student Internship Management System. All rights reserved.</p>
+    <p>&copy; <?php echo date("Y"); ?> <?= __('Student Internship Management System. All rights reserved.') ?></p>
     <p>Version 1.0</p>
     <p>Developer: Isaack Changawa (zak)</p>
 </footer>

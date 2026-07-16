@@ -5,6 +5,7 @@ require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Application.php";
 require_once "../../backend/classes/company.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -21,24 +22,24 @@ $company = $companyObj->getCompanyByUserId($company_user_id);
 $company_id = $company['company_id'] ?? null;
 
 if (!$company_id) {
-    die("Company profile not found.");
+    die(__("Company profile not found."));
 }
 
 // Update application status
 if (isset($_POST['application_id']) && isset($_POST['status'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $app_id = filter_input(INPUT_POST, 'application_id', FILTER_VALIDATE_INT);
     $status = $_POST['status'];
     $allowedStatuses = ['Pending', 'Accepted', 'Rejected'];
     
     if (!in_array($status, $allowedStatuses, true)) {
-        $_SESSION['error'] = "Invalid status value.";
+        $_SESSION['error'] = __("Invalid status value.");
     } elseif ($appObj->updateCompanyApplicationStatus($app_id, $company_id, $status)) {
-        $_SESSION['message'] = "Application status updated.";
+        $_SESSION['message'] = __("Application status updated.");
     } else {
-        $_SESSION['error'] = "Application not found or unauthorized.";
+        $_SESSION['error'] = __("Application not found or unauthorized.");
     }
     header("Location: applications.php");
     exit();
@@ -54,7 +55,7 @@ include "../layouts/sidebar.php";
 
 
 <div class="card">
-    <h2>Review Applications</h2>
+    <h2><?= __('Review Applications') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -67,13 +68,13 @@ include "../layouts/sidebar.php";
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Student Name</th>
-            <th>Registration No</th>
-            <th>Internship</th>
-            <th>Cover Letter</th>
-            <th>Status</th>
-            <th>Applied Date</th>
+            <th><?= __('ID') ?></th>
+            <th><?= __('Student Name') ?></th>
+            <th><?= __('Registration No') ?></th>
+            <th><?= __('Internship') ?></th>
+            <th><?= __('Cover Letter') ?></th>
+            <th><?= __('Status') ?></th>
+            <th><?= __('Applied Date') ?></th>
         </tr>
         </thead>
         <tbody>
@@ -96,11 +97,11 @@ include "../layouts/sidebar.php";
                             <?= csrfField() ?>
                             <input type="hidden" name="application_id" value="<?= $row['application_id'] ?>">
                             <select name="status">
-                                <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>
-                                <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
-                                <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+                                <option value="Pending" <?= $row['status'] === 'Pending' ? 'selected' : '' ?>><?= __('Pending') ?></option>
+                                <option value="Accepted" <?= $row['status'] === 'Accepted' ? 'selected' : '' ?>><?= __('Accepted') ?></option>
+                                <option value="Rejected" <?= $row['status'] === 'Rejected' ? 'selected' : '' ?>><?= __('Rejected') ?></option>
                             </select>
-                            <button type="submit" class="btn btn-sm">Update</button>
+                            <button type="submit" class="btn btn-sm"><?= __('Update') ?></button>
                         </form>
                     </td>
                     <td data-label="Date"><?= htmlspecialchars(date("M j, Y", strtotime($row['application_date']))) ?></td>
@@ -108,7 +109,7 @@ include "../layouts/sidebar.php";
             <?php endwhile; ?>
         <?php else: ?>
             <tr>
-                <td colspan="8" class="center">No applications yet.</td>
+                <td colspan="8" class="center"><?= __('No applications yet.') ?></td>
             </tr>
         <?php endif; ?>
         </tbody>

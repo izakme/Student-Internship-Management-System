@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Internship.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -16,7 +17,7 @@ $db = (new Database())->connect();
 // Bulk delete
 if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
         $ids = array_filter($_POST['selected'], 'is_numeric');
         $deleted = 0;
@@ -29,7 +30,7 @@ if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
                 $errors[] = $result['message'];
             }
         }
-        $_SESSION['message'] = "$deleted internship(s) deleted successfully.";
+        $_SESSION['message'] = $deleted . " " . __("internship(s) deleted successfully.");
         if ($errors) {
             $_SESSION['error'] = implode('<br>', array_unique($errors));
         }
@@ -40,13 +41,13 @@ if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
 
 if (isset($_POST['delete_internship']) && isset($_POST['internship_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $internship = $internshipObj->getInternship($internship_id);
 
     if (!$internship) {
-        $_SESSION['error'] = "Internship not found.";
+        $_SESSION['error'] = __("Internship not found.");
         header("Location: internships.php");
         exit();
     }
@@ -101,7 +102,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>All Internship Opportunities</h2>
+    <h2><?= __('All Internship Opportunities') ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
@@ -111,21 +112,21 @@ include "../layouts/sidebar.php";
     <?php endif; ?>
 
     <form method="GET" class="filter-form" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
-        <input type="text" name="search" placeholder="Search title or company..." value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
+        <input type="text" name="search" placeholder="<?= __('Search title or company...') ?>" value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
         <select name="company_id">
-            <option value="">All Companies</option>
+            <option value=""><?= __('All Companies') ?></option>
             <?php foreach ($companies as $c): ?>
                 <option value="<?= $c['company_id'] ?>" <?= $companyFilter == $c['company_id'] ? 'selected' : '' ?>><?= htmlspecialchars($c['company_name']) ?></option>
             <?php endforeach; ?>
         </select>
         <select name="status">
-            <option value="">All Status</option>
-            <option value="active" <?= $statusFilter === 'active' ? 'selected' : '' ?>>Active</option>
-            <option value="expired" <?= $statusFilter === 'expired' ? 'selected' : '' ?>>Expired</option>
+            <option value=""><?= __('All Status') ?></option>
+            <option value="active" <?= $statusFilter === 'active' ? 'selected' : '' ?>><?= __('Active') ?></option>
+            <option value="expired" <?= $statusFilter === 'expired' ? 'selected' : '' ?>><?= __('Expired') ?></option>
         </select>
-        <button type="submit" class="btn btn-sm">Filter</button>
+        <button type="submit" class="btn btn-sm"><?= __('Filter') ?></button>
         <?php if ($companyFilter || $statusFilter || $search): ?>
-            <a href="internships.php" class="btn btn-sm btn-secondary">Clear</a>
+            <a href="internships.php" class="btn btn-sm btn-secondary"><?= __('Clear') ?></a>
         <?php endif; ?>
     </form>
 </div>
@@ -135,18 +136,18 @@ include "../layouts/sidebar.php";
     <form method="POST" id="bulkForm">
         <?= csrfField() ?>
         <div style="margin-bottom:10px;text-align:left;">
-            <label><input type="checkbox" id="selectAll"> Select All</label>
-            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm" onclick="return confirm('Delete selected internships?');" style="margin-left:10px;">Delete Selected</button>
+            <label><input type="checkbox" id="selectAll"> <?= __('Select All') ?></label>
+            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm" onclick="return confirm('<?= __('Delete selected internships?') ?>');" style="margin-left:10px;"><?= __('Delete Selected') ?></button>
         </div>
         <table>
             <thead>
             <tr>
                 <th></th>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Company</th>
-                <th>Deadline</th>
-                <th>Actions</th>
+                <th><?= __('ID') ?></th>
+                <th><?= __('Title') ?></th>
+                <th><?= __('Company') ?></th>
+                <th><?= __('Deadline') ?></th>
+                <th><?= __('Actions') ?></th>
             </tr>
             </thead>
             <tbody>
@@ -158,10 +159,10 @@ include "../layouts/sidebar.php";
                     <td data-label="Company"><?= htmlspecialchars($row['company_name']) ?></td>
                     <td data-label="Deadline"><?= htmlspecialchars(date("M j, Y", strtotime($row['deadline']))) ?></td>
                     <td data-label="Actions">
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Delete this internship?');">
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('<?= __('Delete this internship?') ?>');">
                             <?= csrfField() ?>
                             <input type="hidden" name="internship_id" value="<?= $row['internship_id'] ?>">
-                            <button type="submit" name="delete_internship" class="btn btn-danger btn-sm">Delete</button>
+                            <button type="submit" name="delete_internship" class="btn btn-danger btn-sm"><?= __('Delete') ?></button>
                         </form>
                     </td>
                 </tr>

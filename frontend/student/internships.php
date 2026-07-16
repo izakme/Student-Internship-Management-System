@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
 require_once __DIR__ . "/../../backend/helpers/csrf.php";
@@ -10,7 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 }
 
 if (!isset($_SESSION['student_id'])) {
-    die("Student ID not found in session. Please log in again.");
+    die(__("Student ID not found in session. Please log in again."));
 }
 
 $internship = new Internship();
@@ -18,7 +19,7 @@ $application = new Application();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
     $student_id = $_SESSION['student_id'];
@@ -26,12 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply'])) {
 
     if ($internship_id && !$application->hasApplied($student_id, $internship_id)) {
         if ($application->apply($student_id, $internship_id, $cover_letter)) {
-            $_SESSION['message'] = "Application submitted successfully.";
+            $_SESSION['message'] = __("Application submitted successfully.");
         } else {
-            $_SESSION['error'] = "Failed to submit application. The internship may be expired.";
+            $_SESSION['error'] = __("Failed to submit application. The internship may be expired.");
         }
     } else {
-        $_SESSION['error'] = "You have already applied for this internship.";
+        $_SESSION['error'] = __("You have already applied for this internship.");
     }
 
     header("Location: internships.php");
@@ -46,7 +47,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2 class="center">Available Internships</h2>
+    <h2 class="center"><?= __('Available Internships') ?></h2>
 
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
@@ -69,12 +70,12 @@ include "../layouts/sidebar.php";
         </colgroup>
         <thead>
             <tr>
-                <th>Company</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Requirements</th>
-                <th>Deadline</th>
-                <th>Action</th>
+                <th><?= __('Company') ?></th>
+                <th><?= __('Title') ?></th>
+                <th><?= __('Description') ?></th>
+                <th><?= __('Requirements') ?></th>
+                <th><?= __('Deadline') ?></th>
+                <th><?= __('Action') ?></th>
             </tr>
         </thead>
         <tbody>
@@ -91,14 +92,14 @@ include "../layouts/sidebar.php";
                 <td data-label="Deadline"><?php echo htmlspecialchars(date("M j, Y", strtotime($row['deadline']))); ?></td>
                 <td data-label="Action">
                     <?php if ($has_applied): ?>
-                        <span class="badge badge-success"><i class="fas fa-check"></i> Applied</span>
+                        <span class="badge badge-success"><i class="fas fa-check"></i> <?= __('Applied') ?></span>
                     <?php else: ?>
-                        <form method="POST" class="inline-form" onsubmit="return confirm('Submit application?');">
+                        <form method="POST" class="inline-form" onsubmit="return confirm('<?= __("Submit application?") ?>');">
                             <?= csrfField() ?>
                             <input type="hidden" name="internship_id" value="<?= $row['internship_id'] ?>">
                             <input type="hidden" name="apply" value="1">
-                            <textarea name="cover_letter" placeholder="Cover letter (optional)..." rows="2" style="width:100%;font-size:11px;padding:4px;"></textarea>
-                            <button type="submit" class="btn btn-sm" style="font-size:11px;">Apply</button>
+                            <textarea name="cover_letter" placeholder="<?= __('Cover letter (optional)') ?>..." rows="2" style="width:100%;font-size:11px;padding:4px;"></textarea>
+                            <button type="submit" class="btn btn-sm" style="font-size:11px;"><?= __('Apply') ?></button>
                         </form>
                     <?php endif; ?>
                 </td>
@@ -111,7 +112,7 @@ include "../layouts/sidebar.php";
     </div>
 
     <?php else: ?>
-        <div class="empty-state">No internships available at the moment.</div>
+        <div class="empty-state"><?= __('No internships available at the moment.') ?></div>
     <?php endif; ?>
 </div>
 

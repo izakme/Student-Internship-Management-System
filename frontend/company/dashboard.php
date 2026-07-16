@@ -5,6 +5,7 @@ require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
 require_once __DIR__ . "/../../backend/classes/company.php";
 require_once __DIR__ . "/../../backend/config/database.php";
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'company') {
     header("Location: ../authentication/login.php");
@@ -16,7 +17,7 @@ $company = $companyObj->getCompanyByUserId($_SESSION['user_id']);
 $company_id = $company['company_id'] ?? null;
 
 if (!$company_id) {
-    die("Company profile not found.");
+    die(__("Company profile not found."));
 }
 
 $db = (new Database())->connect();
@@ -49,25 +50,25 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
-        <div class="stat-title">Posted Internships</div>
+        <div class="stat-title"><?= __('Posted Internships') ?></div>
         <div class="stat-number"><?php echo $postedCount; ?></div>
     </div>
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
-        <div class="stat-title">Applicants</div>
+        <div class="stat-title"><?= __('Applicants') ?></div>
         <div class="stat-number"><?php echo $totalApplicants; ?></div>
     </div>
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-title">Approved</div>
+        <div class="stat-title"><?= __('Approved') ?></div>
         <div class="stat-number"><?php echo $approved; ?></div>
     </div>
 
     <div class="stat-card stat-card-warning">
         <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        <div class="stat-title">Pending</div>
+        <div class="stat-title"><?= __('Pending') ?></div>
         <div class="stat-number"><?php echo $pending; ?></div>
     </div>
 
@@ -75,19 +76,19 @@ include "../layouts/sidebar.php";
 
 <div class="charts-row">
     <div class="chart-card">
-        <h3>Applicant Status</h3>
+        <h3><?= __('Applicant Status') ?></h3>
         <canvas id="statusChart"></canvas>
     </div>
     <div class="chart-card">
-        <h3>Recent Applicants</h3>
+        <h3><?= __('Recent Applicants') ?></h3>
         <?php if (!empty($recentApplicants)): ?>
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Internship</th>
-                    <th>Status</th>
-                    <th>Date</th>
+                    <th><?= __('Name') ?></th>
+                    <th><?= __('Internship') ?></th>
+                    <th><?= __('Status') ?></th>
+                    <th><?= __('Date') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -106,7 +107,7 @@ include "../layouts/sidebar.php";
             </tbody>
         </table>
         <?php else: ?>
-        <p style="text-align:center;color:var(--text-light);padding:30px;">No applicants yet.</p>
+        <p style="text-align:center;color:var(--text-light);padding:30px;"><?= __('No applicants yet.') ?></p>
         <?php endif; ?>
     </div>
 </div>

@@ -3,6 +3,7 @@ session_start();
 
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/Application.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -47,7 +48,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>All Applications</h2>
+    <h2><?= __('All Applications') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -56,16 +57,16 @@ include "../layouts/sidebar.php";
     <?php endif; ?>
 
     <form method="GET" class="filter-form" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
-        <input type="text" name="search" placeholder="Search student, internship, or reg no..." value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
+        <input type="text" name="search" placeholder="<?= __('Search student, internship, or reg no...') ?>" value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
         <select name="status">
-            <option value="">All Status</option>
-            <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>>Pending</option>
-            <option value="Accepted" <?= $statusFilter === 'Accepted' ? 'selected' : '' ?>>Accepted</option>
-            <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>>Rejected</option>
+            <option value=""><?= __('All Status') ?></option>
+            <option value="Pending" <?= $statusFilter === 'Pending' ? 'selected' : '' ?>><?= __('Pending') ?></option>
+            <option value="Accepted" <?= $statusFilter === 'Accepted' ? 'selected' : '' ?>><?= __('Accepted') ?></option>
+            <option value="Rejected" <?= $statusFilter === 'Rejected' ? 'selected' : '' ?>><?= __('Rejected') ?></option>
         </select>
-        <button type="submit" class="btn btn-sm">Filter</button>
+        <button type="submit" class="btn btn-sm"><?= __('Filter') ?></button>
         <?php if ($statusFilter || $search): ?>
-            <a href="applications.php" class="btn btn-sm btn-secondary">Clear</a>
+            <a href="applications.php" class="btn btn-sm btn-secondary"><?= __('Clear') ?></a>
         <?php endif; ?>
     </form>
 </div>
@@ -74,13 +75,13 @@ include "../layouts/sidebar.php";
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Student</th>
-            <th>Registration No</th>
-            <th>Internship</th>
-            <th>Status</th>
-            <th>Cover Letter</th>
-            <th>Applied Date</th>
+            <th><?= __('ID') ?></th>
+            <th><?= __('Student') ?></th>
+            <th><?= __('Registration No') ?></th>
+            <th><?= __('Internship') ?></th>
+            <th><?= __('Status') ?></th>
+            <th><?= __('Cover Letter') ?></th>
+            <th><?= __('Applied Date') ?></th>
         </tr>
         </thead>
         <tbody>

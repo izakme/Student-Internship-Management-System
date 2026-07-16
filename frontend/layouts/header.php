@@ -8,7 +8,16 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) >
     exit();
 }
 $_SESSION['last_activity'] = time();
-$loggedInName = htmlspecialchars($_SESSION['name'] ?? 'User');
+
+require_once __DIR__ . "/../../backend/helpers/Language.php";
+
+if (isset($_GET['lang'])) {
+    setLanguage($_GET['lang']);
+    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+    exit();
+}
+
+$loggedInName = htmlspecialchars($_SESSION['name'] ?? __('User'));
 $loggedInRole = $_SESSION['role'] ?? '';
 
 /* Fetch notification data for admin if page didn't already set it */
@@ -145,10 +154,10 @@ if (!isset($recentApps)) $recentApps = [];
 
     <div class="search-bar">
         <span class="search-icon"><i class="fas fa-search"></i></span>
-        <input type="text" placeholder="Search pages..." id="searchInput">
+        <input type="text" placeholder="<?= __('Search pages...') ?>" id="searchInput">
     </div>
 
-    <span class="topbar-title">Internship Management System</span>
+    <span class="topbar-title"><?= __('Internship Management System') ?></span>
 
     <div class="topbar-datetime" id="topbarClock"></div>
 
@@ -167,7 +176,7 @@ if (!isset($recentApps)) $recentApps = [];
         </button>
         <div class="notification-panel" id="notifPanel">
             <div class="notification-panel-header">
-                New Applications (<?php echo $pendingCount; ?>)
+                <?= __('New Applications') ?> (<?php echo $pendingCount; ?>)
             </div>
             <?php if (!empty($recentApps)): ?>
                 <?php foreach ($recentApps as $app): ?>
@@ -175,7 +184,7 @@ if (!isset($recentApps)) $recentApps = [];
                     <span class="notif-icon"><i class="fas fa-user"></i></span>
                     <div class="notif-text">
                         <strong><?php echo htmlspecialchars($app['username']); ?></strong>
-                        applied for <em><?php echo htmlspecialchars($app['title']); ?></em>
+                        <?= __('applied for') ?> <em><?php echo htmlspecialchars($app['title']); ?></em>
                         <div class="notif-time"><?php echo date('M j, g:i A', strtotime($app['application_date'])); ?></div>
                     </div>
                 </div>
@@ -183,7 +192,7 @@ if (!isset($recentApps)) $recentApps = [];
             <?php else: ?>
                 <div class="notification-item">
                     <span class="notif-icon"><i class="fas fa-check-circle"></i></span>
-                    <div class="notif-text">No new applications</div>
+                    <div class="notif-text"><?= __('No new applications') ?></div>
                 </div>
             <?php endif; ?>
         </div>
@@ -191,6 +200,12 @@ if (!isset($recentApps)) $recentApps = [];
     <?php endif; ?>
 
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fas fa-moon"></i></button>
+
+    <div style="display:flex;align-items:center;gap:5px;margin-left:10px;">
+        <a href="?lang=en" style="color:var(--text);text-decoration:none;font-size:13px;font-weight:600;">EN</a>
+        <span style="color:var(--text-light);">|</span>
+        <a href="?lang=sw" style="color:var(--text);text-decoration:none;font-size:13px;font-weight:600;">SW</a>
+    </div>
 </div>
 
 <div class="layout">

@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/company.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -15,15 +16,15 @@ $companyObj = new Company();
 // Delete company
 if (isset($_POST['delete']) && isset($_POST['company_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $company_id = filter_input(INPUT_POST, 'company_id', FILTER_VALIDATE_INT);
     if ($company_id === false || $company_id === null) {
-        $_SESSION['error'] = "Invalid company ID.";
+        $_SESSION['error'] = __("Invalid company ID.");
     } elseif ($companyObj->deleteCompany($company_id)) {
-        $_SESSION['message'] = "Company deleted successfully.";
+        $_SESSION['message'] = __("Company deleted successfully.");
     } else {
-        $_SESSION['error'] = "Failed to delete company.";
+        $_SESSION['error'] = __("Failed to delete company.");
     }
     }
     header("Location: companies.php");
@@ -37,7 +38,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>Registered Companies</h2>
+    <h2><?= __('Registered Companies') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -50,12 +51,12 @@ include "../layouts/sidebar.php";
     <table>
         <thead>
         <tr>
-            <th>ID</th>
-            <th>Company Name</th>
-            <th>Location</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Actions</th>
+            <th><?= __('ID') ?></th>
+            <th><?= __('Company Name') ?></th>
+            <th><?= __('Location') ?></th>
+            <th><?= __('Phone') ?></th>
+            <th><?= __('Email') ?></th>
+            <th><?= __('Actions') ?></th>
         </tr>
         </thead>
         <tbody>
@@ -63,14 +64,14 @@ include "../layouts/sidebar.php";
             <tr>
                 <td><?= htmlspecialchars($row['company_id']) ?></td>
                 <td><?= htmlspecialchars($row['company_name']) ?></td>
-                <td><?= htmlspecialchars($row['location'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($row['phone'] ?? 'N/A') ?></td>
-                <td><?= htmlspecialchars($row['email'] ?? 'N/A') ?></td>
+                <td><?= htmlspecialchars($row['location'] ?? __('N/A')) ?></td>
+                <td><?= htmlspecialchars($row['phone'] ?? __('N/A')) ?></td>
+                <td><?= htmlspecialchars($row['email'] ?? __('N/A')) ?></td>
                 <td>
-                    <form method="POST" onsubmit="return confirm('Delete this company?');">
+                    <form method="POST" onsubmit="return confirm('<?= __('Delete this company?') ?>');">
                         <?= csrfField() ?>
                         <input type="hidden" name="company_id" value="<?= $row['company_id'] ?>">
-                        <button type="submit" name="delete" class="btn btn-danger btn-sm">Delete</button>
+                        <button type="submit" name="delete" class="btn btn-danger btn-sm"><?= __('Delete') ?></button>
                     </form>
                 </td>
             </tr>

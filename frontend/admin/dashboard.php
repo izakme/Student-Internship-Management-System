@@ -10,6 +10,7 @@ require_once __DIR__ . "/../../backend/config/database.php";
 require_once __DIR__ . "/../../backend/classes/user.php";
 require_once __DIR__ . "/../../backend/classes/Internship.php";
 require_once __DIR__ . "/../../backend/classes/Application.php";
+require_once __DIR__ . "/../../backend/helpers/Language.php";
 
 $db = (new Database())->connect();
 
@@ -70,7 +71,7 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-users"></i></div>
-        <div class="stat-title">Total Users</div>
+        <div class="stat-title"><?= __('Total Users') ?></div>
         <div class="stat-number">
             <?php echo $totalUsers; ?>
         </div>
@@ -78,7 +79,7 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
-        <div class="stat-title">Internships</div>
+        <div class="stat-title"><?= __('Internships') ?></div>
         <div class="stat-number">
             <?php echo $totalInternships; ?>
         </div>
@@ -86,7 +87,7 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card">
         <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
-        <div class="stat-title">Applications</div>
+        <div class="stat-title"><?= __('Applications') ?></div>
         <div class="stat-number">
             <?php echo $totalApplications; ?>
         </div>
@@ -94,7 +95,7 @@ include "../layouts/sidebar.php";
 
     <div class="stat-card stat-card-warning">
         <div class="stat-icon"><i class="fas fa-clock"></i></div>
-        <div class="stat-title">Pending</div>
+        <div class="stat-title"><?= __('Pending') ?></div>
         <div class="stat-number">
             <?php echo $pendingApplications; ?>
         </div>
@@ -104,11 +105,11 @@ include "../layouts/sidebar.php";
 
 <div class="charts-row">
     <div class="chart-card">
-        <h3>Applications by Status</h3>
+        <h3><?= __('Applications by Status') ?></h3>
         <canvas id="statusChart"></canvas>
     </div>
     <div class="chart-card">
-        <h3>Monthly Applications</h3>
+        <h3><?= __('Monthly Applications') ?></h3>
         <canvas id="monthlyChart"></canvas>
     </div>
 </div>

@@ -4,6 +4,7 @@ session_start();
 require_once "../../backend/config/database.php";
 require_once "../../backend/classes/user.php";
 require_once "../../backend/helpers/csrf.php";
+require_once "../../backend/helpers/Language.php";
 
 if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
     header("Location: ../authentication/login.php");
@@ -16,7 +17,7 @@ $userObj = new User($db);
 // Bulk delete
 if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
         $ids = array_filter($_POST['selected'], 'is_numeric');
         $deleted = 0;
@@ -25,7 +26,7 @@ if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
                 $deleted++;
             }
         }
-        $_SESSION['message'] = "$deleted user(s) deleted successfully.";
+        $_SESSION['message'] = $deleted . " " . __("user(s) deleted successfully.");
     }
     header("Location: users.php");
     exit();
@@ -34,17 +35,17 @@ if (isset($_POST['bulk_delete']) && isset($_POST['selected'])) {
 // Single delete
 if (isset($_POST['delete_user']) && isset($_POST['user_id'])) {
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
-        $_SESSION['error'] = "Invalid form submission.";
+        $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $user_id = filter_input(INPUT_POST, 'user_id', FILTER_VALIDATE_INT);
     if ($user_id === false || $user_id === null) {
-        $_SESSION['error'] = "Invalid user ID.";
+        $_SESSION['error'] = __("Invalid user ID.");
     } elseif ($user_id === (int)$_SESSION['user_id']) {
-        $_SESSION['error'] = "You cannot delete your own account.";
+        $_SESSION['error'] = __("You cannot delete your own account.");
     } elseif ($userObj->deleteUser($user_id)) {
-        $_SESSION['message'] = "User deleted successfully.";
+        $_SESSION['message'] = __("User deleted successfully.");
     } else {
-        $_SESSION['error'] = "Failed to delete user.";
+        $_SESSION['error'] = __("Failed to delete user.");
     }
     }
     header("Location: users.php");
@@ -80,7 +81,7 @@ include "../layouts/sidebar.php";
 ?>
 
 <div class="card">
-    <h2>Manage Users</h2>
+    <h2><?= __('Manage Users') ?></h2>
     <?php if (isset($_SESSION['message'])): ?>
         <p class="success-msg"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></p>
     <?php endif; ?>
@@ -89,16 +90,16 @@ include "../layouts/sidebar.php";
     <?php endif; ?>
 
     <form method="GET" class="filter-form" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;">
-        <input type="text" name="search" placeholder="Search name or email..." value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
+        <input type="text" name="search" placeholder="<?= __('Search name or email...') ?>" value="<?= htmlspecialchars($search) ?>" style="flex:1;min-width:200px;">
         <select name="role">
-            <option value="">All Roles</option>
-            <option value="student" <?= $roleFilter === 'student' ? 'selected' : '' ?>>Student</option>
-            <option value="company" <?= $roleFilter === 'company' ? 'selected' : '' ?>>Company</option>
-            <option value="admin" <?= $roleFilter === 'admin' ? 'selected' : '' ?>>Admin</option>
+            <option value=""><?= __('All Roles') ?></option>
+            <option value="student" <?= $roleFilter === 'student' ? 'selected' : '' ?>><?= __('Student') ?></option>
+            <option value="company" <?= $roleFilter === 'company' ? 'selected' : '' ?>><?= __('Company') ?></option>
+            <option value="admin" <?= $roleFilter === 'admin' ? 'selected' : '' ?>><?= __('Admin') ?></option>
         </select>
-        <button type="submit" class="btn btn-sm">Filter</button>
+        <button type="submit" class="btn btn-sm"><?= __('Filter') ?></button>
         <?php if ($roleFilter || $search): ?>
-            <a href="users.php" class="btn btn-sm btn-secondary">Clear</a>
+            <a href="users.php" class="btn btn-sm btn-secondary"><?= __('Clear') ?></a>
         <?php endif; ?>
     </form>
 </div>
@@ -107,19 +108,19 @@ include "../layouts/sidebar.php";
     <form method="POST" id="bulkForm">
         <?= csrfField() ?>
         <div style="margin-bottom:10px;text-align:left;">
-            <label><input type="checkbox" id="selectAll"> Select All</label>
-            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm" onclick="return confirm('Delete selected users?');" style="margin-left:10px;">Delete Selected</button>
+            <label><input type="checkbox" id="selectAll"> <?= __('Select All') ?></label>
+            <button type="submit" name="bulk_delete" class="btn btn-danger btn-sm" onclick="return confirm('<?= __('Delete selected users?') ?>');" style="margin-left:10px;"><?= __('Delete Selected') ?></button>
         </div>
         <table>
             <thead>
             <tr>
                 <th></th>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Created Date</th>
-                <th>Actions</th>
+                <th><?= __('ID') ?></th>
+                <th><?= __('Name') ?></th>
+                <th><?= __('Email') ?></th>
+                <th><?= __('Role') ?></th>
+                <th><?= __('Created Date') ?></th>
+                <th><?= __('Actions') ?></th>
             </tr>
             </thead>
             <tbody>
@@ -140,10 +141,10 @@ include "../layouts/sidebar.php";
                     </td>
                     <td><?= htmlspecialchars(date("M j, Y", strtotime($row['created_at']))) ?></td>
                     <td>
-                        <form method="POST" onsubmit="return confirm('Delete this user?');">
+                        <form method="POST" onsubmit="return confirm('<?= __('Delete this user?') ?>');">
                             <?= csrfField() ?>
                             <input type="hidden" name="user_id" value="<?= $row['user_id'] ?>">
-                            <button type="submit" name="delete_user" class="btn btn-danger btn-sm" <?= $row['user_id'] === $_SESSION['user_id'] ? 'disabled' : '' ?>>Delete</button>
+                            <button type="submit" name="delete_user" class="btn btn-danger btn-sm" <?= $row['user_id'] === $_SESSION['user_id'] ? 'disabled' : '' ?>><?= __('Delete') ?></button>
                         </form>
                     </td>
                 </tr>
