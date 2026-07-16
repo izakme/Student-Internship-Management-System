@@ -211,6 +211,9 @@ input.error {
                 <button type="button" class="toggle-password" id="togglePassword" tabindex="-1"><i class="fas fa-eye"></i></button>
             </div>
             <div class="field-error" id="passwordError"><?= __('Password is required.') ?></div>
+            <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:12px;">
+                <?= __('Must be at least 8 characters with an uppercase letter and a digit.') ?>
+            </div>
 
             <button class="btn btn-block" type="submit" id="loginBtn"><?= __('Login') ?></button>
 
@@ -272,7 +275,14 @@ document.addEventListener('DOMContentLoaded', function() {
             emailError.classList.remove('show');
         }
 
-        if (passwordInput.value.trim() === '') {
+        var pw = passwordInput.value.trim();
+        if (pw === '') {
+            passwordError.textContent = '<?= __('Password is required.') ?>';
+            passwordInput.classList.add('error');
+            passwordError.classList.add('show');
+            valid = false;
+        } else if (pw.length < 8 || !/[A-Z]/.test(pw) || !/[0-9]/.test(pw)) {
+            passwordError.textContent = '<?= __('Must be at least 8 characters with an uppercase letter and a digit.') ?>';
             passwordInput.classList.add('error');
             passwordError.classList.add('show');
             valid = false;
@@ -298,7 +308,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     passwordInput.addEventListener('blur', function() {
-        if (this.value.trim() === '') {
+        var val = this.value.trim();
+        if (val === '') {
+            passwordError.textContent = '<?= __('Password is required.') ?>';
+            this.classList.add('error');
+            passwordError.classList.add('show');
+        } else if (val.length < 8 || !/[A-Z]/.test(val) || !/[0-9]/.test(val)) {
+            passwordError.textContent = '<?= __('Must be at least 8 characters with an uppercase letter and a digit.') ?>';
             this.classList.add('error');
             passwordError.classList.add('show');
         }
