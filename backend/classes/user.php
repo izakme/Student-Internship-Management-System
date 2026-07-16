@@ -20,6 +20,12 @@ class User
             throw new Exception("Invalid role selected.");
         }
 
+        // Check for duplicate username
+        $existing = $this->findByUsername($username);
+        if ($existing) {
+            throw new Exception("A user with this username already exists.");
+        }
+
         // Check for duplicate email
         $existing = $this->findByEmail($email);
         if ($existing) {
@@ -73,6 +79,24 @@ class User
 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute([$user_id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /* =========================
+       FIND USER BY USERNAME
+    ========================= */
+    public function findByUsername($username)
+    {
+        $query = "SELECT * FROM users
+                  WHERE username = :username
+                  LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":username", $username);
+
+        $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
