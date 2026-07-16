@@ -11,7 +11,7 @@ class Auth
 
     public function login($email, $password)
 {
-    $user = $this->user->findByEmail($email);
+    $user = $this->user->findByEmailOrUsername($email);
 
     if ($user && password_verify($password, $user['password'])) {
 

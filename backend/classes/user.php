@@ -84,6 +84,23 @@ class User
     }
 
     /* =========================
+       FIND USER BY EMAIL OR USERNAME
+    ========================= */
+    public function findByEmailOrUsername($input)
+    {
+        $query = "SELECT * FROM users
+                  WHERE email = :input OR username = :input2
+                  LIMIT 1";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":input", $input);
+        $stmt->bindParam(":input2", $input);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /* =========================
        FIND USER BY USERNAME
     ========================= */
     public function findByUsername($username)

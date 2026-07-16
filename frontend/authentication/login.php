@@ -187,16 +187,16 @@ input.error {
 
             <?= csrfField() ?>
 
-            <label><?= __('Email Address') ?></label>
+            <label><?= __('Email or Username') ?></label>
 
             <input
-                type="email"
+                type="text"
                 name="email"
                 id="email"
-                placeholder="<?= __('Enter your email') ?>"
+                placeholder="<?= __('Enter your email or username') ?>"
                 required
             >
-            <div class="field-error" id="emailError"><?= __('Please enter a valid email address.') ?></div>
+            <div class="field-error" id="emailError"><?= __('Please enter your email or username.') ?></div>
 
             <label><?= __('Password') ?></label>
 
@@ -261,9 +261,8 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         var valid = true;
         var email = emailInput.value.trim();
-        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!emailRegex.test(email)) {
+        if (email === '') {
             emailInput.classList.add('error');
             emailError.classList.add('show');
             valid = false;
