@@ -187,23 +187,10 @@ input.error {
 
             <?= csrfField() ?>
 
-            <label><?= __('Login With') ?></label>
-
-            <div style="display:flex;gap:20px;margin-bottom:12px;">
-                <label style="font-weight:400;cursor:pointer;">
-                    <input type="radio" name="login_method" value="email" checked onchange="toggleLoginMethod()">
-                    <?= __('Email') ?>
-                </label>
-                <label style="font-weight:400;cursor:pointer;">
-                    <input type="radio" name="login_method" value="username" onchange="toggleLoginMethod()">
-                    <?= __('Username') ?>
-                </label>
-            </div>
-
-            <label id="emailLabel"><?= __('Email Address') ?></label>
+            <label><?= __('Email Address') ?></label>
 
             <input
-                type="text"
+                type="email"
                 name="email"
                 id="email"
                 placeholder="<?= __('Enter your email') ?>"
@@ -271,42 +258,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var passwordError = document.getElementById('passwordError');
     var toggleBtn = document.getElementById('togglePassword');
 
-    function toggleLoginMethod() {
-        var method = document.querySelector('input[name="login_method"]:checked').value;
-        var label = document.getElementById('emailLabel');
-        var input = document.getElementById('email');
-        if (method === 'email') {
-            label.textContent = '<?= __('Email Address') ?>';
-            input.type = 'email';
-            input.placeholder = '<?= __('Enter your email') ?>';
-        } else {
-            label.textContent = '<?= __('Username') ?>';
-            input.type = 'text';
-            input.placeholder = '<?= __('Enter your username') ?>';
-        }
-    }
-
     form.addEventListener('submit', function(e) {
         var valid = true;
-        var method = document.querySelector('input[name="login_method"]:checked').value;
         var email = emailInput.value.trim();
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (email === '') {
+        if (!emailRegex.test(email)) {
             emailInput.classList.add('error');
-            emailError.textContent = '<?= __('This field is required.') ?>';
             emailError.classList.add('show');
             valid = false;
-        } else if (method === 'email') {
-            var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                emailInput.classList.add('error');
-                emailError.textContent = '<?= __('Please enter a valid email address.') ?>';
-                emailError.classList.add('show');
-                valid = false;
-            } else {
-                emailInput.classList.remove('error');
-                emailError.classList.remove('show');
-            }
         } else {
             emailInput.classList.remove('error');
             emailError.classList.remove('show');
