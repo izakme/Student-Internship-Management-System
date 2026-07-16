@@ -18,14 +18,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $db = (new Database())->connect();
         $user = new User($db);
 
-        $username = trim($_POST['username'] ?? '');
-        $email     = trim($_POST['email'] ?? '');
-        $password  = trim($_POST['password'] ?? '');
-        $role      = $_POST['role'] ?? '';
+        $username         = trim($_POST['username'] ?? '');
+        $email            = trim($_POST['email'] ?? '');
+        $password         = trim($_POST['password'] ?? '');
+        $confirm_password = trim($_POST['confirm_password'] ?? '');
+        $role             = $_POST['role'] ?? '';
 
-        if (empty($username) || empty($email) || empty($password) || empty($role)) {
+        if (empty($username) || empty($email) || empty($password) || empty($confirm_password) || empty($role)) {
 
             $error = "All fields are required.";
+
+        } elseif ($password !== $confirm_password) {
+
+            $error = "Passwords do not match.";
 
         } elseif (!App::isValidEmail($email)) {
 
@@ -201,6 +206,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div style="font-size:12px;color:#888;margin-top:-8px;margin-bottom:12px;">
                 Must be at least 8 characters with an uppercase letter and a digit.
             </div>
+
+            <label>Confirm Password</label>
+
+            <input
+                type="password"
+                name="confirm_password"
+                placeholder="Re-enter your password"
+                required
+            >
 
             <label>Register As</label>
 
