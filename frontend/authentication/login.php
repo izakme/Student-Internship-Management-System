@@ -284,6 +284,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!valid) e.preventDefault();
     });
 
+    emailInput.addEventListener('blur', function() {
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.value.trim() && !emailRegex.test(this.value.trim())) {
+            this.classList.add('error');
+            emailError.classList.add('show');
+        }
+    });
+
     emailInput.addEventListener('input', function() {
         this.classList.remove('error');
         emailError.classList.remove('show');
