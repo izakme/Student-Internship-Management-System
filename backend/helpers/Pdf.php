@@ -4,15 +4,15 @@ require_once __DIR__ . "/../helpers/Language.php";
 
 class Pdf
 {
-    public static function generate($title, $headers, $rows, $filename = 'report.pdf')
+    public static function generate($title, $headers, $rows, $filename = 'report.pdf', $displayHeaders = null)
     {
         $pdf = new self();
-        $pdf->render($title, $headers, $rows, $filename);
+        $pdf->render($title, $headers, $rows, $filename, $displayHeaders);
     }
 
-    private function render($title, $headers, $rows, $filename)
+    private function render($title, $headers, $rows, $filename, $displayHeaders = null)
     {
-        $data = $this->build($title, $headers, $rows);
+        $data = $this->build($title, $headers, $rows, $displayHeaders);
 
         header('Content-Type: application/pdf');
         header('Content-Disposition: attachment; filename="' . addslashes($filename) . '"');
@@ -23,8 +23,9 @@ class Pdf
         echo $data;
     }
 
-    private function build($title, $headers, $rows)
+    private function build($title, $headers, $rows, $displayHeaders = null)
     {
+        $displayHeaders = $displayHeaders ?? $headers;
         $w = 595.28;
         $h = 841.89;
         $ml = 50;
@@ -76,7 +77,7 @@ class Pdf
 
             // Header cells
             $hx = $ml;
-            foreach ($headers as $hdr) {
+            foreach ($displayHeaders as $idx => $hdr) {
                 // Vertical separator
                 if ($hx > $ml) {
                     $body .= sprintf("%.2f %.2f m %.2f %.2f l S\n", $hx, $ty, $hx, $ty - $th);

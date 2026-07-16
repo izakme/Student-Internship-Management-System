@@ -98,7 +98,32 @@ class Report
         $output = fopen('php://output', 'w');
 
         if (!empty($rows)) {
-            fputcsv($output, array_keys($rows[0]));
+            $headerMap = [
+                'username'        => 'FULL NAME',
+                'year_of_study'   => 'YOS',
+                'registration_no' => 'REG NO',
+                'application_id'  => 'ID',
+                'student_name'    => 'STUDENT NAME',
+                'internship_title'=> 'INTERNSHIP TITLE',
+                'company_name'    => 'COMPANY',
+                'applicant_count' => 'APPLICANTS',
+                'application_date'=> 'APPLIED DATE',
+                'description'     => 'DESCRIPTION',
+                'title'           => 'TITLE',
+                'course'          => 'COURSE',
+                'email'           => 'EMAIL',
+                'status'          => 'STATUS',
+                'deadline'        => 'DEADLINE',
+                'internship_id'   => 'ID',
+                'applications'    => 'APPLICATIONS',
+            ];
+
+            $keys = array_keys($rows[0]);
+            $displayKeys = array_map(function($k) use ($headerMap) {
+                return $headerMap[$k] ?? strtoupper(str_replace('_', ' ', $k));
+            }, $keys);
+
+            fputcsv($output, $displayKeys);
 
             foreach ($rows as $row) {
                 fputcsv($output, $row);

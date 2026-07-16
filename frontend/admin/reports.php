@@ -36,9 +36,34 @@ if (isset($_GET['pdf'])) {
 
     if ($report) {
         $rows = json_decode($report['report_data'] ?? '[]', true);
+
+        $headerMap = [
+            'username'        => 'FULL NAME',
+            'year_of_study'   => 'YOS',
+            'registration_no' => 'REG NO',
+            'application_id'  => 'ID',
+            'student_name'    => 'STUDENT NAME',
+            'internship_title'=> 'INTERNSHIP TITLE',
+            'company_name'    => 'COMPANY',
+            'applicant_count' => 'APPLICANTS',
+            'application_date'=> 'APPLIED DATE',
+            'description'     => 'DESCRIPTION',
+            'title'           => 'TITLE',
+            'course'          => 'COURSE',
+            'email'           => 'EMAIL',
+            'status'          => 'STATUS',
+            'deadline'        => 'DEADLINE',
+            'internship_id'   => 'ID',
+            'applications'    => 'APPLICATIONS',
+        ];
+
         $headers = !empty($rows) ? array_keys($rows[0]) : [];
+        $displayHeaders = array_map(function($h) use ($headerMap) {
+            return $headerMap[$h] ?? strtoupper(str_replace('_', ' ', $h));
+        }, $headers);
+
         $filename = preg_replace('/[^A-Za-z0-9_-]+/', '_', $report['report_name']) . '.pdf';
-        Pdf::generate($report['report_name'], $headers, $rows, $filename);
+        Pdf::generate($report['report_name'], $headers, $rows, $filename, $displayHeaders);
         exit();
     }
 
