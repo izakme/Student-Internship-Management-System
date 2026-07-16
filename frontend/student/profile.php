@@ -55,6 +55,11 @@ require_once "../../backend/helpers/App.php";
                 $course = isset($_POST['course']) ? trim($_POST['course']) : '';
                 $year_of_study = isset($_POST['year_of_study']) ? (int)$_POST['year_of_study'] : 0;
                 $phone = isset($_POST['phone']) ? trim($_POST['phone']) : '';
+
+                if (empty($registration_no) || empty($course) || empty($year_of_study) || empty($phone)) {
+                    throw new Exception(__("All fields are required."));
+                }
+
                 $result = $student->updateStudent($student_id, $registration_no, $course, $year_of_study, $phone);
                 if ($result) {
                     $_SESSION['message'] = __("Profile updated successfully.");
@@ -96,20 +101,20 @@ include "../layouts/sidebar.php";
             <input type="email" value="<?= htmlspecialchars($data['email'] ?? '') ?>" disabled>
         </div>
         <div class="form-group">
-            <label><?= __('Registration Number') ?></label>
-            <input type="text" name="registration_no" value="<?= htmlspecialchars($data['registration_no'] ?? '') ?>">
+            <label><?= __('Registration Number') ?> <span style="color:#e74c3c;">*</span></label>
+            <input type="text" name="registration_no" value="<?= htmlspecialchars($data['registration_no'] ?? '') ?>" required>
         </div>
         <div class="form-group">
-            <label><?= __('Course') ?></label>
-            <input type="text" name="course" value="<?= htmlspecialchars($data['course'] ?? '') ?>">
+            <label><?= __('Course') ?> <span style="color:#e74c3c;">*</span></label>
+            <input type="text" name="course" value="<?= htmlspecialchars($data['course'] ?? '') ?>" required>
         </div>
         <div class="form-group">
-            <label><?= __('Year of Study') ?></label>
-            <input type="number" name="year_of_study" value="<?= htmlspecialchars($data['year_of_study'] ?? '') ?>">
+            <label><?= __('Year of Study') ?> <span style="color:#e74c3c;">*</span></label>
+            <input type="number" name="year_of_study" value="<?= htmlspecialchars($data['year_of_study'] ?? '') ?>" required>
         </div>
         <div class="form-group">
-            <label><?= __('Phone') ?></label>
-            <input type="tel" name="phone" value="<?= htmlspecialchars($data['phone'] ?? '') ?>">
+            <label><?= __('Phone') ?> <span style="color:#e74c3c;">*</span></label>
+            <input type="tel" name="phone" value="<?= htmlspecialchars($data['phone'] ?? '') ?>" required>
         </div>
         <div class="form-group">
             <label><?= __('Resume/CV (PDF only, max 5MB)') ?></label>

@@ -26,8 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $company_name = $_POST['company_name'] ?? '';
     $location = $_POST['location'] ?? '';
     $phone = $_POST['phone'] ?? '';
-    
-    if ($company_name && $location) {
+
+    if (!$company_name || !$location || !$phone) {
+        $_SESSION['error'] = __("All fields are required.");
+    } else {
         if ($companyObj->updateCompany($company['company_id'], $company_name, $location, $phone)) {
             $_SESSION['message'] = __("Profile updated successfully.");
             $company = $companyObj->getCompany($company['company_id']);
@@ -82,8 +84,8 @@ include "../layouts/sidebar.php";
                 </div>
                 
                 <div class="form-group">
-                    <label><?= __('Phone') ?></label>
-                    <input type="tel" name="phone" value="<?= htmlspecialchars($company['phone'] ?? '') ?>">
+                    <label><?= __('Phone') ?> <span style="color:#e74c3c;">*</span></label>
+                    <input type="tel" name="phone" value="<?= htmlspecialchars($company['phone'] ?? '') ?>" required>
                 </div>
                 
                 <button type="submit" class="btn"><?= __('Update Profile') ?></button>

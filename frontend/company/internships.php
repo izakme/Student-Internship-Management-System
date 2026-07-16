@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
     $requirements = $_POST['requirements'] ?? '';
     $deadline = $_POST['deadline'] ?? '';
 
-    if ($title && $description && $deadline) {
+    if ($title && $description && $requirements && $deadline) {
         $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
 
         if ($internship_id) {
@@ -131,8 +131,8 @@ include "../layouts/sidebar.php";
         </div>
 
         <div class="form-group">
-            <label><?= __('Requirements') ?></label>
-            <textarea name="requirements"><?php echo htmlspecialchars($editInternship['requirements'] ?? ''); ?></textarea>
+            <label><?= __('Requirements') ?> *</label>
+            <textarea name="requirements" required><?php echo htmlspecialchars($editInternship['requirements'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group">
