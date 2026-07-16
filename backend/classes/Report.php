@@ -255,4 +255,65 @@ class Report
     {
         return $this->conn->query("SELECT COUNT(*) FROM {$this->table}")->fetchColumn();
     }
+
+    /* =========================
+       GET STUDENT INTERNSHIP DETAILS
+    ========================= */
+    public function getStudentInternshipDetails($search)
+    {
+        $sql = "SELECT
+                    s.student_id,
+                    s.registration_no,
+                    s.course,
+                    s.year_of_study,
+                    s.phone as student_phone,
+                    u.username as full_name,
+                    u.email as student_email,
+                    a.status as application_status,
+                    a.application_date,
+                    i.title as internship_title,
+                    i.description as internship_description,
+                    i.deadline as internship_deadline,
+                    c.company_name,
+                    c.location as company_location,
+                    c.phone as company_phone
+                FROM students s
+                INNER JOIN users u ON s.user_id = u.user_id
+                LEFT JOIN applications a ON s.student_id = a.student_id AND a.status = 'Accepted'
+                LEFT JOIN internships i ON a.internship_id = i.internship_id
+                LEFT JOIN companies c ON i.company_id = c.company_id
+                WHERE (u.username LIKE ? OR s.registration_no LIKE ?)
+                LIMIT 1";
+
+        $searchTerm = "%{$search}%";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$searchTerm, $searchTerm]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    /* =========================
+       SEARCH STUDENTS FOR INTERNSHIP DETAILS
+    ========================= */
+    public function searchStudentsForDetails($search)
+    {
+        $sql = "SELECT
+                    s.student_id,
+                    s.registration_no,
+                    s.course,
+                    s.year_of_study,
+                    u.username as full_name,
+                    u.email
+                FROM students s
+                INNER JOIN users u ON s.user_id = u.user_id
+                WHERE u.username LIKE ? OR s.registration_no LIKE ?
+                ORDER BY u.username ASC
+                LIMIT 20";
+
+        $searchTerm = "%{$search}%";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$searchTerm, $searchTerm]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

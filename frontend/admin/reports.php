@@ -142,6 +142,11 @@ if (isset($_POST['delete']) && isset($_POST['report_id'])) {
         </div>
         <button type="submit" name="generate_report" class="btn"><?= __('Generate Report') ?></button>
     </form>
+    <div style="margin-top:15px;text-align:center;">
+        <a href="internship-details.php" class="btn btn-primary" style="display:inline-block;">
+            <?= __('View Internship Details') ?>
+        </a>
+    </div>
 </div>
 
 <div class="card">
