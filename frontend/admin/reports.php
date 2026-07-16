@@ -40,7 +40,7 @@ if (isset($_GET['pdf'])) {
         $headerMap = [
             'username'        => 'FULL NAME',
             'year_of_study'   => 'YOS',
-            'registration_no' => 'REG NO',
+            'registration_no' => 'REGISTRATION NUMBER',
             'application_id'  => 'ID',
             'student_name'    => 'STUDENT NAME',
             'internship_title'=> 'INTERNSHIP TITLE',
