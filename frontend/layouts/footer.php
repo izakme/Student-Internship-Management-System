@@ -11,10 +11,12 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('form').forEach(function(f) {
+        var submitted = false;
         f.addEventListener('submit', function() {
+            if (submitted) return false;
+            submitted = true;
             var btn = this.querySelector('button[type="submit"]');
             if (btn) {
-                btn.disabled = true;
                 btn.innerHTML = 'Processing…';
             }
         });

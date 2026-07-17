@@ -36,14 +36,18 @@ if (isset($_GET['edit'])) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_POST['save_internship']) || isset($_POST['title']))) {
+    error_log("[SIMS] POST handler entered for company_id=$company_id, save_internship=" . $_POST['save_internship']);
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        error_log("[SIMS] CSRF validation FAILED");
         $_SESSION['error'] = __("Invalid form submission.");
     } else {
-    $title = $_POST['title'] ?? '';
-    $description = $_POST['description'] ?? '';
-    $requirements = $_POST['requirements'] ?? '';
-    $deadline = $_POST['deadline'] ?? '';
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $requirements = trim($_POST['requirements'] ?? '');
+    $deadline = trim($_POST['deadline'] ?? '');
+
+    error_log("[SIMS] title='$title' deadline='$deadline' all_filled=" . ($title && $description && $requirements && $deadline ? 'yes' : 'no'));
 
     if ($title && $description && $requirements && $deadline) {
         $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
@@ -62,34 +66,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_internship'])) {
             }
         } else {
             // Create new
-            if ($internshipObj->addInternship($company_id, $title, $description, $requirements, $deadline)) {
-                $_SESSION['message'] = __("Internship posted successfully.");
-            } else {
-                $_SESSION['error'] = __("Error posting internship.");
+            try {
+                error_log("[SIMS] Calling addInternship(company_id=$company_id)");
+                $result = $internshipObj->addInternship($company_id, $title, $description, $requirements, $deadline);
+                error_log("[SIMS] addInternship returned " . ($result ? 'true' : 'false'));
+                if ($result) {
+                    $_SESSION['message'] = __("Internship posted successfully.");
+                } else {
+                    error_log("[SIMS] addInternship returned false for company_id=$company_id title=$title");
+                    $_SESSION['error'] = __("Error posting internship. Please check the logs.");
+                }
+            } catch (Exception $e) {
+                error_log("[SIMS] addInternship EXCEPTION: " . $e->getMessage());
+                $_SESSION['error'] = __("Database error: ") . $e->getMessage();
             }
         }
         header("Location: internships.php");
         exit();
     } else {
+        error_log("[SIMS] Field validation FAILED");
         $_SESSION['error'] = __("Please fill all required fields.");
     }
     }
 }
 
 if (isset($_POST['delete']) && isset($_POST['internship_id'])) {
+    error_log("[SIMS] DELETE handler entered, internship_id=" . $_POST['internship_id']);
     if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        error_log("[SIMS] DELETE CSRF FAILED");
         $_SESSION['error'] = __("Invalid form submission.");
     } else {
     $internship_id = filter_input(INPUT_POST, 'internship_id', FILTER_VALIDATE_INT);
+    error_log("[SIMS] DELETE validated internship_id=$internship_id");
     $internship = $internshipObj->getInternship($internship_id);
     if ($internship && $internship['company_id'] == $company_id) {
         $result = $internshipObj->deleteInternship($internship_id);
+        error_log("[SIMS] DELETE result: " . ($result['success'] ? 'success' : 'fail') . " - " . $result['message']);
         if ($result['success']) {
             $_SESSION['message'] = $result['message'];
         } else {
             $_SESSION['error'] = $result['message'];
         }
     } else {
+        error_log("[SIMS] DELETE unauthorized. internship=" . var_export($internship, true) . " company_id=$company_id");
         $_SESSION['error'] = __("Internship not found or unauthorized.");
     }
     }
@@ -99,11 +118,13 @@ if (isset($_POST['delete']) && isset($_POST['internship_id'])) {
 
 $stmt = $db->prepare("SELECT * FROM internships WHERE company_id = ? ORDER BY internship_id DESC");
 $stmt->execute([$company_id]);
-$internships = $stmt;
+$internships = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 include "../layouts/header.php";
 include "../layouts/sidebar.php";
 ?>
+
+
 
 <div class="card">
     <h2><?php echo $editInternship ? __('Edit Internship') : __('Post New Internship'); ?></h2>
@@ -151,8 +172,8 @@ include "../layouts/sidebar.php";
 
 <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-        <h2 style="margin:0;"><?= __('My Internship Listings') ?></h2>
-        <?php if ($internships->rowCount() > 0): ?>
+        <h2 style="margin:0"><?= __('My Internship Listings') ?></h2>
+        <?php if (count($internships) > 0): ?>
         <button onclick="window.print()" class="btn btn-sm no-print" style="display:inline-flex;align-items:center;gap:6px;">
             <i class="fas fa-print"></i> <?= __('Print') ?>
         </button>
@@ -170,8 +191,8 @@ include "../layouts/sidebar.php";
         </tr>
         </thead>
         <tbody>
-        <?php if ($internships->rowCount() > 0): ?>
-            <?php while ($row = $internships->fetch(PDO::FETCH_ASSOC)): ?>
+        <?php if (count($internships) > 0): ?>
+            <?php foreach ($internships as $row): ?>
                 <tr>
                     <td data-label="ID"><?= htmlspecialchars($row['internship_id']) ?></td>
                     <td data-label="Title"><?= htmlspecialchars($row['title']) ?></td>
@@ -188,7 +209,7 @@ include "../layouts/sidebar.php";
                         </div>
                     </td>
                 </tr>
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         <?php else: ?>
             <tr>
                 <td colspan="4" class="center"><?= __('No internships posted yet.') ?></td>
